@@ -2,14 +2,17 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:filmster/model/film.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/film_detail_page.dart';
+import 'package:filmster/providers/themeProvider.dart';
 
 import 'package:filmster/widgets/drawer.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class FilmsPage extends StatefulWidget {
 
@@ -30,25 +33,25 @@ class _FilmsPageState extends State<FilmsPage> {
   @override
   void initState() {
     super.initState();
-    // Start listening to changes.
     textController.addListener(onTextChange);
   }
 
-  _buildFilm(element) {
+  _buildFilm(Film film) {
+   var provider= Provider.of<ThemeProvider>(context);
     return InkWell(
         onTap: () async{
-          Navigator.of(context).pushNamed('/filmDeatil', arguments: element['imdbID']);
+          Navigator.of(context)
+              .pushReplacement(MaterialPageRoute(
+              builder: (_) => FilmDetailPage(
+               film:film
+              )));
         },
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 15.0),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.transparent,
-                border: Border.all(
-                  color: Colors.deepOrange,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(20),
+                color: provider.currentSecondaryColor,
+                borderRadius: BorderRadius.circular(10),
               ),
               width: MediaQuery
                   .of(context)
@@ -59,9 +62,9 @@ class _FilmsPageState extends State<FilmsPage> {
               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
               child: Row(
                   children: <Widget>[
-                    element['Poster'] != 'N/A' ?
+                    film.posters != 'N/A' ?
                     Image.network(
-                      element['Poster'],
+                      film.posters,
                       height: 150,
                       width: 100,
                     ) :
@@ -71,7 +74,7 @@ class _FilmsPageState extends State<FilmsPage> {
                         child: Icon(
                           Icons.do_not_disturb_on,
                           size: 100.0,
-                          color: Colors.deepOrange,
+                          color:  provider.currentAcidColor,
                         )),
                     Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,12 +86,12 @@ class _FilmsPageState extends State<FilmsPage> {
                                   .size
                                   .width * 0.9 - 140,
                               child: Text(
-                                  element['Title'],
+                                 film.title,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color:provider.currentFontColor,
                                   )
                               )
                           ),
@@ -96,30 +99,20 @@ class _FilmsPageState extends State<FilmsPage> {
                               padding: EdgeInsets.symmetric(
                                   vertical: 5.0, horizontal: 5.0),
                               child: Text(
-                                element['Year'],
+                              film.year,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: provider.currentFontColor,
                                 ),
                               )),
-//                      Container(
-//                          padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-//                          child:Text(
-//                      element['Genre']
-//                          )),
-//                    Text(
-//                      element['Country']
-//                    ),
                           Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical: 5.0, horizontal: 5.0),
                               child: Text(
-                                element['Type'],
+                              film.type,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: provider.currentFontColor,
                                 ),
                               ))
-
-//)
                         ])
                   ]
               ),
@@ -128,13 +121,17 @@ class _FilmsPageState extends State<FilmsPage> {
   }
 
   noData() {
-    return Container(
-      padding: EdgeInsets.only(top: 20.0),
-      alignment: Alignment.topCenter,
-      child: Text('Movies not found',
-        style: TextStyle(
-          color: Colors.white,
-        ),),
+    return Center(
+      child: Container(
+        child: Text(
+          'Movies not found',
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.w600,
+            color: Provider.of<ThemeProvider>(context).currentAcidColor,
+          ),
+        ),
+      ),
     );
   }
 
@@ -152,13 +149,17 @@ class _FilmsPageState extends State<FilmsPage> {
             else {
               _noData = false;
               var films = snapshot.data.search;
-              films.forEach((element) => list.add(_buildFilm(element)));
+              films.forEach((element) => list.add(_buildFilm(Film.fromJson(element))));
               return Column(children: list);
             }
           }
 //          else if(snapshot.hasData && snapshot.data.search==null)
 //            return noData();
-          return CircularProgressIndicator();
+          return Container(
+            height: 50,
+              width: 50,
+              child:CircularProgressIndicator()
+          );
         }
     );
   }
@@ -175,7 +176,6 @@ class _FilmsPageState extends State<FilmsPage> {
     final response = await http.get('$imdbAPI${textController.text}');
     if (response.statusCode == 200) {
       _noData = false;
-      print(json.decode(response.body));
       return Search.fromJson(json.decode(response.body));
     } else {
       _noData = true;
@@ -186,6 +186,7 @@ class _FilmsPageState extends State<FilmsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Provider.of<ThemeProvider>(context).currentBackgroundColor,
       appBar: AppBar(
         title: Text('Find your films'),
       ),
@@ -207,18 +208,26 @@ class _FilmsPageState extends State<FilmsPage> {
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20.0),
         child: TextField(
           controller: textController,
-          cursorRadius: Radius.circular(6000),
-          cursorColor: Colors.deepOrange,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(40.0),
+          cursorRadius: Radius.circular(15),
+          cursorColor: Provider.of<ThemeProvider>(context).currentMainColor,
+          decoration: new InputDecoration(
+            prefix: SizedBox(width: 16,),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(25)),
+              borderSide: BorderSide(color: Provider.of<ThemeProvider>(context).currentMainColor, width: 3.0),
             ),
-            hintText: 'Enter movie title',
-            focusColor: Colors.orange,
-            hoverColor: Colors.white,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(25)),
+              borderSide: BorderSide(color: Provider.of<ThemeProvider>(context).currentMainColor, width: 1.0),
+            ),
+            hintStyle: TextStyle(
+              color: Provider.of<ThemeProvider>(context).currentSecondaryColor,
+            ),
+            hintText: 'Enter movie name',
           ),
           style: TextStyle(
-            color: Colors.white,
+            textBaseline: null,
+            color: Provider.of<ThemeProvider>(context).currentFontColor,
             fontSize: 16.0,
           ),
         )
@@ -227,25 +236,11 @@ class _FilmsPageState extends State<FilmsPage> {
 
   _buildBody(BuildContext context) {
     return SingleChildScrollView(
-        child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: 980,
-            ),
-            child: IntrinsicHeight(
-                child: Column(
-                    children: <Widget>[
-                      buildInput(),
-                      Expanded(
-                        // A flexible child that will grow to fit the viewport but
-                        // still be at least as big as necessary to fit its contents.
-                        child: _noData
-                            ? noData()
-                            : _buildResults(context),
-                      ),
-                    ]
-                )
-            )
-        )
+      child: Column(
+          children: <Widget>[
+            buildInput(),
+            _noData ? noData() : _buildResults(context),
+      ]),
     );
   }
 }

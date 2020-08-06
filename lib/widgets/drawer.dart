@@ -1,3 +1,5 @@
+import 'package:filmster/main.dart';
+import 'package:filmster/page/films.dart';
 import 'package:flutter/material.dart';
 
 class DrawerMenu {
@@ -13,7 +15,7 @@ class DrawerMenu {
                   color: Colors.black87,
                 ),
                 child: Text(
-                  'Hi, man ;)',
+                  'Hello ;)',
                   style: TextStyle(
                     color: Colors.deepOrange,
                     fontSize: 24,
@@ -22,21 +24,25 @@ class DrawerMenu {
               ),
               ListTile(
                 onTap:() {
-                  Navigator.pushNamed(context, '/welcome');
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(
+                      builder: (_) => MyHomePage()));
                 },
                 title: Text('Home'),
               ),
                ListTile(
                  onTap:() {
-                   Navigator.pushNamed(context, '/films');
+                   Navigator.of(context)
+                       .push(MaterialPageRoute(
+                       builder: (_) => FilmsPage()));
                    },
                   title: Text('Films'),
                ),
               ListTile(
-                title: Text('Shows'),
+                title: Text('In progress'),
               ),
               ListTile(
-                title: Text('Library'),
+                title: Text('In progress'),
               ),
             ],
         )

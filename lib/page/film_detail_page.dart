@@ -12,9 +12,9 @@ import 'package:dartpedia/dartpedia.dart' as wiki;
 import 'package:url_launcher/url_launcher.dart';
 
 class FilmDetailPage extends StatefulWidget {
-  final String arguments;
+  final Film film;
 
-  FilmDetailPage({Key key, this.arguments}) : super(key: key);
+  FilmDetailPage({Key key, this.film}) : super(key: key);
 
   @override
   FilmDetailPageState createState() => new FilmDetailPageState();
@@ -26,30 +26,17 @@ class FilmDetailPageState extends State<FilmDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return
-    FutureBuilder <Film>(
-        future: fetchData(),
-        builder: (BuildContext context, AsyncSnapshot<Film> snapshot) {
-          if (snapshot.hasData) {
-            return buildPage(snapshot.data);
-          }
-          else
-            return CircularProgressIndicator();
-        }
-    );
-  }
-
-  buildPage(movie){
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            movie.title
+         widget.film.title
         ),
       ),
       drawer: DrawerMenu().build(context),
-      body: buildBody(movie),
+      body: buildBody(widget.film),
     );
   }
+
 
   _getIcon(name){
     switch(name){
@@ -369,15 +356,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
       wikipediaPage = await wiki.page('${array[1]}');
     }
     return wikipediaPage;
-  }
-
-  Future<Film> fetchData() async {
-    final response = await http.get('$imdbAPI${widget.arguments} ');
-    if (response.statusCode == 200) {
-      return Film.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load ');
-    }
   }
 
 }
