@@ -1,5 +1,10 @@
 //Widgets
+
+
+import 'dart:io';
+
 import 'package:filmster/providers/themeProvider.dart';
+import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/theme.dart';
 import 'package:filmster/widgets/drawer.dart';
 //Flutter
@@ -7,15 +12,20 @@ import 'package:flutter/material.dart';
 //Pages
 
 import 'package:provider/provider.dart';
+import 'package:admob_flutter/admob_flutter.dart';
 
-void main() => runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ],
-        child: MyApp(),
-      ),
-    );
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Admob.initialize(addMobClass().getAdMobId());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
 
@@ -48,10 +58,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   int _counter = 0;
 
   void _incrementCounter() {
     setState(() {
+
       _counter++;
     });
   }
@@ -59,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldState,
       backgroundColor: Provider.of<ThemeProvider>(context,listen: false).currentBackgroundColor,
       appBar: AppBar(
         title: Text('Welcome'),
@@ -85,6 +98,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 Provider.of<ThemeProvider>(context, listen: false).changeTheme(context, MyThemeKeys.DARKER);
               },
               child: Text("Darker!"),
+            ),
+            AdmobBanner(
+              adUnitId: addMobClass().getBannerAdUnitId(),
+              adSize: addMobClass().bannerSize,
+              listener: (AdmobAdEvent event,
+                  Map<String, dynamic> args) {
+                addMobClass().handleEvent(event, args, 'Banner', scaffoldState);
+              },
+              onBannerCreated:
+                  (AdmobBannerController controller) {
+                // Dispose is called automatically for you when Flutter removes the banner from the widget tree.
+                // Normally you don't need to worry about disposing this yourself, it's handled.
+                // If you need direct access to dispose, this is your guy!
+                // controller.dispose();
+              },
             ),
             Divider(height: 100,),
             AnimatedContainer(

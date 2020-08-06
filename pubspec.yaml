@@ -24,6 +24,7 @@ dependencies:
   dartpedia: ^1.6.6
   url_launcher: ^5.4.2
   provider: ^4.3.1
+  admob_flutter: ^0.3.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -60,7 +61,7 @@ flutter:
     - assets/icons/imdb.png
     - assets/icons/RT.png
     - assets/icons/MT.png
-    -
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
