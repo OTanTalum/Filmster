@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:filmster/model/film.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/film_detail_page.dart';
+import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 
 import 'package:filmster/widgets/drawer.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class FilmsPage extends StatefulWidget {
 
@@ -25,7 +27,10 @@ class _FilmsPageState extends State<FilmsPage> {
 
   final textController = TextEditingController();
   bool _noData = true;
-
+  bool isLoading = false;
+  ScrollController _scrollController = ScrollController();
+  int currentPage = 1;
+  bool isLast;
 
   String imdbAPI = 'http://www.omdbapi.com/?apikey=827ba9b0&type=movie&s=';
 
@@ -33,6 +38,7 @@ class _FilmsPageState extends State<FilmsPage> {
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_scrollListener);
     textController.addListener(onTextChange);
   }
 
@@ -88,7 +94,7 @@ class _FilmsPageState extends State<FilmsPage> {
                               child: Text(
                                  film.title,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
+                                  style: GoogleFonts.lifeSavers(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color:provider.currentFontColor,
@@ -100,7 +106,7 @@ class _FilmsPageState extends State<FilmsPage> {
                                   vertical: 5.0, horizontal: 5.0),
                               child: Text(
                               film.year,
-                                style: TextStyle(
+                                style: GoogleFonts.lifeSavers(
                                   color: provider.currentFontColor,
                                 ),
                               )),
@@ -109,7 +115,7 @@ class _FilmsPageState extends State<FilmsPage> {
                                   vertical: 5.0, horizontal: 5.0),
                               child: Text(
                               film.type,
-                                style: TextStyle(
+                                style: GoogleFonts.lifeSavers(
                                   color: provider.currentFontColor,
                                 ),
                               ))
@@ -125,10 +131,10 @@ class _FilmsPageState extends State<FilmsPage> {
       child: Container(
         child: Text(
           'Movies not found',
-          style: TextStyle(
+          style: GoogleFonts.lifeSavers(
             fontSize: 20.0,
             fontWeight: FontWeight.w600,
-            color: Provider.of<ThemeProvider>(context).currentAcidColor,
+            color: Provider.of<ThemeProvider>(context).currentMainColor,
           ),
         ),
       ),
@@ -136,12 +142,11 @@ class _FilmsPageState extends State<FilmsPage> {
   }
 
   _buildResults(context) {
-    List<Widget> list = new List<Widget>();
+    List<Widget> list=[];
     return FutureBuilder <Search>(
         future: fetchData(),
         builder: (BuildContext context, AsyncSnapshot<Search> snapshot) {
           if (snapshot.hasData) {
-            list.clear();
             if(snapshot.data.search==null){
               _noData = true;
               return noData();
@@ -168,18 +173,30 @@ class _FilmsPageState extends State<FilmsPage> {
     print(textController.text);
     if (textController.text.length >= 3)
       setState(() {
+        currentPage=1;
         fetchData();
       });
   }
 
   Future<Search> fetchData() async {
-    final response = await http.get('$imdbAPI${textController.text}');
+    if(!isLoading){
+     setState(() {
+       isLoading = true;
+     });
+    final response = await http.get('$imdbAPI${textController.text}&page=${currentPage}');
     if (response.statusCode == 200) {
       _noData = false;
+      setState(() {
+        isLoading = false;
+      });
       return Search.fromJson(json.decode(response.body));
     } else {
       _noData = true;
+      setState(() {
+        isLoading = false;
+      });
       throw Exception('Failed to load ');
+    }
     }
   }
 
@@ -188,7 +205,8 @@ class _FilmsPageState extends State<FilmsPage> {
     return Scaffold(
       backgroundColor: Provider.of<ThemeProvider>(context).currentBackgroundColor,
       appBar: AppBar(
-        title: Text('Find your films'),
+        title: Text('Find your films',
+        style: GoogleFonts.lifeSavers(),),
       ),
       drawer: DrawerMenu().build(context),
       body: _buildBody(context),
@@ -225,22 +243,48 @@ class _FilmsPageState extends State<FilmsPage> {
             ),
             hintText: 'Enter movie name',
           ),
-          style: TextStyle(
+          style: GoogleFonts.lifeSavers(
             textBaseline: null,
             color: Provider.of<ThemeProvider>(context).currentFontColor,
-            fontSize: 16.0,
+            fontSize: 20.0,
           ),
         )
     );
   }
 
   _buildBody(BuildContext context) {
+     List<Widget> list=[];
+    Provider.of<SearchProvider>(context).listOfFilms.forEach((element) {
+      list.add( _buildFilm(element));
+    });
     return SingleChildScrollView(
       child: Column(
           children: <Widget>[
             buildInput(),
-            _noData ? noData() : _buildResults(context),
-      ]),
+            _noData
+                ? noData()
+                :  _buildResults(context)
+          ]),
     );
   }
+
+
+  _scrollListener() async {
+    if (isLast) return;
+
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      setState(() {
+        isLoading = true;
+      });
+      ++currentPage;
+
+    //  isLast = await getNextPage();
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
 }

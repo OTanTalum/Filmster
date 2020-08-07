@@ -1,4 +1,5 @@
 import 'package:dartpedia/dartpedia.dart';
+import 'package:filmster/providers/themeProvider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -9,6 +10,7 @@ import 'package:filmster/model/film.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dartpedia/dartpedia.dart' as wiki;
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FilmDetailPage extends StatefulWidget {
@@ -30,6 +32,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         title: Text(widget.film.title),
       ),
       drawer: DrawerMenu().build(context),
+      drawerScrimColor: Provider.of<ThemeProvider>(context).currentMainColor,
       body: buildBody(context),
     );
   }

@@ -3,12 +3,14 @@
 
 import 'dart:io';
 
+import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/theme.dart';
 import 'package:filmster/widgets/drawer.dart';
 //Flutter
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 //Pages
 
 import 'package:provider/provider.dart';
@@ -21,6 +23,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
       ],
       child: MyApp(),
     ),
@@ -63,7 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
       key: scaffoldState,
       backgroundColor: Provider.of<ThemeProvider>(context,listen: false).currentBackgroundColor,
       appBar: AppBar(
-        title: Text('Welcome'),
+        title: Text('Welcome',
+          style: GoogleFonts.lifeSavers(),),
       ),
       drawer: DrawerMenu().build(context),
       body: Column(
@@ -77,19 +81,22 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Provider.of<ThemeProvider>(context, listen: false).changeTheme(context, MyThemeKeys.LIGHT);
               },
-              child: Text("Light!"),
+              child: Text("Light!",
+                style: GoogleFonts.lifeSavers(),),
             ),
             RaisedButton(
               onPressed: () {
                 Provider.of<ThemeProvider>(context, listen: false).changeTheme(context, MyThemeKeys.DARK);
               },
-              child: Text("Dark!"),
+              child: Text("Dark!",
+                style: GoogleFonts.lifeSavers(),),
             ),
             RaisedButton(
               onPressed: () {
                 Provider.of<ThemeProvider>(context, listen: false).changeTheme(context, MyThemeKeys.DARKER);
               },
-              child: Text("Darker!"),
+              child: Text("Darker!",
+              style: GoogleFonts.lifeSavers(),),
             ),
             Divider(height: 100,),
             AnimatedContainer(
@@ -100,11 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
         ],
         ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: AdmobBanner(
+      AdmobBanner(
             adUnitId: addMobClass().getBannerAdUnitId(),
             adSize: AdmobBannerSize.FULL_BANNER,
             listener: (AdmobAdEvent event, Map<String, dynamic> args) {
@@ -112,7 +115,6 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             onBannerCreated: (AdmobBannerController controller) {},
           ),
-        )
       ]
       ),
       floatingActionButton: FloatingActionButton(

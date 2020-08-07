@@ -36,7 +36,7 @@ class MyThemes {
       case MyThemeKeys.DARK:
         {
           Provider.of<ThemeProvider>(context,listen: false).changeColor(
-            fontColor:Colors.white70,
+            fontColor:Colors.white,
             backgroundColor: Colors.blueGrey[400],
             mainColor:Colors.orange[400],
             acidColor:Colors.deepOrange[400],

@@ -1,70 +1,91 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/main.dart';
 import 'package:filmster/page/films.dart';
+import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DrawerMenu {
-
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<ThemeProvider>(context);
     return Drawer(
-        child:Stack(
-        children:[
-          ListView(
-          padding: EdgeInsets.zero,
+      child: Container(
+        color: provider.currentBackgroundColor,
+        child: ListView(
+            padding: EdgeInsets.zero,
             children: <Widget>[
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.black87,
+                  color: provider.currentMainColor,
                 ),
                 child: Text(
                   'Hello ;)',
-                  style: TextStyle(
-                    color: Colors.deepOrange,
-                    fontSize: 24,
+                  style: GoogleFonts.lifeSavers(
+                    color: provider.currentFontColor,
+                    fontSize: 28,),
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => MyHomePage()));
+                },
+                title: Text(
+                  'Home',
+                  style:  GoogleFonts.lifeSavers(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                    color: provider.currentFontColor,
                   ),
                 ),
               ),
               ListTile(
-                onTap:() {
+                onTap: () {
                   Navigator.of(context)
-                      .push(MaterialPageRoute(
-                      builder: (_) => MyHomePage()));
+                      .push(MaterialPageRoute(builder: (_) => FilmsPage()));
                 },
-                title: Text('Home'),
-              ),
-               ListTile(
-                 onTap:() {
-                   Navigator.of(context)
-                       .push(MaterialPageRoute(
-                       builder: (_) => FilmsPage()));
-                   },
-                  title: Text('Films'),
-               ),
-              ListTile(
-                title: Text('In progress'),
+                title: Text(
+                  'Films',
+                  style:  GoogleFonts.lifeSavers(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                    color: provider.currentFontColor,
+                  ),
+                ),
               ),
               ListTile(
-                title: Text('In progress'),
+                title: Text(
+                  'In progress',
+                  style:  GoogleFonts.lifeSavers(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                    color: provider.currentFontColor,
+                  ),
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'In progress',
+                  style:  GoogleFonts.lifeSavers(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                    color: provider.currentFontColor,
+                  ),
+                ),
+              ),
+              AdmobBanner(
+                    adUnitId: addMobClass().getBannerAdUnitId(),
+                    adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
+                    listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+                    },
+                    onBannerCreated: (AdmobBannerController controller) {},
               ),
             ],
-        ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child:AdmobBanner(
-                adUnitId: addMobClass().getBannerAdUnitId(),
-                adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
-                listener: (AdmobAdEvent event, Map<String, dynamic> args) {
-                  print("some data");
-                },
-                onBannerCreated: (AdmobBannerController controller) {},
-              ),
-            ),
-      ]),
-
+          ),
+      ),
     );
   }
 }
