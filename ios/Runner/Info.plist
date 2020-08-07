@@ -41,5 +41,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3113025288273721~7357255507</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>GADMobileAds.sharedInstance.requestConfiguration.testDeviceIdentifiers</key>
+	<string>BA862153-63F3-446B-AD00-EAEF01EAC23B</string>
 </dict>
 </plist>

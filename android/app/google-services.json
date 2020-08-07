@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "577918515815",
+    "firebase_url": "https://filmster-408e8.firebaseio.com",
+    "project_id": "filmster-408e8",
+    "storage_bucket": "filmster-408e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577918515815:android:4f37dff47af4c0b1b432c2",
+        "android_client_info": {
+          "package_name": "com.tantalum.filmster"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "577918515815-v2lld71gr4mia1qon4hq5t0tpvgk5utr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu4uNVxyy-DsiSnRdFIEMh3UUnf-ggywo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "577918515815-v2lld71gr4mia1qon4hq5t0tpvgk5utr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

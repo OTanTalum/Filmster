@@ -1,5 +1,7 @@
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/main.dart';
 import 'package:filmster/page/films.dart';
+import 'package:filmster/setting/adMob.dart';
 import 'package:flutter/material.dart';
 
 class DrawerMenu {
@@ -7,7 +9,9 @@ class DrawerMenu {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-        child: ListView(
+        child:Stack(
+        children:[
+          ListView(
           padding: EdgeInsets.zero,
             children: <Widget>[
               DrawerHeader(
@@ -45,7 +49,22 @@ class DrawerMenu {
                 title: Text('In progress'),
               ),
             ],
-        )
+        ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child:AdmobBanner(
+                adUnitId: addMobClass().getBannerAdUnitId(),
+                adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
+                listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+                  print("some data");
+                },
+                onBannerCreated: (AdmobBannerController controller) {},
+              ),
+            ),
+      ]),
+
     );
   }
 }

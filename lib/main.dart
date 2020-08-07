@@ -16,7 +16,7 @@ import 'package:admob_flutter/admob_flutter.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Admob.initialize(addMobClass().getAdMobId());
+  Admob.initialize();
   runApp(
     MultiProvider(
       providers: [
@@ -42,17 +42,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
 
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -77,10 +66,13 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text('Welcome'),
       ),
       drawer: DrawerMenu().build(context),
-      body: Center(
-        child: Column(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            SizedBox(height: 40,),
             RaisedButton(
               onPressed: () {
                 Provider.of<ThemeProvider>(context, listen: false).changeTheme(context, MyThemeKeys.LIGHT);
@@ -99,21 +91,6 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: Text("Darker!"),
             ),
-            AdmobBanner(
-              adUnitId: addMobClass().getBannerAdUnitId(),
-              adSize: addMobClass().bannerSize,
-              listener: (AdmobAdEvent event,
-                  Map<String, dynamic> args) {
-                addMobClass().handleEvent(event, args, 'Banner', scaffoldState);
-              },
-              onBannerCreated:
-                  (AdmobBannerController controller) {
-                // Dispose is called automatically for you when Flutter removes the banner from the widget tree.
-                // Normally you don't need to worry about disposing this yourself, it's handled.
-                // If you need direct access to dispose, this is your guy!
-                // controller.dispose();
-              },
-            ),
             Divider(height: 100,),
             AnimatedContainer(
               duration: Duration(milliseconds: 500),
@@ -121,8 +98,22 @@ class _MyHomePageState extends State<MyHomePage> {
               width: 100,
               height: 100,
             ),
-          ],
+        ],
         ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: AdmobBanner(
+            adUnitId: addMobClass().getBannerAdUnitId(),
+            adSize: AdmobBannerSize.FULL_BANNER,
+            listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+              addMobClass().handleEvent(event, args, 'Banner', scaffoldState);
+            },
+            onBannerCreated: (AdmobBannerController controller) {},
+          ),
+        )
+      ]
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Provider.of<ThemeProvider>(context,listen: false).currentBackgroundColor,
