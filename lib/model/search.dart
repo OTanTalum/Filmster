@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'film.dart';
+
 class Search{
-  final List search;
-  final String total;
-  final String response;
+  List<Film> search=[];
+  int total;
+  String response;
 
   Search({
     this.search,
@@ -13,11 +15,11 @@ class Search{
   });
 
 
-  factory Search.fromJson(Map<String, dynamic> json) {
-    return Search(
-      search: json['Search'],
-      total: json['totalResults'],
-      response: json['Response'],
-    );
+  Search.fromJson(Map<String, dynamic> json) {
+   if(json['Search']!=null)
+     json['Search'].forEach((element)=>search.add(Film.fromJson(element)));
+   if(json['totalResults']!=null)
+    total = int.parse(json['totalResults']);
+    response = json['Response'];
   }
 }
