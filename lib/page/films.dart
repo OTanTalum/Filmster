@@ -45,7 +45,7 @@ class _FilmsPageState extends State<FilmsPage> {
       child: GestureDetector(
         onTap: () async {
           Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => FilmDetailPage(film: film)));
+              MaterialPageRoute(builder: (_) => FilmDetailPage(filmID: film.imdbid)));
         },
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 15.0),
@@ -187,11 +187,9 @@ class _FilmsPageState extends State<FilmsPage> {
         });
         List<Film> list = Search.fromJson(json.decode(response.body)).search;
           Provider.of<SearchProvider>(context, listen: false).addFilms(list, currentPage);
-          print(Search.fromJson(json.decode(response.body)).total??0);
         Provider.of<SearchProvider>(context, listen: false).changeIsLast(
             (Search.fromJson(json.decode(response.body)).total??0)<currentPage*10
         );
-
         return ( Search.fromJson(json.decode(response.body)).total??0)<currentPage*10;
       } else {
         _noData = true;
@@ -224,6 +222,7 @@ class _FilmsPageState extends State<FilmsPage> {
   void dispose() {
     // Clean up the controller when the widget is removed from the
     // widget tree.
+    _scrollController.dispose();
     textController.dispose();
     super.dispose();
   }
@@ -283,7 +282,6 @@ class _FilmsPageState extends State<FilmsPage> {
     if(isLoading)
       return;
     if (Provider.of<SearchProvider>(context, listen: false).isLast) return;
-    print("OK");
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       ++currentPage;

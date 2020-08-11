@@ -66,7 +66,7 @@ class Film{
       genre: json['Genre'],
       director: json['Director'],
       writerdirector: json['Writer'],
-     actors: json['Actors'],
+      actors: json['Actors'],
       plot: json['Plot'],
       language: json['Language'],
       country: json['Country'],
