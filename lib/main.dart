@@ -11,7 +11,6 @@ import 'package:filmster/setting/theme.dart';
 import 'package:filmster/widgets/drawer.dart';
 //Flutter
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 //Pages
 
 import 'package:provider/provider.dart';

@@ -1,7 +1,6 @@
 import 'package:dartpedia/dartpedia.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/widgets/progressBarWidget.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -59,7 +58,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     return Text(
       title,
       textAlign: TextAlign.center,
-      style: GoogleFonts.caveat(
+      style: TextStyle(
+        fontFamily: "AmaticSC",
         fontWeight: FontWeight.bold,
         fontSize: 20,
         color: provider.currentMainColor,
@@ -81,7 +81,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             appBar: AppBar(
               title: Text(
                 film.title,
-                style: GoogleFonts.caveat(
+                style: TextStyle(
+                  fontFamily: "AmaticSC",
                   color: provider.currentFontColor,
                 ),
               ),
@@ -134,7 +135,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         Container(
           child: Text(
             "${element}",
-            style: GoogleFonts.caveat(
+            style: TextStyle(
+              fontFamily: "AmaticSC",
               fontSize: 18.0,
               color: provider.currentFontColor,
             ),
@@ -166,7 +168,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                           ),
                           Text(
                             " ${film.year}",
-                            style: GoogleFonts.caveat(
+                            style: TextStyle(
+                              fontFamily: "AmaticSC",
                               fontSize: 16.0,
                               color: provider.currentFontColor,
                             ),
@@ -179,7 +182,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                           ),
                           Text(
                             " ${film.runtime}",
-                            style: GoogleFonts.caveat(
+                            style: TextStyle(
+                              fontFamily: "AmaticSC",
                               fontSize: 16.0,
                               color: provider.currentFontColor,
                             ),
@@ -201,7 +205,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                             color: provider.currentFontColor, height: 30)),
                     Text(
                       "Genre",
-                      style: GoogleFonts.caveat(
+                      style: TextStyle(
+                        fontFamily: "AmaticSC",
                         fontSize: 20.0,
                         color: provider.currentMainColor,
                       ),
@@ -249,7 +254,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     film.raiting?.isNotEmpty ?? false
                         ? Text(
                             'IMDB Votes : ${film.imdbV}',
-                            style: GoogleFonts.caveat(
+                            style: TextStyle(
+                              fontFamily: "AmaticSC",
                               color: provider.currentFontColor,
                               fontSize: 18,
                             ),
@@ -306,7 +312,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           _buildHeader("Director"),
               Text(
                 film.director,
-                style: GoogleFonts.caveat(
+                style: TextStyle(
+                  fontFamily: "AmaticSC",
                   fontSize: 16.0,
                   color: provider.currentFontColor,
                 ),
@@ -358,7 +365,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   padding: EdgeInsets.symmetric(horizontal: 7),
                   child: Text(
                     movie.raiting[i]["Value"],
-                    style: GoogleFonts.caveat(
+                    style: TextStyle(
+                        fontFamily: "AmaticSC",
                         color: provider.currentFontColor),
                   ),
                 )
@@ -377,7 +385,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   padding: EdgeInsets.symmetric(horizontal: 7),
                   child: Text(
                     movie.raiting[i]["Value"],
-                    style: GoogleFonts.caveat(
+                    style: TextStyle(
+                        fontFamily: "AmaticSC",
                         color: provider.currentFontColor),
                   ),
                 ),
@@ -395,7 +404,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   padding: EdgeInsets.symmetric(horizontal: 7, vertical: 20),
                   child: Text(
                     movie.raiting[i]["Value"],
-                    style: GoogleFonts.caveat(
+                    style: TextStyle(
+                        fontFamily: "AmaticSC",
                         color: provider.currentFontColor),
                   ),
                 ),
