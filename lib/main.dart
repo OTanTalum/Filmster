@@ -4,6 +4,7 @@
 import 'dart:io';
 
 import 'package:filmster/providers/searchProvider.dart';
+import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/theme.dart';
@@ -24,6 +25,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => SearchProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
       child: MyApp(),
     ),
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Filmster',
       home: MyHomePage(),
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );
@@ -51,14 +53,22 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
 
-      _counter++;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      await Provider.of<SettingsProvider>(context, listen:false).getGanresSettings();
     });
   }
+
+
+///TODO 3. Attribution
+///You shall use the TMDb logo to identify your use of the TMDb APIs.
+///You shall place the following notice prominently on your application: "This product uses the TMDb API but is not endorsed or certified by TMDb."
+///Any use of the TMDb logo in your application shall be less prominent than the logo or mark that primarily describes the application and your use of the TMDb logo shall not imply any endorsement by TMDb.
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Provider.of<ThemeProvider>(context,listen: false).currentBackgroundColor,
       appBar: AppBar(
         title: Text('Welcome',
-          style: GoogleFonts.lifeSavers(),),
+          style: TextStyle(
+              fontFamily:"AmaticSC"
+          ),
+        ),
       ),
       drawer: DrawerMenu().build(context),
       body: Column(
@@ -78,25 +91,25 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             SizedBox(height: 40,),
             RaisedButton(
-              onPressed: () {
+              onPressed: (){
                 Provider.of<ThemeProvider>(context, listen: false).changeTheme(context, MyThemeKeys.LIGHT);
               },
               child: Text("Light!",
-                style: GoogleFonts.lifeSavers(),),
+                style: TextStyle(fontFamily:"AmaticSC",),),
             ),
             RaisedButton(
               onPressed: () {
                 Provider.of<ThemeProvider>(context, listen: false).changeTheme(context, MyThemeKeys.DARK);
               },
               child: Text("Dark!",
-                style: GoogleFonts.lifeSavers(),),
+                style: TextStyle(fontFamily:"AmaticSC",),),
             ),
             RaisedButton(
               onPressed: () {
                 Provider.of<ThemeProvider>(context, listen: false).changeTheme(context, MyThemeKeys.DARKER);
               },
               child: Text("Darker!",
-              style: GoogleFonts.lifeSavers(),),
+              style: TextStyle(fontFamily:"AmaticSC",),),
             ),
             Divider(height: 100,),
             AnimatedContainer(
@@ -116,14 +129,6 @@ class _MyHomePageState extends State<MyHomePage> {
             onBannerCreated: (AdmobBannerController controller) {},
           ),
       ]
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Provider.of<ThemeProvider>(context,listen: false).currentBackgroundColor,
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add,
-        color: Provider.of<ThemeProvider>(context,listen: false).currentMainColor,
-        ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

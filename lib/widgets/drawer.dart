@@ -23,7 +23,7 @@ class DrawerMenu {
                 ),
                 child: Text(
                   'Hello ;)',
-                  style: GoogleFonts.lifeSavers(
+                  style: TextStyle(fontFamily:"AmaticSC",
                     color: provider.currentFontColor,
                     fontSize: 28,),
                 ),
@@ -35,7 +35,7 @@ class DrawerMenu {
                 },
                 title: Text(
                   'Home',
-                  style:  GoogleFonts.lifeSavers(
+                  style:  TextStyle(fontFamily:"AmaticSC",
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0,
                     color: provider.currentFontColor,
@@ -49,7 +49,7 @@ class DrawerMenu {
                 },
                 title: Text(
                   'Films',
-                  style:  GoogleFonts.lifeSavers(
+                  style:  TextStyle(fontFamily:"AmaticSC",
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0,
                     color: provider.currentFontColor,
@@ -59,7 +59,7 @@ class DrawerMenu {
               ListTile(
                 title: Text(
                   'In progress',
-                  style:  GoogleFonts.lifeSavers(
+                  style:  TextStyle(fontFamily:"AmaticSC",
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0,
                     color: provider.currentFontColor,
@@ -69,7 +69,7 @@ class DrawerMenu {
               ListTile(
                 title: Text(
                   'In progress',
-                  style:  GoogleFonts.lifeSavers(
+                  style:  TextStyle(fontFamily:"AmaticSC",
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0,
                     color: provider.currentFontColor,

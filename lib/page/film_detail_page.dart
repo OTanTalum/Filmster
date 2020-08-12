@@ -54,6 +54,18 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     }
   }
 
+  _buildHeader(String title){
+    var provider = Provider.of<ThemeProvider>(context);
+    return Text(
+      title,
+      textAlign: TextAlign.center,
+      style: GoogleFonts.caveat(
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
+        color: provider.currentMainColor,
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<ThemeProvider>(context);
@@ -69,7 +81,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             appBar: AppBar(
               title: Text(
                 film.title,
-                style: GoogleFonts.lifeSavers(
+                style: GoogleFonts.caveat(
                   color: provider.currentFontColor,
                 ),
               ),
@@ -113,7 +125,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         return 'assets/icons/NotRated.png';
     }
   }
-
   _buildInfo() {
     var provider = Provider.of<ThemeProvider>(context);
     List<String> listOfGanres = film.genre.split(",");
@@ -123,7 +134,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         Container(
           child: Text(
             "${element}",
-            style: GoogleFonts.lifeSavers(
+            style: GoogleFonts.caveat(
               fontSize: 18.0,
               color: provider.currentFontColor,
             ),
@@ -142,15 +153,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
-                  " ${film.title}",
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.lifeSavers(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 26.0,
-                    color: provider.currentMainColor,
-                  ),
-                ),
+                _buildHeader("${film.title}"),
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15.0),
                     child: Row(
@@ -163,7 +166,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                           ),
                           Text(
                             " ${film.year}",
-                            style: GoogleFonts.lifeSavers(
+                            style: GoogleFonts.caveat(
                               fontSize: 16.0,
                               color: provider.currentFontColor,
                             ),
@@ -176,7 +179,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                           ),
                           Text(
                             " ${film.runtime}",
-                            style: GoogleFonts.lifeSavers(
+                            style: GoogleFonts.caveat(
                               fontSize: 16.0,
                               color: provider.currentFontColor,
                             ),
@@ -198,7 +201,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                             color: provider.currentFontColor, height: 30)),
                     Text(
                       "Genre",
-                      style: GoogleFonts.lifeSavers(
+                      style: GoogleFonts.caveat(
                         fontSize: 20.0,
                         color: provider.currentMainColor,
                       ),
@@ -235,15 +238,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   child: Column(children: <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 15.0),
-                      child: Text(
-                        'Raitings',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.lifeSavers(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: provider.currentMainColor,
-                        ),
-                      ),
+                      child: _buildHeader('Raitings'),
                     ),
                     film.raiting?.isNotEmpty ?? false
                         ? Row(
@@ -254,7 +249,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     film.raiting?.isNotEmpty ?? false
                         ? Text(
                             'IMDB Votes : ${film.imdbV}',
-                            style: GoogleFonts.lifeSavers(
+                            style: GoogleFonts.caveat(
                               color: provider.currentFontColor,
                               fontSize: 18,
                             ),
@@ -283,15 +278,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           child: Column(children: <Widget>[
             Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0),
-              child: Text(
-                '${film.title} in Web',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.lifeSavers(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: provider.currentMainColor,
-                ),
-              ),
+              child: _buildHeader('${film.title} in Web'),
             ),
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -304,7 +291,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
       ),
     );
   }
-
   _buildCreatorBlock() {
     var provider = Provider.of<ThemeProvider>(context);
     return Expanded(
@@ -317,16 +303,10 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         ),
         child: Column(
             children: [
-          Text(
-            "Director",
-            style: GoogleFonts.lifeSavers(
-              fontSize: 22.0,
-              color: provider.currentMainColor,
-            ),
-          ),
+          _buildHeader("Director"),
               Text(
                 film.director,
-                style: GoogleFonts.lifeSavers(
+                style: GoogleFonts.caveat(
                   fontSize: 16.0,
                   color: provider.currentFontColor,
                 ),
@@ -378,7 +358,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   padding: EdgeInsets.symmetric(horizontal: 7),
                   child: Text(
                     movie.raiting[i]["Value"],
-                    style: GoogleFonts.lifeSavers(
+                    style: GoogleFonts.caveat(
                         color: provider.currentFontColor),
                   ),
                 )
@@ -397,7 +377,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   padding: EdgeInsets.symmetric(horizontal: 7),
                   child: Text(
                     movie.raiting[i]["Value"],
-                    style: GoogleFonts.lifeSavers(
+                    style: GoogleFonts.caveat(
                         color: provider.currentFontColor),
                   ),
                 ),
@@ -415,7 +395,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   padding: EdgeInsets.symmetric(horizontal: 7, vertical: 20),
                   child: Text(
                     movie.raiting[i]["Value"],
-                    style: GoogleFonts.lifeSavers(
+                    style: GoogleFonts.caveat(
                         color: provider.currentFontColor),
                   ),
                 ),

@@ -6,7 +6,9 @@ import 'package:filmster/model/film.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/film_detail_page.dart';
 import 'package:filmster/providers/searchProvider.dart';
+import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
+import 'package:filmster/setting/api.dart';
 
 import 'package:filmster/widgets/drawer.dart';
 
@@ -23,14 +25,9 @@ class FilmsPage extends StatefulWidget {
 
 class _FilmsPageState extends State<FilmsPage> {
   final textController = TextEditingController();
-  bool _noData = true;
-  bool isLoading = false;
   ScrollController _scrollController = ScrollController();
   int currentPage = 1;
   bool isLast = false;
-  String oldValue='';
-
-  String imdbAPI = 'http://www.omdbapi.com/?apikey=827ba9b0&type=movie&s=';
 
   @override
   void initState() {
@@ -39,29 +36,70 @@ class _FilmsPageState extends State<FilmsPage> {
     textController.addListener(onTextChange);
   }
 
-  _buildFilm(Film film) {
+  _buildVoteBlock(icon, text) {
     var provider = Provider.of<ThemeProvider>(context);
+    return Row(
+        children: [
+          Icon(
+           icon,
+            color: provider.currentFontColor,
+          ),
+          Container(
+              padding: EdgeInsets.only(left: 5),
+              child: Text(text,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: "AmaticSC",
+                    fontSize: 25,
+                    //  fontWeight: FontWeight.bold,
+                    color: provider.currentFontColor,
+                  )))
+        ]);
+  }
+
+  buildGenres(id) {
+    return Text(
+      Provider.of<SettingsProvider>(context).mapOfGanres[id],
+       style:  TextStyle(
+          fontFamily: "AmaticSC",
+          fontSize: 25,
+          //  fontWeight: FontWeight.bold,
+          color: Provider.of<ThemeProvider>(context).currentMainColor,
+        ),
+    );
+  }
+
+  _buildFilm(SearchResults film) {
+    var provider = Provider.of<ThemeProvider>(context);
+    List<Widget> list=[];
+    if(film.ganres!=null&& film.ganres.isNotEmpty) {
+       film.ganres.forEach((element) {
+         print(element);
+         print(Provider.of<SettingsProvider>(context).mapOfGanres[element]);
+         list.add(buildGenres(element));
+       }) ;
+      }
     return Container(
       child: GestureDetector(
         onTap: () async {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => FilmDetailPage(filmID: film.imdbid)));
+//          Navigator.of(context).pushReplacement(
+//              MaterialPageRoute(builder: (_) => FilmDetailPage(filmID: film.imdbid)));
         },
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 15.0),
             child: Container(
+              height: MediaQuery.of(context).size.height*0.28,
               decoration: BoxDecoration(
                 color: provider.currentSecondaryColor,
                 borderRadius: BorderRadius.circular(10),
               ),
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: 165,
-              //     color: Colors.white,
               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-              child: Row(children: <Widget>[
-                film.posters != 'N/A'
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                film.poster != null
                     ? Image.network(
-                        film.posters,
+                      "${Api().imageBannerAPI}${film.poster}",
                         height: 150,
                         width: 100,
                       )
@@ -73,38 +111,76 @@ class _FilmsPageState extends State<FilmsPage> {
                           size: 100.0,
                           color: provider.currentAcidColor,
                         )),
-                Column(
+                Container(
+                  padding: EdgeInsets.only(left: 10),
+                  width: MediaQuery.of(context).size.width*0.55,
+                    child:Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Container(
-                          padding: EdgeInsets.only(left: 5),
-                          width: MediaQuery.of(context).size.width * 0.9 - 140,
-                          child: Text(film.title,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.lifeSavers(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: provider.currentFontColor,
-                              ))),
-                      Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 5.0, horizontal: 5.0),
+                      Expanded(
+                        child:Container(
                           child: Text(
-                            film.year,
-                            style: GoogleFonts.lifeSavers(
+                              film.title,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                              style: TextStyle(
+                                fontFamily: "AmaticSC",
+                                fontSize: 25,
+                                color: provider.currentMainColor,
+                              ),
+                          ),
+                        ),
+                      ),
+                     film.title!=film.originalTitle
+                         ? Expanded(
+                          child: Text(film.originalTitle,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: "AmaticSC",
+                                fontSize: 23,
+                              //  fontWeight: FontWeight.bold,
+                                color: provider.currentFontColor,
+                              ),
+                          ),
+                     )
+                      :Container(),
+                      Expanded(
+                          child: Text(
+                            film.release??"-",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: "AmaticSC",
                               color: provider.currentFontColor,
                             ),
                           )),
-                      Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 5.0, horizontal: 5.0),
-                          child: Text(
-                            film.type,
-                            style: GoogleFonts.lifeSavers(
-                              color: provider.currentFontColor,
-                            ),
-                          ))
-                    ])
+                      Container(
+                        width: MediaQuery.of(context).size.width*0.46,
+                        child: Wrap(
+                          direction: Axis.horizontal,
+                          spacing: 6,
+                          children: list,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          _buildVoteBlock(Icons.trending_up, film.popularity.toString()),
+                          SizedBox(width:10),
+                          _buildVoteBlock( Icons.grade, film.voteAverage),
+                        ],
+                      )
+//                      Padding(
+//                          padding: EdgeInsets.symmetric(
+//                              vertical: 5.0, horizontal: 5.0),
+//                          child: Text(
+//                            film.type,
+//                            style: TextStyle(
+//                              color: provider.currentFontColor,
+//                            ),
+//                          ))
+                    ]),
+                ),
               ]),
             )),
       ),
@@ -116,9 +192,9 @@ class _FilmsPageState extends State<FilmsPage> {
       child: Container(
         child: Text(
           'Movies not found',
-          style: GoogleFonts.lifeSavers(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w600,
+          style: TextStyle(
+            fontFamily: "AmaticSC",
+            fontSize: 28.0,
             color: Provider.of<ThemeProvider>(context).currentMainColor,
           ),
         ),
@@ -167,40 +243,11 @@ class _FilmsPageState extends State<FilmsPage> {
     if (textController.text.length >= 3) {
       setState(() {
         currentPage = 1;
-        fetchData(textController.text);
+        Provider.of<SearchProvider>(context, listen: false).fetchData(textController.text, currentPage);
       });
     }
   }
 
-   Future<bool> fetchData(text) async {
-    if (!isLoading) {
-      setState(() {
-        isLoading = true;
-      });
-      final response =
-          await http.get('$imdbAPI${textController.text}&page=${currentPage}');
-      if (response.statusCode == 200) {
-        _noData = false;
-        setState(() {
-          oldValue=text;
-          isLoading = false;
-        });
-        List<Film> list = Search.fromJson(json.decode(response.body)).search;
-          Provider.of<SearchProvider>(context, listen: false).addFilms(list, currentPage);
-        Provider.of<SearchProvider>(context, listen: false).changeIsLast(
-            (Search.fromJson(json.decode(response.body)).total??0)<currentPage*10
-        );
-        return ( Search.fromJson(json.decode(response.body)).total??0)<currentPage*10;
-      } else {
-        _noData = true;
-        setState(() {
-          oldValue=text;
-          isLoading = false;
-        });
-        throw Exception('Failed to load ');
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +257,9 @@ class _FilmsPageState extends State<FilmsPage> {
       appBar: AppBar(
         title: Text(
           'Find your films',
-          style: GoogleFonts.lifeSavers(),
+          style: TextStyle(
+            fontFamily: "AmaticSC"
+          ),
         ),
       ),
       drawer: DrawerMenu().build(context),
@@ -235,6 +284,10 @@ class _FilmsPageState extends State<FilmsPage> {
           cursorRadius: Radius.circular(15),
           cursorColor: Provider.of<ThemeProvider>(context).currentMainColor,
           decoration: new InputDecoration(
+            prefixIcon: Icon(
+              Icons.search,
+              color: Provider.of<ThemeProvider>(context).currentSecondaryColor,
+            ),
             prefix: SizedBox(
               width: 16,
             ),
@@ -252,10 +305,13 @@ class _FilmsPageState extends State<FilmsPage> {
             ),
             hintStyle: TextStyle(
               color: Provider.of<ThemeProvider>(context).currentSecondaryColor,
+              fontFamily: "AmaticSC"
             ),
             hintText: 'Enter movie name',
           ),
-          style: GoogleFonts.lifeSavers(
+          style: TextStyle(
+            fontFamily: "AmaticSC",
+            fontWeight: FontWeight.w700,
             textBaseline: null,
             color: Provider.of<ThemeProvider>(context).currentFontColor,
             fontSize: 20.0,
@@ -273,21 +329,23 @@ class _FilmsPageState extends State<FilmsPage> {
             buildInput(),
             Padding(
               padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.105, left: 24, right: 24),
-            child:_noData ? noData() : _buildResults(context))
+            child: _buildResults(context))
       ]
     );
   }
 
   _scrollListener() async {
-    if(isLoading)
+    var provider = Provider.of<SearchProvider>(context, listen: false);
+    if(provider.isLoading)
       return;
     if (Provider.of<SearchProvider>(context, listen: false).isLast) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
+      print("____");
       ++currentPage;
-      await fetchData(oldValue);
+      await Provider.of<SearchProvider>(context, listen: false).fetchData(provider.oldValue, currentPage);
       setState(() {
-        isLoading = false;
+        provider.isLoading = false;
       });
     }
   }
