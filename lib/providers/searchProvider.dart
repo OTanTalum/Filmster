@@ -46,5 +46,6 @@ class SearchProvider extends ChangeNotifier {
     }
   }
 
+
 }
 

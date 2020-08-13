@@ -1,87 +1,147 @@
 import 'dart:async';
 import 'dart:convert';
 
-class Film{
-  final String title;
-  final String year;
-  final String rated;
-  final String released;
-  final String runtime;
-  final String genre;
-  final String director;
-  final String writerdirector;
-  final String actors;
-  final String plot;
-  final String language;
-  final String country;
-  final String awards;
-  final String posters;
-  final List raiting;
-  final String metasc;
-  final String imdbR;
-  final String imdbV;
-  final String imdbid;
-  final String type;
-  final String dvd;
-  final String boxOff;
-  final String prod;
-  final String website;
+class Film {
+  bool isAdult;
+  String title;
+  String backdrop;
+  Map toColection;
+  int budget;
+  List ganres = [];
+  String homepage;
+  String id;
+  String imdbId;
 
+  String originalLanguage;
+  String originalTitle;
+  String overview;
+  String popularity;
+  String poster;
+  List<Company> companies = [];
+  List<Country> countrys = [];
+  String release;
+  int revenue;
+  int runtime;
+  List<Language> spoken = [];
+  String status;
+  String tagline;
+  bool video;
+  String voteAverage;
+  String voteCount;
 
   Film({
     this.title,
-    this.year,
-    this.rated,
-    this.released,
+    this.isAdult,
+    this.backdrop,
+    this.toColection,
+    this.budget,
+    this.ganres,
+    this.homepage,
+    this.id,
+    this.originalLanguage,
+    this.originalTitle,
+    this.overview,
+    this.popularity,
+    this.poster,
+    this.companies,
+    this.countrys,
+    this.release,
+    this.revenue,
+    this.imdbId,
     this.runtime,
-    this.genre,
-    this.director,
-    this.writerdirector,
-    this.actors,
-    this.plot,
-    this.language,
-    this.country,
-    this.awards,
-    this.posters,
-    this.raiting,
-    this.metasc,
-    this.imdbR,
-    this.imdbV,
-    this.imdbid,
-    this.type,
-    this.dvd,
-    this.boxOff,
-    this.prod,
-    this.website,
+    this.spoken,
+    this.status,
+    this.tagline,
+    this.video,
+    this.voteAverage,
+    this.voteCount,
   });
 
+  Film.fromJson(Map<String, dynamic> json) {
+    title = json['title'];
+    isAdult = json['adult'];
+    backdrop = json['backdrop_path'];
+    toColection = json['belongs_to_collection'];
+    budget = json['budget'];
+    if (json['genres'] != null)
+      json['genres'].forEach((genre) => ganres.add(genre));
+    homepage = json['homepage'];
+    id = json['id'].toString();
+    imdbId = json['imdb_id'];
+    originalLanguage = json['original_language'];
+    originalTitle = json['original_title'];
+    overview = json['overview'];
+    popularity = json['popularity'].toString();
+    poster = json['poster_path'];
+    if (json['production_companies'] != null)
+      json['production_companies']
+          .forEach((element) => companies.add(Company.fromJson(element)));
+    if (json['production_countries'] != null)
+      json['production_countries']
+          .forEach((element) => countrys.add(Country.fromJson(element)));
+    release = json['release_date'];
+    revenue = json['revenue'];
+    runtime = json['runtime'];
+    if (json['spoken_languages'] != null)
+      json['spoken_languages']
+          .forEach((element) => spoken.add(Language.fromJson(element)));
+    status = json['status'];
+    tagline = json['tagline'];
+    video = json['video'];
+    voteAverage = json['vote_average'].toString();
+    voteCount = json['vote_count'].toString();
+  }
+}
 
-  factory Film.fromJson(Map<String, dynamic> json) {
-    return Film(
-      title: json['Title'],
-      year: json['Year'],
-      rated: json['Rated'],
-      released: json['Released'],
-      runtime: json['Runtime'],
-      genre: json['Genre'],
-      director: json['Director'],
-      writerdirector: json['Writer'],
-      actors: json['Actors'],
-      plot: json['Plot'],
-      language: json['Language'],
-      country: json['Country'],
-      awards: json['Awards'],
-      posters: json['Poster'],
-      raiting: json['Ratings'],
-      metasc: json['Metascore'],
-      imdbR: json['imdbRating'],
-      imdbV: json['imdbVotes'],
-      imdbid: json['imdbID'],
-      type: json['Type'],
-      dvd: json['DVD'],
-      boxOff: json['BoxOffice'],
-      prod: json['Production'],
-      website: json['Website'],
-    );
+class Company {
+  String id;
+  String logo;
+  String name;
+  String originalCountry;
+
+  Company({
+    this.id,
+    this.logo,
+    this.name,
+    this.originalCountry,
+  });
+
+  Company.fromJson(Map<String, dynamic> json) {
+    id = json["id"].toString();
+    if (json['logo_path'] != null) {
+      logo = json['logo_path'];
+    }
+    name = json['name'];
+    originalCountry = json['origin_country'];
+  }
+}
+
+class Country {
+  String code;
+  String name;
+
+  Country({
+    this.name,
+    this.code,
+  });
+
+  Country.fromJson(Map<String, dynamic> json) {
+    code = json['iso_3166_1'];
+    name = json['name'];
+  }
+}
+
+class Language {
+  String code;
+  String name;
+
+  Language({
+    this.name,
+    this.code,
+  });
+
+  Language.fromJson(Map<String, dynamic> json) {
+    code = json['iso_639_1'];
+    name = json['name'];
   }
 }

@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 
+import 'package:filmster/model/film.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:provider/provider.dart';
@@ -11,12 +12,13 @@ class Api{
   final String api_key = "22e195d94c2274b3dcf6484e58a1715f";
   final String imageBannerAPI = "https://image.tmdb.org/t/p/w500";
   String language = "ru";
-  String imdbAPI = 'https://api.themoviedb.org/3/search/movie?api_key=';
+  String TMDBAPI = 'https://api.themoviedb.org/3/search/movie';
+  String TMDBDetailAPI = 'https://api.themoviedb.org/3/movie/';
   String imdbGenreAPI = 'https://api.themoviedb.org/3/genre/movie/list?api_key=';
 
 
   searchMovie(type, query, page) async{
-    final response = await http.get('$imdbAPI$api_key&type=$type&query=${query}&page=${page}&language=$language');
+    final response = await http.get('$TMDBAPI?api_key=$api_key&type=$type&query=${query}&page=${page}&language=$language');
     if (response.statusCode == 200) {
       return Search.fromJson(json.decode(response.body));
     }
@@ -36,4 +38,13 @@ class Api{
     }
   }
 
+  getFilmDetail(String id) async{
+    final response = await http.get('$TMDBDetailAPI$id?api_key=$api_key&language=$language');
+    if (response.statusCode == 200) {
+      return Film.fromJson(json.decode(response.body));
+    }
+    else {
+      print("ERROR Details");
+    }
+  }
 }

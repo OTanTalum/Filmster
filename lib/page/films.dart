@@ -1,8 +1,6 @@
-import 'dart:convert';
-import 'dart:async';
+
 import 'dart:ui';
 
-import 'package:filmster/model/film.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/film_detail_page.dart';
 import 'package:filmster/providers/searchProvider.dart';
@@ -14,7 +12,6 @@ import 'package:filmster/widgets/drawer.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class FilmsPage extends StatefulWidget {
@@ -63,7 +60,7 @@ class _FilmsPageState extends State<FilmsPage> {
           fontFamily: "AmaticSC",
           fontSize: 25,
           //  fontWeight: FontWeight.bold,
-          color: Provider.of<ThemeProvider>(context).currentMainColor,
+          color: Provider.of<ThemeProvider>(context).currentFontColor,
         ),
     );
   }
@@ -73,21 +70,19 @@ class _FilmsPageState extends State<FilmsPage> {
     List<Widget> list=[];
     if(film.ganres!=null&& film.ganres.isNotEmpty) {
        film.ganres.forEach((element) {
-         print(element);
-         print(Provider.of<SettingsProvider>(context).mapOfGanres[element]);
          list.add(buildGenres(element));
        }) ;
       }
     return Container(
       child: GestureDetector(
         onTap: () async {
-//          Navigator.of(context).pushReplacement(
-//              MaterialPageRoute(builder: (_) => FilmDetailPage(filmID: film.imdbid)));
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => FilmDetailPage(id: film.id.toString())));
         },
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 15.0),
             child: Container(
-              height: MediaQuery.of(context).size.height*0.28,
+              height: MediaQuery.of(context).size.height*0.26,
               decoration: BoxDecoration(
                 color: provider.currentSecondaryColor,
                 borderRadius: BorderRadius.circular(10),
@@ -96,6 +91,8 @@ class _FilmsPageState extends State<FilmsPage> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+               Column(
+              children:[
                 film.poster != null
                     ? Image.network(
                       "${Api().imageBannerAPI}${film.poster}",
@@ -110,12 +107,21 @@ class _FilmsPageState extends State<FilmsPage> {
                           size: 100.0,
                           color: provider.currentAcidColor,
                         )),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    _buildVoteBlock(Icons.trending_up, film.popularity.toString()),
+                    _buildVoteBlock( Icons.grade, film.voteAverage),
+                  ],
+                )
+                ]),
                 Container(
                   padding: EdgeInsets.only(left: 10),
-                  width: MediaQuery.of(context).size.width*0.55,
+                  width: MediaQuery.of(context).size.width*0.5,
+                    height: MediaQuery.of(context).size.height*0.23,
                     child:Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Expanded(
                         child:Container(
@@ -127,6 +133,7 @@ class _FilmsPageState extends State<FilmsPage> {
                                 fontFamily: "AmaticSC",
                                 fontSize: 25,
                                 color: provider.currentMainColor,
+                                fontWeight: FontWeight.w700,
                               ),
                           ),
                         ),
@@ -161,14 +168,14 @@ class _FilmsPageState extends State<FilmsPage> {
                           children: list,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          _buildVoteBlock(Icons.trending_up, film.popularity.toString()),
-                          SizedBox(width:10),
-                          _buildVoteBlock( Icons.grade, film.voteAverage),
-                        ],
-                      )
+//                      Row(
+//                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+//                        children: <Widget>[
+//                          _buildVoteBlock(Icons.trending_up, film.popularity.toString()),
+//                          SizedBox(width:10),
+//                          _buildVoteBlock( Icons.grade, film.voteAverage),
+//                        ],
+//                      )
 //                      Padding(
 //                          padding: EdgeInsets.symmetric(
 //                              vertical: 5.0, horizontal: 5.0),
@@ -201,41 +208,14 @@ class _FilmsPageState extends State<FilmsPage> {
     );
   }
 
-
   _buildResults(context) {
     List<Widget> list = [];
     var films = Provider.of<SearchProvider>(context).listOfFilms;
-              films.forEach(
-                  (element) => list.add(_buildFilm(element)));
-              return ListView(
-                  children: list,
-                controller: _scrollController,
-              );
-//    return FutureBuilder<bool>(
-//        future: fetchData(textController.text),
-//        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-//          if (snapshot.hasData) {
-//            if (snapshot.data == null) {
-//              _noData = true;
-//              return noData();
-//            } else {
-//              _noData = false;
-//              var films = Provider.of<SearchProvider>(context).listOfFilms;
-//              films.forEach(
-//                  (element) => list.add(_buildFilm(element)));
-//              return ListView(
-//                  children: list,
-//                controller: _scrollController,
-//              );
-//            }
-//          }
-////          else if(snapshot.hasData && snapshot.data.search==null)
-////            return noData();
-//          return Center(
-//              child:Container(
-//                padding: EdgeInsets.only(top: 60),
-//              height: 50, width: 50, child: CircularProgressIndicator()));
-//        });
+    films.forEach((element) => list.add(_buildFilm(element)));
+    return ListView(
+      children: list,
+      controller: _scrollController,
+    );
   }
 
   onTextChange() {
@@ -319,15 +299,11 @@ class _FilmsPageState extends State<FilmsPage> {
   }
 
   _buildBody(BuildContext context) {
-    //List<Widget> list = [];
-//    Provider.of<SearchProvider>(context).listOfFilms.forEach((element) {
-//      list.add(_buildFilm(element));
-//    });
     return  Stack(
           children: <Widget>[
             buildInput(),
             Padding(
-              padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.105, left: 24, right: 24),
+              padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.107, left: 24, right: 24),
             child: _buildResults(context))
       ]
     );

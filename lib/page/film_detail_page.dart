@@ -1,5 +1,8 @@
 import 'package:dartpedia/dartpedia.dart';
+import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
+import 'package:filmster/setting/api.dart';
+import 'package:filmster/widgets/movieBanner.dart';
 import 'package:filmster/widgets/progressBarWidget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -15,16 +18,15 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FilmDetailPage extends StatefulWidget {
-  final String filmID;
+  final String id;
 
-  FilmDetailPage({Key key, this.filmID}) : super(key: key);
+  FilmDetailPage({Key key, this.id}) : super(key: key);
 
   @override
   FilmDetailPageState createState() => new FilmDetailPageState();
 }
 
 class FilmDetailPageState extends State<FilmDetailPage> {
-  String imdbAPI = 'http://www.omdbapi.com/?apikey=827ba9b0&i=';
   Film film;
   bool isLoading = true;
   ScrollController scrollController = ScrollController();
@@ -38,34 +40,31 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   }
 
   loadFilm() async {
-    final response = await http.get('$imdbAPI${widget.filmID}');
-    if (response.statusCode == 200) {
-      setState(() {
-        isLoading = false;
-      });
-      film = Film.fromJson(json.decode(response.body));
-    } else {
-      setState(() {
-        film = null;
-        isLoading = false;
-      });
-      throw Exception('Failed to load ');
-    }
+    setState(() {
+      isLoading = true;
+    });
+    film = await Api().getFilmDetail(widget.id);
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  _buildHeader(String title){
+  _buildHeader(String title) {
     var provider = Provider.of<ThemeProvider>(context);
-    return Text(
-      title,
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontFamily: "AmaticSC",
-        fontWeight: FontWeight.bold,
-        fontSize: 20,
-        color: provider.currentMainColor,
+    return Center(
+      child: Text(
+        title,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontFamily: "AmaticSC",
+          fontWeight: FontWeight.bold,
+          fontSize: 34,
+          color: provider.currentMainColor,
+        ),
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<ThemeProvider>(context);
@@ -83,6 +82,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 film.title,
                 style: TextStyle(
                   fontFamily: "AmaticSC",
+                  fontSize: 33,
                   color: provider.currentFontColor,
                 ),
               ),
@@ -96,7 +96,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                         painter: Progress(
                             current:
                                 scrollController?.offset?.toDouble() ?? 1.0,
-                            allSize: scrollController.position.maxScrollExtent
+                            allSize: scrollController?.position?.maxScrollExtent
                                 ?.toDouble(),
                             colors: provider.currentMainColor,
                             height: 4,
@@ -126,40 +126,63 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         return 'assets/icons/NotRated.png';
     }
   }
+
+  buildGenres(id) {
+    return Text(
+      Provider.of<SettingsProvider>(context).mapOfGanres[id],
+      style: TextStyle(
+        fontFamily: "AmaticSC",
+        fontSize: 25,
+        //  fontWeight: FontWeight.bold,
+        color: Provider.of<ThemeProvider>(context).currentFontColor,
+      ),
+    );
+  }
+
+  _buildVoteBlock(icon, text) {
+    var provider = Provider.of<ThemeProvider>(context);
+    return Row(children: [
+      Icon(
+        icon,
+        color: provider.currentFontColor,
+      ),
+      Container(
+          padding: EdgeInsets.only(left: 5),
+          child: Text(text,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: "AmaticSC",
+                fontSize: 25,
+                //  fontWeight: FontWeight.bold,
+                color: provider.currentFontColor,
+              )))
+    ]);
+  }
+
   _buildInfo() {
     var provider = Provider.of<ThemeProvider>(context);
-    List<String> listOfGanres = film.genre.split(",");
-    List<Widget> listOfWidget = [];
-    listOfGanres.forEach((element) {
-      listOfWidget.add(
-        Container(
-          child: Text(
-            "${element}",
-            style: TextStyle(
-              fontFamily: "AmaticSC",
-              fontSize: 18.0,
-              color: provider.currentFontColor,
-            ),
-          ),
-        ),
-      );
-    });
-    return Expanded(
-      child: Padding(
+    return Padding(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Container(
-            decoration: BoxDecoration(
+          height: MediaQuery.of(context).size.height * 0.15,
+          decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(25)),
-              color: provider.currentSecondaryColor,
-            ),
-            child: Column(
+              gradient: LinearGradient(
+                colors: [
+                  provider.currentBackgroundColor,
+                  provider.currentSecondaryColor
+                ],
+                stops: [0.4, 1],
+              )),
+          child: Row(children: [
+            SizedBox(width: MediaQuery.of(context).size.width * 0.4),
+            Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                _buildHeader("${film.title}"),
                 Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    padding: EdgeInsets.only(left: 22, top: 22),
+                    child: Wrap(
+                      direction: Axis.vertical,
                       children: <Widget>[
                         Row(children: <Widget>[
                           Icon(
@@ -167,15 +190,16 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                             color: provider.currentFontColor,
                           ),
                           Text(
-                            " ${film.year}",
+                            " ${film.release}",
                             style: TextStyle(
                               fontFamily: "AmaticSC",
-                              fontSize: 16.0,
+                              fontSize: 20.0,
                               color: provider.currentFontColor,
                             ),
                           ),
-                        ]),
-                        Row(children: <Widget>[
+                          SizedBox(
+                            width: 15,
+                          ),
                           Icon(
                             Icons.hourglass_empty,
                             color: provider.currentFontColor,
@@ -184,90 +208,37 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                             " ${film.runtime}",
                             style: TextStyle(
                               fontFamily: "AmaticSC",
-                              fontSize: 16.0,
+                              fontSize: 20.0,
                               color: provider.currentFontColor,
                             ),
                           ),
                         ]),
-                        Image.asset(
-                          _getIcon(film.rated),
-                          color: provider.currentFontColor,
-                          height: 30,
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: <Widget>[
+                            _buildVoteBlock(
+                                Icons.trending_up, film.popularity.toString()),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            _buildVoteBlock(Icons.grade, film.voteAverage),
+                          ],
                         )
                       ],
                     )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Image.asset('assets/icons/Genre.png',
-                            color: provider.currentFontColor, height: 30)),
-                    Text(
-                      "Genre",
-                      style: TextStyle(
-                        fontFamily: "AmaticSC",
-                        fontSize: 20.0,
-                        color: provider.currentMainColor,
-                      ),
-                    )
-                  ],
-                ),
-                Wrap(
-                  direction: Axis.horizontal,
-                  children: listOfWidget,
-                ),
-                Container(),
+                _buildDevider(),
               ],
-            )),
+            ),
+          ]),
       ),
     );
   }
-  _buildRaitings() {
-    var provider = Provider.of<ThemeProvider>(context);
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: Container(
-          height: 150,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(25)),
-            color: provider.currentBackgroundColor,
-          ),
-          child: film.raiting?.isNotEmpty ?? false
-              ? Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(25)),
-                    color: provider.currentSecondaryColor,
-                  ),
-                  child: Column(children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15.0),
-                      child: _buildHeader('Raitings'),
-                    ),
-                    film.raiting?.isNotEmpty ?? false
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: getRaiting(film),
-                          )
-                        : Container(),
-                    film.raiting?.isNotEmpty ?? false
-                        ? Text(
-                            'IMDB Votes : ${film.imdbV}',
-                            style: TextStyle(
-                              fontFamily: "AmaticSC",
-                              color: provider.currentFontColor,
-                              fontSize: 18,
-                            ),
-                          )
-                        : Container(),
-                  ]))
-              : Container(),
-        ));
-  }
+
   _buildWebLinkBlock() {
     var provider = Provider.of<ThemeProvider>(context);
-    return  Padding(
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Container(
         height: 150,
@@ -297,51 +268,106 @@ class FilmDetailPageState extends State<FilmDetailPage> {
       ),
     );
   }
+
   _buildCreatorBlock() {
     var provider = Provider.of<ThemeProvider>(context);
-    return Expanded(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child:Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(25)),
-          color: provider.currentSecondaryColor,
-        ),
-        child: Column(
-            children: [
-          _buildHeader("Director"),
-              Text(
-                film.director,
+    List<Widget> list = [];
+    if (film.ganres != null && film.ganres.isNotEmpty) {
+      film.ganres.forEach((element) {
+        list.add(buildGenres(element["id"]));
+      });
+    }
+    return Container(
+      width: MediaQuery.of(context).size.width - 20,
+      decoration: BoxDecoration(
+        color: provider.currentSecondaryColor,
+      ),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader("${film.title}"),
+            film.tagline!=null&& film.tagline.isNotEmpty
+                ? Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    child: Text(
+                      "\"${film.tagline}\"",
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontFamily: "AmaticSC",
+                        fontSize: 20.0,
+                        color: provider.currentFontColor,
+                      ),
+                    ),
+                  )
+                : Container(),
+            _buildDevider(),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Wrap(
+                direction: Axis.horizontal,
+                alignment: WrapAlignment.start,
+                spacing: 6,
+                children: list,
+              ),
+            ),
+            _buildDevider(),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                film.overview,
                 style: TextStyle(
                   fontFamily: "AmaticSC",
-                  fontSize: 16.0,
+                  fontSize: 20.0,
                   color: provider.currentFontColor,
                 ),
-              )
-        ]),
+              ),
+            ),
+            _buildDevider(),
+            SizedBox(height: 10,)
+          ]),
+    );
+  }
+
+  _buildDevider(){
+    var provider = Provider.of<ThemeProvider>(context);
+    return   Padding(
+      padding: EdgeInsets.symmetric(vertical: 4),
+      child: Divider(
+        color: provider.currentBackgroundColor,
+        height: 1,
+        thickness: 1,
+        indent: 10,
+        endIndent: 10,
       ),
-    ),);
+    );
   }
 
   buildBody(context) {
     return SingleChildScrollView(
         controller: scrollController,
         child: Stack(children: [
-          IntrinsicHeight(
-            child: Column(children: <Widget>[
+           Column(children: <Widget>[
               Container(
-                alignment: Alignment.topCenter,
-                width: MediaQuery.of(context).size.width,
-                child: Image.network(film.posters),
-              ),
+                  alignment: Alignment.topCenter,
+                  width: MediaQuery.of(context).size.width,
+                  //child: Image.network("${Api().imageBannerAPI}${film.poster}",),
+                  child:
+                      MovieBanner("${Api().imageBannerAPI}${film.backdrop}")),
               _buildInfo(),
               _buildCreatorBlock(),
-              film?.raiting != null && film?.raiting?.isNotEmpty
-                  ? _buildRaitings()
-                  : Container(),
-             _buildWebLinkBlock(),
+              _buildWebLinkBlock(),
               //  Container( child: getDesc(movie),)
             ]),
+          Positioned(
+            left: 15,
+            top: 120,
+            child: Container(
+              child: Image.network(
+                "${Api().imageBannerAPI}${film.poster}",
+                width: MediaQuery.of(context).size.width * 0.4,
+              ),
+            ),
           ),
         ]));
   }
@@ -433,10 +459,10 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     );
   }
 
-  getWikiLinks(movie) {
+  getWikiLinks(Film movie) {
     var provider = Provider.of<ThemeProvider>(context);
     return FutureBuilder<WikipediaPage>(
-        future: getWiki(movie.title),
+        future: getWiki(movie.originalTitle),
         builder: (BuildContext context, AsyncSnapshot<WikipediaPage> snapshot) {
           if (snapshot.hasData) {
             return InkWell(
