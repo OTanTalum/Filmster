@@ -4,8 +4,6 @@ import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/movieBanner.dart';
 import 'package:filmster/widgets/progressBarWidget.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'dart:async';
 
 import 'package:filmster/widgets/drawer.dart';
@@ -94,13 +92,13 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     width: MediaQuery.of(context).size.width,
                     child: CustomPaint(
                         painter: Progress(
-                            current:
-                                scrollController?.offset?.toDouble() ?? 1.0,
-                            allSize: scrollController?.position?.maxScrollExtent
-                                ?.toDouble(),
+                            current: scrollController.offset?.toDouble() ?? 1.0,
+                            allSize: scrollController.position?.maxScrollExtent?.toDouble()??200,
                             colors: provider.currentMainColor,
                             height: 4,
-                            width: MediaQuery.of(context).size.width)),
+                            width: MediaQuery.of(context).size.width,
+                            radius: 7.0
+                        )),
                   ),
                 ),
               ),

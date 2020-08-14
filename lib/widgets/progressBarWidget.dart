@@ -1,26 +1,45 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 
 class Progress extends CustomPainter {
-  var  current;
-  var colors;
-  var  allSize;
-  var  width;
-  var  height;
+  double current;
+  Color colors;
+  final double allSize;
+  final double width;
+  final double height;
+  final double radius;
 
-  Progress({this.current, this.colors, this.allSize, this.width, this.height});
+  Progress({
+    this.current,
+    this.colors,
+    this.allSize,
+    this.width,
+    this.height,
+    this.radius
+  });
 
+  /// Progress Bar
+  /// Draw indicator where :
+  /// [current] is a offset position of ScrollController
+  /// [colors] is a Custome Color
+  /// [allSize] is a Max scroling height of your scroll area
+  /// [width] is a width of you area where Progress Bar will build
+  /// [height] is a height of you Progress Bar
+  ///
 
   @override
   void paint(Canvas canvas, Size size) {
     if (this.current == null)
       this.current = 0;
-    print(this.current);
     canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTRB(
-          0.0, 0.0, ((this.width??1.0 )/ this.allSize) * (this.current + 1), 4),
-          const Radius.circular(7)),
+      RRect.fromRectAndRadius(
+          Rect.fromLTRB(
+              0.0,
+              0.0,
+              ((this.width)/ this.allSize) * (this.current + 1),
+              this.height
+          ),
+          Radius.circular(this.radius)
+      ),
       Paint()
         ..color = this.colors,
     );

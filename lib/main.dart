@@ -54,6 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
+    // Load List of genres with current language//
+
     Future.microtask(() async {
       await Provider.of<SettingsProvider>(context, listen: false)
           .getGanresSettings();
@@ -64,6 +67,38 @@ class _MyHomePageState extends State<MyHomePage> {
   ///You shall use the TMDb logo to identify your use of the TMDb APIs.
   ///You shall place the following notice prominently on your application: "This product uses the TMDb API but is not endorsed or certified by TMDb."
   ///Any use of the TMDb logo in your application shall be less prominent than the logo or mark that primarily describes the application and your use of the TMDb logo shall not imply any endorsement by TMDb.
+
+
+  _buildButton (String languageCode, String languageName){
+    return RaisedButton(
+      onPressed: () async {
+        Provider.of<SettingsProvider>(context, listen: false)
+            .changeLanguage(languageCode);
+        await Provider.of<SettingsProvider>(context,
+            listen: false)
+            .getGanresSettings();
+      },
+      child: Text(
+        languageName,
+        style: TextStyle(
+          fontFamily: "AmaticSC",
+        ),
+      ),
+    );
+  }
+
+  _buildTitle(String titleText){
+   return Text(
+      titleText,
+      style: TextStyle(
+        fontFamily: "AmaticSC",
+        fontSize: 26,
+        color:
+        Provider.of<ThemeProvider>(context, listen: false)
+            .currentFontColor,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,16 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      "Change your Theme",
-                      style: TextStyle(
-                        fontFamily: "AmaticSC",
-                        fontSize: 26,
-                        color:
-                        Provider.of<ThemeProvider>(context, listen: false)
-                            .currentFontColor,
-                      ),
-                    ),
+                    _buildTitle("Change your Theme"),
                     SizedBox(
                       height: 40,
                     ),
@@ -142,64 +168,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      "Change you Language",
-                      style: TextStyle(
-                        fontFamily: "AmaticSC",
-                        fontSize: 26,
-                        color:
-                            Provider.of<ThemeProvider>(context, listen: false)
-                                .currentFontColor,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    RaisedButton(
-                      onPressed: () async {
-                        Provider.of<SettingsProvider>(context, listen: false)
-                            .changeLanguage("US");
-                        await Provider.of<SettingsProvider>(context,
-                                listen: false)
-                            .getGanresSettings();
-                      },
-                      child: Text(
-                        "English",
-                        style: TextStyle(
-                          fontFamily: "AmaticSC",
-                        ),
-                      ),
-                    ),
-                    RaisedButton(
-                      onPressed: () async {
-                        Provider.of<SettingsProvider>(context, listen: false)
-                            .changeLanguage("ru");
-                        await Provider.of<SettingsProvider>(context,
-                                listen: false)
-                            .getGanresSettings();
-                      },
-                      child: Text(
-                        "Russian",
-                        style: TextStyle(
-                          fontFamily: "AmaticSC",
-                        ),
-                      ),
-                    ),
-                    RaisedButton(
-                      onPressed: () async {
-                        Provider.of<SettingsProvider>(context, listen: false)
-                            .changeLanguage("pt");
-                        await Provider.of<SettingsProvider>(context,
-                                listen: false)
-                            .getGanresSettings();
-                      },
-                      child: Text(
-                        "Spanish",
-                        style: TextStyle(
-                          fontFamily: "AmaticSC",
-                        ),
-                      ),
-                    ),
+                   _buildTitle("Change you Language",),
+                    SizedBox(height: 40,),
+                    _buildButton("us", "English"),
+                    _buildButton("ru", "Russian"),
+                    _buildButton("pt", "Spanish"),
                   ],
                 ),
               ]),
