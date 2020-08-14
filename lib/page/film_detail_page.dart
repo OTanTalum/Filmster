@@ -49,7 +49,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     });
   }
 
-  _buildHeader(String title) {
+  _buildHeader(String title, double size) {
     var provider = Provider.of<ThemeProvider>(context);
     return Center(
       child: Text(
@@ -58,7 +58,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         style: TextStyle(
           fontFamily: "AmaticSC",
           fontWeight: FontWeight.bold,
-          fontSize: 34,
+          fontSize: size,
           color: provider.currentMainColor,
         ),
       ),
@@ -255,7 +255,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           child: Column(children: <Widget>[
             Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0),
-              child: _buildHeader('${film.title} in Web'),
+              child: _buildHeader('${film.title} in Web',25)
             ),
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -286,9 +286,11 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader("${film.title}"),
+            _buildHeader("${film.title}",33),
+            film.title!=film.originalTitle ? _buildHeader("${film.originalTitle}",27) : Container(),
             film.tagline!=null&& film.tagline.isNotEmpty
-                ? Padding(
+                ? Container(
+                    width: MediaQuery.of(context).size.width,
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     child: Text(
                       "\"${film.tagline}\"",
@@ -312,7 +314,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               ),
             ),
             _buildDevider(),
-            Container(
+            film.overview!=null&&film.overview.isNotEmpty
+            ?Container(
               padding: EdgeInsets.symmetric(horizontal: 12),
               child: Text(
                 film.overview,
@@ -322,8 +325,10 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   color: provider.currentFontColor,
                 ),
               ),
-            ),
-            _buildDevider(),
+            )
+            :Container(),
+            film.overview!=null&&film.overview.isNotEmpty
+            ?_buildDevider():Container(),
             SizedBox(height: 10,)
           ]),
     );

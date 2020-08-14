@@ -9,10 +9,10 @@ class ThemeProvider extends ChangeNotifier {
   ThemeData currentTheme = MyThemes.lightTheme;
 
   Color currentFontColor = Colors.black;
-  Color currentBackgroundColor = Colors.white70;
-  Color currentMainColor = Colors.blueGrey[600];
-  Color currentAcidColor = Colors.lime;
-  Color currentSecondaryColor = Colors.blueGrey[900];
+  Color currentBackgroundColor = Colors.white;
+  Color currentMainColor = Colors.orange[200];
+  Color currentAcidColor = Colors.deepOrange[200];
+  Color currentSecondaryColor = Colors.black12;
 
   changeTheme(BuildContext context, MyThemeKeys key) {
     currentThemeKeys = key;
