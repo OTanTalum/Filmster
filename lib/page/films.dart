@@ -96,11 +96,11 @@ class _FilmsPageState extends State<FilmsPage> {
                 film.poster != null
                     ? Image.network(
                       "${Api().imageBannerAPI}${film.poster}",
-                        height: 150,
+                        height: 139,
                         width: 100,
                       )
                     : Container(
-                        height: 150,
+                        height: 139,
                         width: 100,
                         child: Icon(
                           Icons.do_not_disturb_on,

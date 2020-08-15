@@ -6,6 +6,7 @@ import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/setting/adMob.dart';
+import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
 import 'package:filmster/widgets/drawer.dart';
 
@@ -54,11 +55,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-
-    // Load List of genres with current language//
-
     Future.microtask(() async {
-      await Provider.of<SettingsProvider>(context, listen: false)
+      SettingsProvider.language=(await Prefs()?.getStringPrefs("languageCode")??'ru');
+      await Provider.of<SettingsProvider>(context, listen: false)    // Load List of genres with current language//
           .getGanresSettings();
     });
   }
@@ -72,8 +71,11 @@ class _MyHomePageState extends State<MyHomePage> {
   _buildButton (String languageCode, String languageName){
     return RaisedButton(
       onPressed: () async {
+        setState(() {
         Provider.of<SettingsProvider>(context, listen: false)
             .changeLanguage(languageCode);
+        Prefs().setStringPrefs('languageCode', languageCode);
+        });
         await Provider.of<SettingsProvider>(context,
             listen: false)
             .getGanresSettings();
@@ -114,78 +116,80 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       drawer: DrawerMenu().build(context),
-      body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _buildTitle("Change your Theme"),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        Provider.of<ThemeProvider>(context, listen: false)
-                            .changeTheme(context, MyThemeKeys.LIGHT);
-                      },
-                      child: Text(
-                        "Light!",
-                        style: TextStyle(
-                          fontFamily: "AmaticSC",
+      body: SafeArea(
+        child: Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      _buildTitle("Change your Theme"),
+                      SizedBox(
+                        height: 40,
+                      ),
+                      RaisedButton(
+                        onPressed: () {
+                          Provider.of<ThemeProvider>(context, listen: false)
+                              .changeTheme(context, MyThemeKeys.LIGHT);
+                        },
+                        child: Text(
+                          "Light!",
+                          style: TextStyle(
+                            fontFamily: "AmaticSC",
+                          ),
                         ),
                       ),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        Provider.of<ThemeProvider>(context, listen: false)
-                            .changeTheme(context, MyThemeKeys.DARK);
-                      },
-                      child: Text(
-                        "Dark!",
-                        style: TextStyle(
-                          fontFamily: "AmaticSC",
+                      RaisedButton(
+                        onPressed: () {
+                          Provider.of<ThemeProvider>(context, listen: false)
+                              .changeTheme(context, MyThemeKeys.DARK);
+                        },
+                        child: Text(
+                          "Dark!",
+                          style: TextStyle(
+                            fontFamily: "AmaticSC",
+                          ),
                         ),
                       ),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        Provider.of<ThemeProvider>(context, listen: false)
-                            .changeTheme(context, MyThemeKeys.DARKER);
-                      },
-                      child: Text(
-                        "Darker!",
-                        style: TextStyle(
-                          fontFamily: "AmaticSC",
+                      RaisedButton(
+                        onPressed: () {
+                          Provider.of<ThemeProvider>(context, listen: false)
+                              .changeTheme(context, MyThemeKeys.DARKER);
+                        },
+                        child: Text(
+                          "Darker!",
+                          style: TextStyle(
+                            fontFamily: "AmaticSC",
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                   _buildTitle("Change you Language",),
-                    SizedBox(height: 40,),
-                    _buildButton("us", "English"),
-                    _buildButton("ru", "Russian"),
-                    _buildButton("pt", "Spanish"),
-                  ],
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                     _buildTitle("Change you Language",),
+                      SizedBox(height: 40,),
+                      _buildButton("us", "English"),
+                      _buildButton("ru", "Russian"),
+                      _buildButton("pt", "Spanish"),
+                    ],
+                  ),
+                ]),
+                AdmobBanner(
+                  adUnitId: addMobClass().getBannerAdUnitId(),
+                  adSize: AdmobBannerSize.FULL_BANNER,
+                  listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+                    addMobClass()
+                        .handleEvent(event, args, 'Banner', scaffoldState);
+                  },
+                  onBannerCreated: (AdmobBannerController controller) {},
                 ),
               ]),
-              AdmobBanner(
-                adUnitId: addMobClass().getBannerAdUnitId(),
-                adSize: AdmobBannerSize.FULL_BANNER,
-                listener: (AdmobAdEvent event, Map<String, dynamic> args) {
-                  addMobClass()
-                      .handleEvent(event, args, 'Banner', scaffoldState);
-                },
-                onBannerCreated: (AdmobBannerController controller) {},
-              ),
-            ]),
+        ),
       ),
     );
   }

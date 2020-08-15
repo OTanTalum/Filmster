@@ -21,7 +21,11 @@ class SettingsProvider extends ChangeNotifier {
   changeLanguage(String newLanguage){
     language = newLanguage;
     notifyListeners();
+    return language;
   }
 
+  getLanguage(){
+    return language;
+  }
 }
 
