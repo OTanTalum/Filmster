@@ -10,7 +10,7 @@ class Prefs{
 
   setStringPrefs(String nameOfPrefs, String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('languageCode', value);
+    await prefs.setString(nameOfPrefs, value);
   }
 
 }

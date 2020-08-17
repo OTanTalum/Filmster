@@ -56,7 +56,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     Future.microtask(() async {
-      SettingsProvider.language=(await Prefs()?.getStringPrefs("languageCode")??'ru');
+      SettingsProvider.language=(
+          await Prefs().getStringPrefs("languageCode")??'ru'
+      );
+      Provider.of<ThemeProvider>(context, listen: false)
+          .changeTheme(context, await Prefs().getStringPrefs("themeKCode")??'Light');
       await Provider.of<SettingsProvider>(context, listen: false)    // Load List of genres with current language//
           .getGanresSettings();
     });
@@ -68,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ///Any use of the TMDb logo in your application shall be less prominent than the logo or mark that primarily describes the application and your use of the TMDb logo shall not imply any endorsement by TMDb.
 
 
-  _buildButton (String languageCode, String languageName){
+  _buildLanguageButton (String languageCode, String languageName){
     return RaisedButton(
       onPressed: () async {
         setState(() {
@@ -82,6 +86,22 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       child: Text(
         languageName,
+        style: TextStyle(
+          fontFamily: "AmaticSC",
+        ),
+      ),
+    );
+  }
+
+  _buildThemeButton(MyThemeKeys themeKey, String themeKeyName){
+    return RaisedButton(
+      onPressed: () {
+        Provider.of<ThemeProvider>(context, listen: false)
+            .changeTheme(context, themeKey);
+        Prefs().setStringPrefs('themeCode', themeKeyName);
+      },
+      child: Text(
+        themeKeyName,
         style: TextStyle(
           fontFamily: "AmaticSC",
         ),
@@ -130,52 +150,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       SizedBox(
                         height: 40,
                       ),
-                      RaisedButton(
-                        onPressed: () {
-                          Provider.of<ThemeProvider>(context, listen: false)
-                              .changeTheme(context, MyThemeKeys.LIGHT);
-                        },
-                        child: Text(
-                          "Light!",
-                          style: TextStyle(
-                            fontFamily: "AmaticSC",
-                          ),
-                        ),
-                      ),
-                      RaisedButton(
-                        onPressed: () {
-                          Provider.of<ThemeProvider>(context, listen: false)
-                              .changeTheme(context, MyThemeKeys.DARK);
-                        },
-                        child: Text(
-                          "Dark!",
-                          style: TextStyle(
-                            fontFamily: "AmaticSC",
-                          ),
-                        ),
-                      ),
-                      RaisedButton(
-                        onPressed: () {
-                          Provider.of<ThemeProvider>(context, listen: false)
-                              .changeTheme(context, MyThemeKeys.DARKER);
-                        },
-                        child: Text(
-                          "Darker!",
-                          style: TextStyle(
-                            fontFamily: "AmaticSC",
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                      _buildThemeButton(MyThemeKeys.LIGHT, "Light"),
+                      _buildThemeButton(MyThemeKeys.DARK, "Dark"),
+                      _buildThemeButton(MyThemeKeys.DARKER, "Darker"),
+                    ]),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                      _buildTitle("Change you Language",),
                       SizedBox(height: 40,),
-                      _buildButton("us", "English"),
-                      _buildButton("ru", "Russian"),
-                      _buildButton("pt", "Spanish"),
+                      _buildLanguageButton("us", "English"),
+                      _buildLanguageButton("ru", "Russian"),
+                      _buildLanguageButton("pt", "Spanish"),
                     ],
                   ),
                 ]),
