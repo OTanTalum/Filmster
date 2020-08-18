@@ -18,7 +18,7 @@ class Api{
 
 
   searchMovie(type, query, page) async{
-    final response = await http.get('$TMDBAPI?api_key=$api_key&type=$type&query=${query}&page=${page}&language=${SettingsProvider.language}');
+    final response = await http.get('$TMDBAPI?api_key=$api_key&type=$type&query=${query}&page=${page}&language=${SettingsProvider.language}&include_adult=true');
     if (response.statusCode == 200) {
       return Search.fromJson(json.decode(response.body));
     }

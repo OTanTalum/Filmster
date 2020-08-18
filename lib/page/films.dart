@@ -15,6 +15,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FilmsPage extends StatefulWidget {
+  final String type;
+
+  FilmsPage({
+    this.type,
+  });
+
   @override
   _FilmsPageState createState() => _FilmsPageState();
 }
@@ -232,7 +238,7 @@ class _FilmsPageState extends State<FilmsPage> {
     if (textController.text.length >= 3) {
       setState(() {
         currentPage = 1;
-        Provider.of<SearchProvider>(context, listen: false).fetchData(textController.text, currentPage);
+        Provider.of<SearchProvider>(context, listen: false).fetchData(textController.text, currentPage, widget.type);
       });
     }
   }
@@ -326,9 +332,8 @@ class _FilmsPageState extends State<FilmsPage> {
     if (Provider.of<SearchProvider>(context, listen: false).isLast) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      print("____");
       ++currentPage;
-      await Provider.of<SearchProvider>(context, listen: false).fetchData(provider.oldValue, currentPage);
+      await Provider.of<SearchProvider>(context, listen: false).fetchData(provider.oldValue, currentPage, widget.type);
       setState(() {
         provider.isLoading = false;
       });

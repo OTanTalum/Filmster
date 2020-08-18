@@ -30,10 +30,10 @@ class SearchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> fetchData(Oldtext, currentPage) async {
+  Future<bool> fetchData(Oldtext, currentPage, type) async {
     if (!isLoading) {
       isLoading = true;
-      Search response = await Api().searchMovie("movie", Oldtext, currentPage);
+      Search response = await Api().searchMovie(type, Oldtext, currentPage);
       oldValue = Oldtext;
       isLoading = false;
       List<SearchResults> list = response.search;

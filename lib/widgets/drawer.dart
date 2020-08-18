@@ -50,7 +50,7 @@ class DrawerMenu {
               ListTile(
                 onTap: () {
                   Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (_) => FilmsPage()));
+                      .push(MaterialPageRoute(builder: (_) => FilmsPage(type:"movie")));
                 },
                 title: Text(
                   'Films',
@@ -62,8 +62,12 @@ class DrawerMenu {
                 ),
               ),
               ListTile(
+                onTap: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => FilmsPage(type:"tv")));
+                },
                 title: Text(
-                  'In progress',
+                  'TV',
                   style:  TextStyle(fontFamily:"AmaticSC",
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0,
