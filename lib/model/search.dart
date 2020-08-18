@@ -59,7 +59,7 @@ class SearchResults{
 
   SearchResults.fromJson(Map<String, dynamic> json) {
    id=json['id'];
-   popularity=json['popularity'];
+   popularity=json['popularity']*1.0;
    voteCount=json['vote_count'];
    isVideo=json['video'];
    poster=json['poster_path'];

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dartpedia/dartpedia.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
@@ -77,7 +78,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             backgroundColor: provider.currentBackgroundColor,
             appBar: AppBar(
               title: Text(
-                film.title,
+                film.isAdult
+                    ? "${film.title} 18+"
+                  : "${film.title} ",
                 style: TextStyle(
                   fontFamily: "AmaticSC",
                   fontSize: 33,
@@ -93,12 +96,13 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     child: CustomPaint(
                         painter: Progress(
                             current: scrollController.offset?.toDouble() ?? 1.0,
-                            allSize: scrollController.position?.maxScrollExtent?.toDouble()??200,
+                            allSize: scrollController.position?.maxScrollExtent
+                                    ?.toDouble() ??
+                                200,
                             colors: provider.currentMainColor,
                             height: 4,
                             width: MediaQuery.of(context).size.width,
-                            radius: 7.0
-                        )),
+                            radius: 7.0)),
                   ),
                 ),
               ),
@@ -106,23 +110,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             drawer: DrawerMenu().build(context),
             body: buildBody(context),
           );
-  }
-
-  _getIcon(name) {
-    switch (name) {
-      case 'G':
-        return 'assets/icons/g.png';
-      case 'PG':
-        return 'assets/icons/pg.png';
-      case 'PG-13':
-        return 'assets/icons/pg-13.png';
-      case 'R':
-        return 'assets/icons/r.png';
-      case 'Unrated':
-        return 'assets/icons/Unrated.png';
-      default:
-        return 'assets/icons/NotRated.png';
-    }
   }
 
   buildGenres(id) {
@@ -160,76 +147,76 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   _buildInfo() {
     var provider = Provider.of<ThemeProvider>(context);
     return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.15,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(25)),
-              gradient: LinearGradient(
-                colors: [
-                  provider.currentBackgroundColor,
-                  provider.currentSecondaryColor
-                ],
-                stops: [0.4, 1],
-              )),
-          child: Row(children: [
-            SizedBox(width: MediaQuery.of(context).size.width * 0.4),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.only(left: 22, top: 22),
-                    child: Wrap(
-                      direction: Axis.vertical,
-                      children: <Widget>[
-                        Row(children: <Widget>[
-                          Icon(
-                            Icons.today,
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.15,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(25)),
+            gradient: LinearGradient(
+              colors: [
+                provider.currentBackgroundColor,
+                provider.currentSecondaryColor
+              ],
+              stops: [0.4, 1],
+            )),
+        child: Row(children: [
+          SizedBox(width: MediaQuery.of(context).size.width * 0.4),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(left: 22, top: 22),
+                  child: Wrap(
+                    direction: Axis.vertical,
+                    children: <Widget>[
+                      Row(children: <Widget>[
+                        Icon(
+                          Icons.today,
+                          color: provider.currentFontColor,
+                        ),
+                        Text(
+                          " ${film.release}",
+                          style: TextStyle(
+                            fontFamily: "AmaticSC",
+                            fontSize: 20.0,
                             color: provider.currentFontColor,
                           ),
-                          Text(
-                            " ${film.release}",
-                            style: TextStyle(
-                              fontFamily: "AmaticSC",
-                              fontSize: 20.0,
-                              color: provider.currentFontColor,
-                            ),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Icon(
+                          Icons.hourglass_empty,
+                          color: provider.currentFontColor,
+                        ),
+                        Text(
+                          " ${film.runtime}",
+                          style: TextStyle(
+                            fontFamily: "AmaticSC",
+                            fontSize: 20.0,
+                            color: provider.currentFontColor,
                           ),
+                        ),
+                      ]),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          _buildVoteBlock(
+                              Icons.trending_up, film.popularity.toString()),
                           SizedBox(
                             width: 15,
                           ),
-                          Icon(
-                            Icons.hourglass_empty,
-                            color: provider.currentFontColor,
-                          ),
-                          Text(
-                            " ${film.runtime}",
-                            style: TextStyle(
-                              fontFamily: "AmaticSC",
-                              fontSize: 20.0,
-                              color: provider.currentFontColor,
-                            ),
-                          ),
-                        ]),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: <Widget>[
-                            _buildVoteBlock(
-                                Icons.trending_up, film.popularity.toString()),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            _buildVoteBlock(Icons.grade, film.voteAverage),
-                          ],
-                        )
-                      ],
-                    )),
-                _buildDevider(),
-              ],
-            ),
-          ]),
+                          _buildVoteBlock(Icons.grade, film.voteAverage),
+                        ],
+                      )
+                    ],
+                  )),
+              _buildDevider(),
+            ],
+          ),
+        ]),
       ),
     );
   }
@@ -242,7 +229,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         height: 150,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(25)),
+          // borderRadius: BorderRadius.all(Radius.circular(25)),
           color: provider.currentSecondaryColor,
         ),
         child: Container(
@@ -252,15 +239,30 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           ),
           child: Column(children: <Widget>[
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.0),
-              child: _buildHeader('${film.title} in Web',25)
-            ),
+                padding: EdgeInsets.symmetric(vertical: 15.0),
+                child: _buildHeader('${film.title} in Web', 25)),
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   getWikiLinks(film),
                   getIMDB(film),
                 ]),
+            film.homepage != null
+                ? Padding(
+                    padding: EdgeInsets.symmetric(vertical: 6),
+                    child: GestureDetector(
+                      onTap: () => {},
+                      child: Text(
+                        film.homepage,
+                        style: TextStyle(
+                          fontFamily: "Cuprum",
+                          fontSize: 20.0,
+                          color: provider.currentFontColor,
+                        ),
+                      ),
+                    ),
+                  )
+                : Container()
           ]),
         ),
       ),
@@ -284,9 +286,11 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader("${film.title}",33),
-            film.title!=film.originalTitle ? _buildHeader("${film.originalTitle}",27) : Container(),
-            film.tagline!=null&& film.tagline.isNotEmpty
+            _buildHeader("${film.title}", 33),
+            film.title != film.originalTitle
+                ? _buildHeader("${film.originalTitle}", 27)
+                : Container(),
+            film.tagline != null && film.tagline.isNotEmpty
                 ? Container(
                     width: MediaQuery.of(context).size.width,
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -312,29 +316,32 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               ),
             ),
             _buildDevider(),
-            film.overview!=null&&film.overview.isNotEmpty
-            ?Container(
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              child: Text(
-                film.overview,
-                style: TextStyle(
-                  fontFamily: "AmaticSC",
-                  fontSize: 20.0,
-                  color: provider.currentFontColor,
-                ),
-              ),
+            film.overview != null && film.overview.isNotEmpty
+                ? Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      film.overview,
+                      style: TextStyle(
+                        fontFamily: "AmaticSC",
+                        fontSize: 20.0,
+                        color: provider.currentFontColor,
+                      ),
+                    ),
+                  )
+                : Container(),
+            film.overview != null && film.overview.isNotEmpty
+                ? _buildDevider()
+                : Container(),
+            SizedBox(
+              height: 10,
             )
-            :Container(),
-            film.overview!=null&&film.overview.isNotEmpty
-            ?_buildDevider():Container(),
-            SizedBox(height: 10,)
           ]),
     );
   }
 
-  _buildDevider(){
+  _buildDevider() {
     var provider = Provider.of<ThemeProvider>(context);
-    return   Padding(
+    return Padding(
       padding: EdgeInsets.symmetric(vertical: 4),
       child: Divider(
         color: provider.currentBackgroundColor,
@@ -346,22 +353,120 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     );
   }
 
+  _buildProduction() {
+    var provider = Provider.of<ThemeProvider>(context);
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 12,
+      ),
+      width: MediaQuery.of(context).size.width - 20,
+      decoration: BoxDecoration(
+        color: provider.currentSecondaryColor,
+      ),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader("Production", 33),
+            Row(
+              children: <Widget>[
+                film.companies[0].logo != null
+                    ? Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Image.network(
+                          "${Api().imageBannerAPI}${film.companies[0].logo}",
+                          width: 100,
+                        ),
+                      )
+                    : Container(),
+                Expanded(
+                    child: Column(
+                  children: <Widget>[
+                      _buildDevider(),
+                    buildOneField(film.status, "Status:"),
+                    film.status != null && film.status != 0
+                        ? _buildDevider()
+                        : Container(),
+                    buildOneField(film.budget, "Budget:"),
+                      film.budget != null && film.budget != 0
+                          ? _buildDevider()
+                          : Container(),
+                    buildOneField(film.revenue, "Revenue:"),
+                    film.revenue != null && film.revenue != 0
+                        ? _buildDevider()
+                        : Container(),
+                  ],
+                ),
+                ),
+              ],
+            ),
+            film.companies[0]!= null
+                ? buildOneField(film.companies[0].name, "Company:")
+                : Container(),
+            film.companies[0] != null
+                ? _buildDevider()
+                : Container(),
+            film.countrys.isNotEmpty
+                ? buildOneField(film?.countrys[0].name, "Country:")
+                : Container(),
+            film.countrys.isNotEmpty && film?.countrys[0] != null
+                ? _buildDevider()
+                : Container(),
+            SizedBox(
+              height: 10,
+            )
+          ]),
+    );
+  }
+
+  buildOneField(field, String fieldName){
+    var provider = Provider.of<ThemeProvider>(context);
+   return  field != null && field != 0
+        ? Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+            fieldName,
+              style: TextStyle(
+                fontFamily: "AmaticSC",
+                fontSize: 22,
+                color: provider.currentFontColor,
+              ),
+            ),
+            Text(
+              field.toString(),
+              style: TextStyle(
+                fontFamily: "AmaticSC",
+                fontSize: 22,
+                color: provider.currentFontColor,
+              ),
+            ),
+          ]),
+    )
+        : Container();
+  }
+
   buildBody(context) {
     return SingleChildScrollView(
         controller: scrollController,
         child: Stack(children: [
-           Column(children: <Widget>[
-              Container(
-                  alignment: Alignment.topCenter,
-                  width: MediaQuery.of(context).size.width,
-                  //child: Image.network("${Api().imageBannerAPI}${film.poster}",),
-                  child:
-                      MovieBanner("${Api().imageBannerAPI}${film.backdrop}")),
-              _buildInfo(),
-              _buildCreatorBlock(),
-              _buildWebLinkBlock(),
-              //  Container( child: getDesc(movie),)
-            ]),
+          Column(children: <Widget>[
+            Container(
+                alignment: Alignment.topCenter,
+                width: MediaQuery.of(context).size.width,
+                //child: Image.network("${Api().imageBannerAPI}${film.poster}",),
+                child: MovieBanner("${Api().imageBannerAPI}${film.backdrop}")),
+            _buildInfo(),
+            _buildCreatorBlock(),
+            SizedBox(
+              height: 20,
+            ),
+            _buildProduction(),
+            _buildWebLinkBlock(),
+            //  Container( child: getDesc(movie),)
+          ]),
           Positioned(
             left: 15,
             top: 120,

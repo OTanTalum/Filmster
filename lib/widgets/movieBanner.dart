@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
 class MovieBanner extends StatelessWidget {
-  MovieBanner(this.imageUrl);
+
   final String imageUrl;
+
+  MovieBanner(
+      this.imageUrl
+      );
 
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
-
     return ClipPath(
       clipper: ArcClipper(),
       child: Image.network(

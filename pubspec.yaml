@@ -11,7 +11,7 @@ description: A new Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.0.1+13
+version: 0.0.1+14
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -51,18 +51,7 @@ flutter:
 
   assets:
     - assets/icons/
-    - assets/icons/g.png
-    - assets/icons/Nc-17.png
-    - assets/icons/NotRated.png
-    - assets/icons/pg.png
-    - assets/icons/pg-13.png
-    - assets/icons/r.png
-    - assets/icons/Unrated.png
-    - assets/icons/Genre.png
-    - assets/icons/wiki.png
-    - assets/icons/imdb.png
-    - assets/icons/RT.png
-    - assets/icons/MT.png
+
 
   fonts:
     - family: Cuprum

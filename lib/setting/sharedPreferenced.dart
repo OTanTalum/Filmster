@@ -8,6 +8,11 @@ class Prefs{
     return prefs.getString(nameOfPrefs);
   }
 
+  hasString(String nameOfPrefs) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.containsKey(nameOfPrefs);
+  }
+
   setStringPrefs(String nameOfPrefs, String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(nameOfPrefs, value);

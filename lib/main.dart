@@ -56,11 +56,15 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     Future.microtask(() async {
-      SettingsProvider.language=(
-          await Prefs().getStringPrefs("languageCode")??'ru'
-      );
-      Provider.of<ThemeProvider>(context, listen: false)
-          .changeTheme(context, await Prefs().getStringPrefs("themeKCode")??'Light');
+      if(await Prefs().hasString("languageCode"))
+        SettingsProvider.language=(await Prefs().getStringPrefs("languageCode"));
+      else SettingsProvider.language=("us");
+      if(await Prefs().hasString("themeCode"))
+        Provider.of<ThemeProvider>(context, listen: false)
+            .changeTheme(context, await Prefs().getStringPrefs("themeKCode"));
+      else  Provider.of<ThemeProvider>(context, listen: false)
+          .changeTheme(context, MyThemeKeys.DARK);
+
       await Provider.of<SettingsProvider>(context, listen: false)    // Load List of genres with current language//
           .getGanresSettings();
     });

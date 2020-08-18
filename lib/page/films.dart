@@ -123,22 +123,32 @@ class _FilmsPageState extends State<FilmsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Expanded(
-                        child:Container(
-                          child: Text(
-                              film.title,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                              style: TextStyle(
-                                fontFamily: "AmaticSC",
-                                fontSize: 25,
-                                color: provider.currentMainColor,
-                                fontWeight: FontWeight.w700,
+                            Row(children: [
+                              Expanded(
+                                child: Text(
+                                  film.title,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    fontFamily: "AmaticSC",
+                                    fontSize: 25,
+                                    color: provider.currentMainColor,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ),
-                          ),
-                        ),
-                      ),
-                     film.title!=film.originalTitle
+
+                            ]),
+                      film.isAdult
+                          ? Text("18+",
+                          style: TextStyle(
+                            fontFamily: "AmaticSC",
+                            fontSize: 30,
+                            color: provider.currentAcidColor,
+                            fontWeight: FontWeight.w700,
+                          ))
+                          : Container(),
+                            film.title!=film.originalTitle
                          ? Expanded(
                           child: Text(film.originalTitle,
                               overflow: TextOverflow.ellipsis,
