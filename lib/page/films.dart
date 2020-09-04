@@ -251,9 +251,10 @@ class _FilmsPageState extends State<FilmsPage> {
           Provider.of<ThemeProvider>(context).currentBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'Find your films',
+          'Find your ${widget.type}',
           style: TextStyle(
-            fontFamily: "AmaticSC"
+            fontFamily: "AmaticSC",
+            fontSize: 20,
           ),
         ),
       ),
@@ -302,7 +303,7 @@ class _FilmsPageState extends State<FilmsPage> {
               color: Provider.of<ThemeProvider>(context).currentSecondaryColor,
               fontFamily: "AmaticSC"
             ),
-            hintText: 'Enter movie name',
+            hintText: 'Enter ${widget.type} name',
           ),
           style: TextStyle(
             fontFamily: "AmaticSC",

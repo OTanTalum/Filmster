@@ -1,9 +1,11 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/main.dart';
 import 'package:filmster/page/films.dart';
+import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/setting/adMob.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
@@ -22,91 +24,106 @@ class DrawerMenu {
         child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: provider.currentMainColor,
-                ),
-                child: Text(
-                  'Hello ;)',
-                  style: TextStyle(fontFamily:"AmaticSC",
-                    color: provider.currentFontColor,
-                    fontSize: 28,),
-                ),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (_) => MyHomePage()));
-                },
-                title: Text(
-                  'Home',
-                  style:  TextStyle(fontFamily:"AmaticSC",
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0,
-                    color: provider.currentFontColor,
+            Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: provider.currentMainColor,
+                    ),
+                    child: Text(
+                      'Hello ;)',
+                      style: TextStyle(
+                        fontFamily: "AmaticSC",
+                        color: provider.currentFontColor,
+                        fontSize: 28,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (_) => FilmsPage(type:"movie")));
-                },
-                title: Text(
-                  'Films',
-                  style:  TextStyle(fontFamily:"AmaticSC",
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0,
-                    color: provider.currentFontColor,
-                  ),
-                ),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (_) => FilmsPage(type:"tv")));
-                },
-                title: Text(
-                  'TV',
-                  style:  TextStyle(fontFamily:"AmaticSC",
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0,
-                    color: provider.currentFontColor,
-                  ),
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  'In progress',
-                  style:  TextStyle(fontFamily:"AmaticSC",
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0,
-                    color: provider.currentFontColor,
-                  ),
-                ),
-              ),
-            AdmobBanner(
-                    adUnitId: addMobClass().getBannerAdUnitId(),
-                    adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
-                    listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+                  ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => MyHomePage()));
                     },
-                    onBannerCreated: (AdmobBannerController controller) {},
-              ),
-              Center(
-                child:FutureBuilder<String>(
+                    title: Text(
+                      'Home',
+                      style: TextStyle(
+                        fontFamily: "AmaticSC",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.0,
+                        color: provider.currentFontColor,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => FilmsPage(type: "movie")));
+                    },
+                    title: Text(
+                      'Films',
+                      style: TextStyle(
+                        fontFamily: "AmaticSC",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.0,
+                        color: provider.currentFontColor,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => FilmsPage(type: "tv")));
+                    },
+                    title: Text(
+                      'TV',
+                      style: TextStyle(
+                        fontFamily: "AmaticSC",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.0,
+                        color: provider.currentFontColor,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => SettingsPage()));
+                    },
+                    title: Text(
+                      'Settings',
+                      style: TextStyle(
+                        fontFamily: "AmaticSC",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.0,
+                        color: provider.currentFontColor,
+                      ),
+                    ),
+                  ),
+                ]),
+            AdmobBanner(
+              adUnitId: addMobClass().getBannerAdUnitId(),
+              adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
+              listener: (AdmobAdEvent event, Map<String, dynamic> args) {},
+              onBannerCreated: (AdmobBannerController controller) {},
+            ),
+            Center(
+              child: FutureBuilder<String>(
                 future: getVersion(),
-                builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
                   if (snapshot.hasData) {
                     return Container(
                         child: Text(
-                          "Version: ${snapshot.data}",
-                          style: TextStyle(
-                            fontFamily: "AmaticSC",
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0,
-                            color: provider.currentFontColor,
-                          ),
-                        ));
+                      "Version: ${snapshot.data}",
+                      style: TextStyle(
+                        fontFamily: "AmaticSC",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.0,
+                        color: provider.currentFontColor,
+                      ),
+                    ));
                   }
                   return Container();
                 },

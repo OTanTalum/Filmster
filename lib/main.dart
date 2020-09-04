@@ -33,6 +33,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -56,75 +57,49 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     Future.microtask(() async {
-      if(await Prefs().hasString("languageCode"))
-        SettingsProvider.language=(await Prefs().getStringPrefs("languageCode"));
-      else SettingsProvider.language=("us");
-      if(await Prefs().hasString("themeCode"))
-        Provider.of<ThemeProvider>(context, listen: false)
-            .changeTheme(context, await Prefs().getStringPrefs("themeKCode"));
-      else  Provider.of<ThemeProvider>(context, listen: false)
-          .changeTheme(context, MyThemeKeys.DARK);
-
+      await initLanguage();
+      await initTheme();
       await Provider.of<SettingsProvider>(context, listen: false)    // Load List of genres with current language//
           .getGanresSettings();
     });
+  }
+
+ Future initLanguage() async {
+    if(await Prefs().hasString("languageCode"))
+      SettingsProvider.language=(await Prefs().getStringPrefs("languageCode"));
+    else SettingsProvider.language=("us");
+  }
+
+  Future initTheme() async {
+    if(await Prefs().hasString("themeCode")) {
+      String themeCode = await Prefs().getStringPrefs("themeCode");
+      switch (themeCode) {
+        case "Light":
+          Provider.of<ThemeProvider>(context, listen: false)
+              .changeTheme(context, MyThemeKeys.LIGHT);
+          break;
+        case "Dark":
+          Provider.of<ThemeProvider>(context, listen: false)
+              .changeTheme(context, MyThemeKeys.DARK);
+          break;
+        case "Darker":
+          Provider.of<ThemeProvider>(context, listen: false)
+              .changeTheme(context, MyThemeKeys.DARKER);
+          break;
+          case "Manyutka":
+          Provider.of<ThemeProvider>(context, listen: false)
+              .changeTheme(context, MyThemeKeys.Manyutka);
+          break;
+      }
+    }
+    else  Provider.of<ThemeProvider>(context, listen: false)
+        .changeTheme(context, MyThemeKeys.DARK);
   }
 
   ///TODO 3. Attribution
   ///You shall use the TMDb logo to identify your use of the TMDb APIs.
   ///You shall place the following notice prominently on your application: "This product uses the TMDb API but is not endorsed or certified by TMDb."
   ///Any use of the TMDb logo in your application shall be less prominent than the logo or mark that primarily describes the application and your use of the TMDb logo shall not imply any endorsement by TMDb.
-
-
-  _buildLanguageButton (String languageCode, String languageName){
-    return RaisedButton(
-      onPressed: () async {
-        setState(() {
-        Provider.of<SettingsProvider>(context, listen: false)
-            .changeLanguage(languageCode);
-        Prefs().setStringPrefs('languageCode', languageCode);
-        });
-        await Provider.of<SettingsProvider>(context,
-            listen: false)
-            .getGanresSettings();
-      },
-      child: Text(
-        languageName,
-        style: TextStyle(
-          fontFamily: "AmaticSC",
-        ),
-      ),
-    );
-  }
-
-  _buildThemeButton(MyThemeKeys themeKey, String themeKeyName){
-    return RaisedButton(
-      onPressed: () {
-        Provider.of<ThemeProvider>(context, listen: false)
-            .changeTheme(context, themeKey);
-        Prefs().setStringPrefs('themeCode', themeKeyName);
-      },
-      child: Text(
-        themeKeyName,
-        style: TextStyle(
-          fontFamily: "AmaticSC",
-        ),
-      ),
-    );
-  }
-
-  _buildTitle(String titleText){
-   return Text(
-      titleText,
-      style: TextStyle(
-        fontFamily: "AmaticSC",
-        fontSize: 26,
-        color:
-        Provider.of<ThemeProvider>(context, listen: false)
-            .currentFontColor,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,36 +120,12 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _buildTitle("Change your Theme"),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      _buildThemeButton(MyThemeKeys.LIGHT, "Light"),
-                      _buildThemeButton(MyThemeKeys.DARK, "Dark"),
-                      _buildThemeButton(MyThemeKeys.DARKER, "Darker"),
-                    ]),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                     _buildTitle("Change you Language",),
-                      SizedBox(height: 40,),
-                      _buildLanguageButton("us", "English"),
-                      _buildLanguageButton("ru", "Russian"),
-                      _buildLanguageButton("pt", "Spanish"),
-                    ],
-                  ),
-                ]),
+                Container(),
                 AdmobBanner(
                   adUnitId: addMobClass().getBannerAdUnitId(),
                   adSize: AdmobBannerSize.FULL_BANNER,
                   listener: (AdmobAdEvent event, Map<String, dynamic> args) {
-                    addMobClass()
-                        .handleEvent(event, args, 'Banner', scaffoldState);
+                   ///todo something
                   },
                   onBannerCreated: (AdmobBannerController controller) {},
                 ),
