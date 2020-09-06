@@ -10,8 +10,6 @@ class Prefs{
 
   hasString(String nameOfPrefs) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print("prefs.containsKey(nameOfPrefs)");
-    print(prefs.containsKey(nameOfPrefs));
     return prefs.containsKey(nameOfPrefs);
   }
 

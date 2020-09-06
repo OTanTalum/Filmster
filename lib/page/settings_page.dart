@@ -50,19 +50,18 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _buildBody(context){
     return Column(
       children: <Widget>[
-        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     _buildTitle("Change your Theme"),
-                    SizedBox(
-                      height: 40,
-                    ),
+                    SizedBox(height: 40,),
                     _buildThemeButton(MyThemeKeys.LIGHT, "Light"),
                     _buildThemeButton(MyThemeKeys.DARK, "Dark"),
                     _buildThemeButton(MyThemeKeys.DARKER, "Darker"),
-                    _buildThemeButton(MyThemeKeys.Manyutka, "Manyutka"),
+                    _buildThemeButton(MyThemeKeys.Loft, "Loft"),
                   ]),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -72,6 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   _buildLanguageButton("us", "English"),
                   _buildLanguageButton("ru", "Russian"),
                   _buildLanguageButton("pt", "Spanish"),
+                  SizedBox(height: 50,),
                 ],
               ),
             ]),

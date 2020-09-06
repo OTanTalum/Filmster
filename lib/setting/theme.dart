@@ -2,7 +2,7 @@ import 'package:filmster/providers/themeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-enum MyThemeKeys { LIGHT, DARK, DARKER, Manyutka }
+enum MyThemeKeys { LIGHT, DARK, DARKER, Loft }
 
 class MyThemes {
   static final ThemeData lightTheme = ThemeData(
@@ -20,7 +20,7 @@ class MyThemes {
     primaryColor: Colors.blueGrey[900],
     brightness: Brightness.light,
   );
-  static final ThemeData Manyutka = ThemeData(
+  static final ThemeData Loft = ThemeData(
     primaryColor: Color(0xffffC488),
     brightness: Brightness.light,
   );
@@ -59,15 +59,15 @@ class MyThemes {
           );
           return darkerTheme;
         }
-      case MyThemeKeys.Manyutka:{
+      case MyThemeKeys.Loft :{
         Provider.of<ThemeProvider>(context,listen: false).changeColor(
           fontColor:Colors.black,
           backgroundColor: Color(0xffffdab9),
-          mainColor:Colors.white,
+          mainColor:Colors.blueGrey[700],
           acidColor:Colors.white,
           secondaryColor: Color(0xffffC488),
         );
-        return Manyutka;
+        return Loft;
       }
       default:
         return lightTheme;

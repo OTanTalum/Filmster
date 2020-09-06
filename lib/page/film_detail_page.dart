@@ -55,8 +55,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         title,
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontFamily: "AmaticSC",
-          fontWeight: FontWeight.bold,
+          fontFamily: "MPLUSRounded1c",
+          fontWeight: FontWeight.w500,
           fontSize: size,
           color: provider.currentMainColor,
         ),
@@ -116,9 +116,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     return Text(
       Provider.of<SettingsProvider>(context).mapOfGanres[id],
       style: TextStyle(
-        fontFamily: "AmaticSC",
-        fontSize: 25,
-        //  fontWeight: FontWeight.bold,
+        fontFamily: "MPLUSRounded1c",
+        fontSize: 20,
+          fontWeight: FontWeight.w300,
         color: Provider.of<ThemeProvider>(context).currentFontColor,
       ),
     );
@@ -137,8 +137,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontFamily: "AmaticSC",
-                fontSize: 25,
-                //  fontWeight: FontWeight.bold,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
                 color: provider.currentFontColor,
               )))
     ]);
@@ -226,7 +226,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Container(
-        height: 150,
+        height: 200,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           // borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -237,7 +237,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             borderRadius: BorderRadius.all(Radius.circular(25)),
             color: provider.currentSecondaryColor,
           ),
-          child: Column(children: <Widget>[
+          child: Column(
+              children: <Widget>[
             Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0),
                 child: _buildHeader('${film.title} in Web', 25)),
@@ -255,7 +256,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                       child: Text(
                         film.homepage,
                         style: TextStyle(
-                          fontFamily: "Cuprum",
+                          fontFamily: "MPLUSRounded1c",
                           fontSize: 20.0,
                           color: provider.currentFontColor,
                         ),
@@ -286,9 +287,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader("${film.title}", 33),
+            _buildHeader("${film.title}", 25),
             film.title != film.originalTitle
-                ? _buildHeader("${film.originalTitle}", 27)
+                ? _buildHeader("${film.originalTitle}", 22)
                 : Container(),
             film.tagline != null && film.tagline.isNotEmpty
                 ? Container(
@@ -320,10 +321,11 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 ? Container(
                     padding: EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
-                      film.overview,
+                      "\t${film.overview}",
                       style: TextStyle(
-                        fontFamily: "AmaticSC",
-                        fontSize: 20.0,
+                        fontFamily: "MPLUSRounded1c",
+                        fontWeight: FontWeight.w300,
+                        fontSize: 17.0,
                         color: provider.currentFontColor,
                       ),
                     ),
@@ -367,7 +369,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader("Production", 33),
+            _buildHeader("Production", 26),
             Row(
               children: <Widget>[
                 film.companies[0].logo != null
@@ -419,32 +421,32 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     );
   }
 
-  buildOneField(field, String fieldName){
+  buildOneField(field, String fieldName) {
     var provider = Provider.of<ThemeProvider>(context);
-   return  field != null && field != 0
+    return field != null && field != 0
         ? Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-            fieldName,
-              style: TextStyle(
-                fontFamily: "AmaticSC",
-                fontSize: 22,
-                color: provider.currentFontColor,
-              ),
-            ),
-            Text(
-              field.toString(),
-              style: TextStyle(
-                fontFamily: "AmaticSC",
-                fontSize: 22,
-                color: provider.currentFontColor,
-              ),
-            ),
-          ]),
-    )
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    fieldName,
+                    style: TextStyle(
+                      fontFamily: "AmaticSC",
+                      fontSize: 22,
+                      color: provider.currentFontColor,
+                    ),
+                  ),
+                  Text(
+                    field.toString(),
+                    style: TextStyle(
+                      fontFamily: "AmaticSC",
+                      fontSize: 22,
+                      color: provider.currentFontColor,
+                    ),
+                  ),
+                ]),
+          )
         : Container();
   }
 
@@ -500,7 +502,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   child: Text(
                     movie.raiting[i]["Value"],
                     style: TextStyle(
-                        fontFamily: "AmaticSC",
+                        fontFamily: "MPLUSRounded1c",
+                        fontWeight: FontWeight.w300,
                         color: provider.currentFontColor),
                   ),
                 )
@@ -520,7 +523,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   child: Text(
                     movie.raiting[i]["Value"],
                     style: TextStyle(
-                        fontFamily: "AmaticSC",
+                        fontFamily: "MPLUSRounded1c",
+                        fontWeight: FontWeight.w300,
                         color: provider.currentFontColor),
                   ),
                 ),
@@ -539,7 +543,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   child: Text(
                     movie.raiting[i]["Value"],
                     style: TextStyle(
-                        fontFamily: "AmaticSC",
+                        fontFamily: "MPLUSRounded1c",
+                        fontWeight: FontWeight.w300,
                         color: provider.currentFontColor),
                   ),
                 ),

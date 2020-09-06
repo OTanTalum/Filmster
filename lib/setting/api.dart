@@ -13,6 +13,7 @@ class Api{
   final String api_key = "22e195d94c2274b3dcf6484e58a1715f";
   final String imageBannerAPI = "https://image.tmdb.org/t/p/w500";
   String TMDBAPI = 'https://api.themoviedb.org/3/search/movie';
+  String TMDBTrendingAPI = 'https://api.themoviedb.org/3/trending/';
   String TMDBDetailAPI = 'https://api.themoviedb.org/3/movie/';
   String imdbGenreAPI = 'https://api.themoviedb.org/3/genre/movie/list?api_key=';
 
@@ -24,6 +25,16 @@ class Api{
     }
     else {
       print("ERROR SEARCH");
+    }
+  }
+
+  getTrending(type, period, page) async{
+    final response = await http.get('$TMDBTrendingAPI$type/$period?api_key=$api_key&page=${page}&language=${SettingsProvider.language}&include_adult=true');
+    if (response.statusCode == 200) {
+      return Search.fromJson(json.decode(response.body));
+    }
+    else {
+      print("ERROR Trending");
     }
   }
 

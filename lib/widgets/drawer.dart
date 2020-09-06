@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
 
 class DrawerMenu {
-
   String version;
   String buildNumber;
 
@@ -20,24 +19,30 @@ class DrawerMenu {
     var provider = Provider.of<ThemeProvider>(context);
     return Drawer(
       child: Container(
+        height: double.infinity,
         color: provider.currentBackgroundColor,
-        child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisSize: MainAxisSize.max,
+          children: [
             Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: provider.currentMainColor,
-                    ),
-                    child: Text(
-                      'Hello ;)',
-                      style: TextStyle(
-                        fontFamily: "AmaticSC",
-                        color: provider.currentFontColor,
-                        fontSize: 28,
+                  Container(
+                    width: double.infinity,
+                    child: DrawerHeader(
+                      decoration: BoxDecoration(
+                        color: provider.currentMainColor,
+                      ),
+                      child: Text(
+                        'Hello ;)',
+                        style: TextStyle(
+                          fontFamily: "MPLUSRounded1c",
+                          color: provider.currentFontColor,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 28,
+                        ),
                       ),
                     ),
                   ),
@@ -102,35 +107,42 @@ class DrawerMenu {
                     ),
                   ),
                 ]),
-            AdmobBanner(
-              adUnitId: addMobClass().getBannerAdUnitId(),
-              adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
-              listener: (AdmobAdEvent event, Map<String, dynamic> args) {},
-              onBannerCreated: (AdmobBannerController controller) {},
+            SizedBox(
+              height: 24,
             ),
-            Center(
-              child: FutureBuilder<String>(
-                future: getVersion(),
-                builder:
-                    (BuildContext context, AsyncSnapshot<String> snapshot) {
-                  if (snapshot.hasData) {
-                    return Container(
-                        child: Text(
-                      "Version: ${snapshot.data}",
-                      style: TextStyle(
-                        fontFamily: "AmaticSC",
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0,
-                        color: provider.currentFontColor,
-                      ),
-                    ));
-                  }
-                  return Container();
-                },
-              ),
-              ),
-            ],
-          ),
+            Column(
+              children: [
+                AdmobBanner(
+                  adUnitId: addMobClass().getBannerAdUnitId(),
+                  adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
+                  listener: (AdmobAdEvent event, Map<String, dynamic> args) {},
+                  onBannerCreated: (AdmobBannerController controller) {},
+                ),
+                Center(
+                  child: FutureBuilder<String>(
+                    future: getVersion(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.hasData) {
+                        return Container(
+                            child: Text(
+                          "Version: ${snapshot.data}",
+                          style: TextStyle(
+                            fontFamily: "AmaticSC",
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                            color: provider.currentFontColor,
+                          ),
+                        ));
+                      }
+                      return Container();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
