@@ -2,6 +2,8 @@
 import 'dart:ui';
 
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:filmster/localization/languages/workKeys.dart';
+import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/film_detail_page.dart';
 import 'package:filmster/providers/searchProvider.dart';
@@ -28,7 +30,8 @@ class _TrendingPageState extends State<TrendingPage> {
   ScrollController _scrollController = ScrollController();
   int currentPage = 1;
   List<Widget> movieTrend = [];
-  bool isSwitched = false;
+  bool isWeek = false;
+  bool isTV = false;
 
   @override
   void initState() {
@@ -38,60 +41,163 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
   initTrending() async {
-    await Provider.of<TrendingProvider>(context, listen: false).fetchData(currentPage, "movie", "week");
+    await Provider.of<TrendingProvider>(context, listen: false).fetchData(currentPage, isTV?"tv":"movie", isWeek?"week":"day");
    setState(() {
      getCards();
    });
   }
 
   getCards(){
-    movieTrend=[];
-    int i=0;
-    Provider
-        .of<TrendingProvider>(context, listen: false)
-        .trendingMovies
-        .forEach((element) {
-          i++;
-      movieTrend.add(MovieCard(element));
-      if(i==10){
-        movieTrend.add(
-          AdmobBanner(
-            adUnitId: addMobClass().getBannerAdUnitId(),
-            adSize: AdmobBannerSize.FULL_BANNER,
-            listener: (AdmobAdEvent event, Map<String, dynamic> args) {
-              ///todo something
-            },
-            onBannerCreated: (AdmobBannerController controller) {},
-          ),);
-        i=0;
-      }
-    });
+    movieTrend = [];
+    int i = 0;
+    isTV
+        ? isWeek
+            ? Provider.of<TrendingProvider>(context, listen: false)
+                .trendingTVWeek
+                .forEach((element) {
+                i++;
+                movieTrend.add( movieCard(element) );
+                if (i == 10) {
+                  movieTrend.add(
+                    AdmobBanner(
+                      adUnitId: addMobClass().getBannerAdUnitId(),
+                      adSize: AdmobBannerSize.FULL_BANNER,
+                      listener:
+                          (AdmobAdEvent event, Map<String, dynamic> args) {
+                        ///todo something
+                      },
+                      onBannerCreated: (AdmobBannerController controller) {},
+                    ),
+                  );
+                  i = 0;
+                }
+              })
+            : Provider.of<TrendingProvider>(context, listen: false)
+                .trendingTVDay
+                .forEach((element) {
+                i++;
+                movieTrend.add(movieCard(element));
+                if (i == 10) {
+                  movieTrend.add(
+                    AdmobBanner(
+                      adUnitId: addMobClass().getBannerAdUnitId(),
+                      adSize: AdmobBannerSize.FULL_BANNER,
+                      listener:
+                          (AdmobAdEvent event, Map<String, dynamic> args) {},
+                      onBannerCreated: (AdmobBannerController controller) {},
+                    ),
+                  );
+                  i = 0;
+                }
+              })
+        : isWeek
+            ? Provider.of<TrendingProvider>(context, listen: false)
+                .trendingMoviesWeek
+                .forEach((element) {
+                i++;
+                movieTrend.add( movieCard(element));
+                if (i == 10) {
+                  movieTrend.add(
+                    AdmobBanner(
+                      adUnitId: addMobClass().getBannerAdUnitId(),
+                      adSize: AdmobBannerSize.FULL_BANNER,
+                      listener:
+                          (AdmobAdEvent event, Map<String, dynamic> args) {
+                        ///todo something
+                      },
+                      onBannerCreated: (AdmobBannerController controller) {},
+                    ),
+                  );
+                  i = 0;
+                }
+              })
+            : Provider.of<TrendingProvider>(context, listen: false)
+                .trendingMoviesDay
+                .forEach((element) {
+                i++;
+                movieTrend.add( movieCard(element) );
+                if (i == 10) {
+                  movieTrend.add(
+                    AdmobBanner(
+                      adUnitId: addMobClass().getBannerAdUnitId(),
+                      adSize: AdmobBannerSize.FULL_BANNER,
+                      listener:
+                          (AdmobAdEvent event, Map<String, dynamic> args) {},
+                      onBannerCreated: (AdmobBannerController controller) {},
+                    ),
+                  );
+                  i = 0;
+                }
+              });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor:
-      Provider.of<ThemeProvider>(context).currentBackgroundColor,
+          Provider.of<ThemeProvider>(context).currentBackgroundColor,
       appBar: AppBar(
-   leading: Switch(
-     value: isSwitched,
-     onChanged: (value){
-       setState(() {
-         isSwitched=value;
-         print(isSwitched);
-       });
-     },
-     activeTrackColor: Provider.of<ThemeProvider>(context).currentSecondaryColor,
-     activeColor: Provider.of<ThemeProvider>(context).currentMainColor,
-   ),
-        title: Text(
-          'Trending Movie',
-          style: TextStyle(
-            fontFamily: "AmaticSC",
-            fontSize: 22,
-          ),
-        ),
+        leading: null,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children:[
+              Row(children: [
+              Text(
+                AppLocalizations().translate(context, WordKeys.day),
+                style: TextStyle(
+                  fontFamily: "AmaticSC",
+                  fontSize: 22,
+                ),
+              ),
+              Switch(
+                value: isWeek,
+                onChanged: (value) {
+                  setState(() {
+                    isWeek = value;
+                    initTrending();
+                  });
+                },
+                activeTrackColor:
+                Provider.of<ThemeProvider>(context).currentSecondaryColor,
+                activeColor: Provider.of<ThemeProvider>(context).currentMainColor,
+              ),
+              Text(
+                AppLocalizations().translate(context, WordKeys.week),
+                style: TextStyle(
+                  fontFamily: "AmaticSC",
+                  fontSize: 22,
+                ),
+              ),
+            ]),
+              Row(children: [
+                Text(
+                  AppLocalizations().translate(context, WordKeys.films),
+                  style: TextStyle(
+                    fontFamily: "AmaticSC",
+                    fontSize: 22,
+                  ),
+                ),
+                Switch(
+                  value: isTV,
+                  onChanged: (value) {
+                    setState(() {
+                      isTV = value;
+                      initTrending();
+                    });
+                  },
+                  activeTrackColor:
+                  Provider.of<ThemeProvider>(context).currentSecondaryColor,
+                  activeColor: Provider.of<ThemeProvider>(context).currentMainColor,
+                ),
+                Text(
+                  AppLocalizations().translate(context, WordKeys.TV),
+                  style: TextStyle(
+                    fontFamily: "AmaticSC",
+                    fontSize: 22,
+                  ),
+                ),
+              ]),
+            ]),
       ),
       body: _buildBody(context),
     );
@@ -106,27 +212,95 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
 
-  Widget MovieCard(SearchResults movie) {
-    return GestureDetector(
-      onTap: () async {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => FilmDetailPage(id: movie.id.toString())));
-      },
-      child: Image.network(
-        "${Api().imageBannerAPI}${movie.poster}",
-        width: MediaQuery
-            .of(context)
-            .size
-            .width * 0.5,
+   movieCard(SearchResults movie){
+    var provider = Provider.of<ThemeProvider>(context, listen: false);
+    return Stack(children: [
+      GestureDetector(
+        onTap: () async {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => FilmDetailPage(id: movie.id.toString(), type: isTV?"tv":"movie")));
+        },
+        child: Image.network(
+          "${Api().imageBannerAPI}${movie.poster}",
+          fit: BoxFit.fill,
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),
+        ),
       ),
-    );
+      Positioned(
+        bottom: 0,
+      child:Opacity(
+        opacity: 0.7,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          color: Colors.blueGrey[900],
+          height: 50,
+          width: MediaQuery.of(context).size.width*0.5,
+          child:
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                  Row(children: [
+                    Icon(
+                      Icons.trending_up,
+                      color: provider.currentFontColor,
+                    ),
+                    Container(
+                        padding: EdgeInsets.only(left: 5),
+                        child: Text(movie.popularity.toString(),
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: "AmaticSC",
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: provider.currentFontColor,
+                            ))),
+                  ]),
+                 Expanded(
+                   child: IconButton(
+                     onPressed: (){
+                       ///TODO add isWatched
+                     },
+                    icon:Icon(
+                    Icons.remove_red_eye,
+                    color: provider.currentFontColor,
+                ),),
+                 ),
+                Expanded(
+                  child: IconButton(
+                    onPressed: (){
+                      ///TODO add isFavorite
+                    },
+                    icon: Icon(
+                      Icons.favorite_border,
+                      color: provider.currentFontColor,
+                    ),
+                  ),
+                ),
+              ],
+            )
+        ),
+      ),
+      )
+    ]);
   }
 
   _buildBody(BuildContext context) {
-    return  SafeArea(
+    return SafeArea(
       child: SingleChildScrollView(
         controller: _scrollController,
-              child:Wrap(
+        child: Provider.of<TrendingProvider>(context, listen: false).isLoading
+            ? Container(
+                height: 200,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(
+                        Provider.of<ThemeProvider>(context).currentMainColor
+                    )
+                  ),
+                ),
+              )
+            : Wrap(
                 children: movieTrend,
               ),
       ),
@@ -141,7 +315,7 @@ class _TrendingPageState extends State<TrendingPage> {
         _scrollController.position.maxScrollExtent) {
       ++currentPage;
       await Provider.of<TrendingProvider>(context, listen: false)
-          .fetchData(currentPage, "movie", "week");
+          .fetchData(currentPage, isTV?"tv":"movie", isWeek?"week":"day");
       provider.isLoading = false;
       setState(() {
         getCards();

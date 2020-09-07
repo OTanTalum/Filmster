@@ -18,8 +18,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 class FilmDetailPage extends StatefulWidget {
   final String id;
+  final String type;
 
-  FilmDetailPage({Key key, this.id}) : super(key: key);
+  FilmDetailPage({
+    Key key,
+    this.id,
+    this.type,
+  }) : super(key: key);
 
   @override
   FilmDetailPageState createState() => new FilmDetailPageState();
@@ -42,7 +47,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     setState(() {
       isLoading = true;
     });
-    film = await Api().getFilmDetail(widget.id);
+    film = await Api().getFilmDetail(widget.id, widget.type);
     setState(() {
       isLoading = false;
     });
@@ -71,14 +76,18 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         ? Container(
             color: provider.currentBackgroundColor,
             child: Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                  valueColor:AlwaysStoppedAnimation(
+                      Provider.of<ThemeProvider>(context).currentMainColor
+                  )
+              ),
             ),
           )
         : Scaffold(
             backgroundColor: provider.currentBackgroundColor,
             appBar: AppBar(
               title: Text(
-                film.isAdult
+                film.title==null&&film.originalTitle!=null
                     ? "${film.title} 18+"
                   : "${film.title} ",
                 style: TextStyle(
@@ -107,14 +116,16 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 ),
               ),
             ),
-            drawer: DrawerMenu().build(context),
+            //drawer: DrawerMenu().build(context),
             body: buildBody(context),
           );
   }
 
   buildGenres(id) {
     return Text(
-      Provider.of<SettingsProvider>(context).mapOfGanres[id],
+      widget.type=="movie"
+          ? Provider.of<SettingsProvider>(context).movieMapOfGanres[id]
+          : Provider.of<SettingsProvider>(context).tvMapOfGanres[id],
       style: TextStyle(
         fontFamily: "MPLUSRounded1c",
         fontSize: 20,
@@ -275,7 +286,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     List<Widget> list = [];
     if (film.ganres != null && film.ganres.isNotEmpty) {
       film.ganres.forEach((element) {
-        list.add(buildGenres(element["id"]));
+          list.add(buildGenres(element["id"]));
       });
     }
     return Container(
@@ -372,7 +383,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             _buildHeader("Production", 26),
             Row(
               children: <Widget>[
-                film.companies[0].logo != null
+                film.companies.isNotEmpty&& film.companies[0].logo != null
                     ? Padding(
                         padding: EdgeInsets.all(12),
                         child: Image.network(
@@ -402,16 +413,16 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 ),
               ],
             ),
-            film.companies[0]!= null
+            film.companies.isNotEmpty&&film.companies[0]!= null
                 ? buildOneField(film.companies[0].name, "Company:")
                 : Container(),
-            film.companies[0] != null
+            film.companies.isNotEmpty&& film.companies[0] != null
                 ? _buildDevider()
                 : Container(),
-            film.countrys.isNotEmpty
+           film.countrys.isNotEmpty
                 ? buildOneField(film?.countrys[0].name, "Country:")
                 : Container(),
-            film.countrys.isNotEmpty && film?.countrys[0] != null
+           film.countrys.isNotEmpty && film?.countrys[0] != null
                 ? _buildDevider()
                 : Container(),
             SizedBox(
@@ -475,7 +486,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             child: Container(
               child: Image.network(
                 "${Api().imageBannerAPI}${film.poster}",
-                width: MediaQuery.of(context).size.width * 0.4,
+                height: MediaQuery.of(context).size.height * 0.3,
               ),
             ),
           ),

@@ -58,7 +58,11 @@ class Film {
   });
 
   Film.fromJson(Map<String, dynamic> json) {
-    title = json['title'];
+    if(json['title']!=null) {
+      title = json['title'];
+    }else {
+      title = json['name'];
+    }
     isAdult = json['adult'];
     backdrop = json['backdrop_path'];
     toColection = json['belongs_to_collection'];
@@ -69,7 +73,12 @@ class Film {
     id = json['id'].toString();
     imdbId = json['imdb_id'];
     originalLanguage = json['original_language'];
-    originalTitle = json['original_title'];
+
+    if(json['original_title']!=null) {
+      originalTitle = json['original_title'];
+    } else{
+    originalTitle = json['original_name'];
+    }
     overview = json['overview'];
     popularity = json['popularity'].toString();
     poster = json['poster_path'];
@@ -79,9 +88,18 @@ class Film {
     if (json['production_countries'] != null)
       json['production_countries']
           .forEach((element) => countrys.add(Country.fromJson(element)));
-    release = json['release_date'];
+    if(json['release_date']!=null)
+      release = json['release_date'];
+    else {
+      release = json['first_air_date'];
+    }
     revenue = json['revenue'];
-    runtime = json['runtime'];
+    if(json['runtime']!=null) {
+      runtime = json['runtime'];
+    }
+    else{
+      runtime = json['episode_run_time'].first;
+    }
     if (json['spoken_languages'] != null)
       json['spoken_languages']
           .forEach((element) => spoken.add(Language.fromJson(element)));

@@ -70,8 +70,11 @@ class _MyHomePageState extends State<MyHomePage> {
       await initLanguage();
       await initTheme();
       await Provider.of<SettingsProvider>(context,
-          listen: false) // Load List of genres with current language//
-          .getGanresSettings();
+          listen: false)
+          .getGanresSettings("movie");
+      await Provider.of<SettingsProvider>(context,
+          listen: false)
+          .getGanresSettings("tv");
     });
 
   }

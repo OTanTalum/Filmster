@@ -1,4 +1,6 @@
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:filmster/localization/languages/workKeys.dart';
+import 'package:filmster/localization/localization.dart';
 import 'package:filmster/main.dart';
 import 'package:filmster/page/films.dart';
 import 'package:filmster/page/settings_page.dart';
@@ -48,60 +50,60 @@ class DrawerMenu {
                   ),
                   ListTile(
                     onTap: () {
-                      Navigator.of(context).push(
+                      Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (_) => MyHomePage()));
                     },
                     title: Text(
-                      'Home',
+                      AppLocalizations().translate(context, WordKeys.home),
                       style: TextStyle(
                         fontFamily: "AmaticSC",
                         fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
+                        fontSize: 27.0,
                         color: provider.currentFontColor,
                       ),
                     ),
                   ),
                   ListTile(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (_) => FilmsPage(type: "movie")));
                     },
                     title: Text(
-                      'Films',
+                      AppLocalizations().translate(context, WordKeys.films),
                       style: TextStyle(
                         fontFamily: "AmaticSC",
                         fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
+                        fontSize: 27.0,
                         color: provider.currentFontColor,
                       ),
                     ),
                   ),
                   ListTile(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (_) => FilmsPage(type: "tv")));
                     },
                     title: Text(
-                      'TV',
+                      AppLocalizations().translate(context, WordKeys.TV),
                       style: TextStyle(
                         fontFamily: "AmaticSC",
                         fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
+                        fontSize: 27.0,
                         color: provider.currentFontColor,
                       ),
                     ),
                   ),
                   ListTile(
                     onTap: () {
-                      Navigator.of(context).push(
+                      Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (_) => SettingsPage()));
                     },
                     title: Text(
-                      'Settings',
+                      AppLocalizations().translate(context, WordKeys.settings),
                       style: TextStyle(
                         fontFamily: "AmaticSC",
                         fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
+                        fontSize: 27.0,
                         color: provider.currentFontColor,
                       ),
                     ),

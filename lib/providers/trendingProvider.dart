@@ -8,25 +8,34 @@ import 'package:flutter/material.dart';
 
 class TrendingProvider extends ChangeNotifier {
 
-  List<SearchResults> trendingMovies= [];
-  List<SearchResults> trendingTV= [];
+  List<SearchResults> trendingMoviesWeek= [];
+  List<SearchResults> trendingMoviesDay= [];
+  List<SearchResults> trendingTVWeek= [];
+  List<SearchResults> trendingTVDay= [];
   bool isLoading = false;
   bool isLast = false;
 
-  addFilms(List<SearchResults> list, int page, type) {
-    if(page!=1){
-      type=="movie"
+  addFilms(List<SearchResults> list, int page, type, period) {
+    if (page != 1) {
+      type == "movie"
           ? list.forEach((element) {
-        trendingMovies.add(element);
-      })
+              period == "week"
+                  ? trendingMoviesWeek.add(element)
+                  : trendingMoviesDay.add(element);
+            })
           : list.forEach((element) {
-        trendingTV.add(element);
-      });
-    }
-    else{
+              period == "week"
+                  ? trendingTVWeek.add(element)
+                  : trendingTVDay.add(element);
+            });
+    } else{
       type=="movie"
-          ? trendingMovies=list
-          : trendingTV = list;
+          ?  period=="week"
+            ? trendingMoviesWeek=list
+            : trendingMoviesDay=list
+          :   period=="week"
+            ? trendingTVWeek=list
+            : trendingTVDay=list;
     }
     notifyListeners();
   }
@@ -36,18 +45,13 @@ class TrendingProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  saveList(List list){
-    trendingMovies = list;
-    notifyListeners();
-  }
 
   Future<bool> fetchData(currentPage, type, period) async {
     if (!isLoading) {
       isLoading = true;
       Search response = await Api().getTrending(type, period, currentPage);
-      print(response.search);
       List<SearchResults> list = response.search;
-      addFilms(list, currentPage, type);
+      addFilms(list, currentPage, type, period);
       isLoading = false;
       changeIsLast(
           (response

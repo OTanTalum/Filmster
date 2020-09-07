@@ -8,12 +8,17 @@ import 'package:package_info/package_info.dart';
 class SettingsProvider extends ChangeNotifier {
 
   static String language = "ru";
-  Map mapOfGanres={};
+  Map movieMapOfGanres={};
+  Map tvMapOfGanres={};
 
-  getGanresSettings() async{
-   List list = await Api().getGenres();
-   list.forEach((value) {
-      mapOfGanres[value["id"]] = value["name"];
+  getGanresSettings(type) async{
+   List list = await Api().getGenres(type);
+    type=="movie"
+    ? list.forEach((value) {
+      movieMapOfGanres[value["id"]] = value["name"];
+      })
+    : list.forEach((value) {
+      tvMapOfGanres[value["id"]] = value["name"];
     });
     notifyListeners();
   }

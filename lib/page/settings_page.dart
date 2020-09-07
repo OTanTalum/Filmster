@@ -1,6 +1,8 @@
 
 import 'dart:ui';
 
+import 'package:filmster/localization/languages/workKeys.dart';
+import 'package:filmster/localization/localization.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
@@ -35,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
       Provider.of<ThemeProvider>(context).currentBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'Settings',
+          AppLocalizations().translate(context, WordKeys.settings),
           style: TextStyle(
             fontFamily: "AmaticSC",
             fontSize: 20,
@@ -56,8 +58,11 @@ class _SettingsPageState extends State<SettingsPage> {
               Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    _buildTitle("Change your Theme"),
-                    SizedBox(height: 40,),
+                    _buildTitle(AppLocalizations().translate(context, WordKeys.changeYourTheme)),
+                    SizedBox(
+                      height: 40,
+                    width: MediaQuery.of(context).size.width*0.5,
+                    ),
                     _buildThemeButton(MyThemeKeys.LIGHT, "Light"),
                     _buildThemeButton(MyThemeKeys.DARK, "Dark"),
                     _buildThemeButton(MyThemeKeys.DARKER, "Darker"),
@@ -66,8 +71,11 @@ class _SettingsPageState extends State<SettingsPage> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  _buildTitle("Change you Language",),
-                  SizedBox(height: 40,),
+                  _buildTitle(AppLocalizations().translate(context, WordKeys.changeYourLanguage)),
+                  SizedBox(
+                    height: 40,
+                    width: MediaQuery.of(context).size.width*0.5,
+                  ),
                   _buildLanguageButton("us", "English"),
                   _buildLanguageButton("ru", "Russian"),
                   _buildLanguageButton("pt", "Spanish"),
@@ -89,7 +97,10 @@ class _SettingsPageState extends State<SettingsPage> {
         });
         await Provider.of<SettingsProvider>(context,
             listen: false)
-            .getGanresSettings();
+            .getGanresSettings("movie");
+        await Provider.of<SettingsProvider>(context,
+            listen: false)
+            .getGanresSettings("tv");
       },
       child: Text(
         languageName,

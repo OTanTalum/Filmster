@@ -1,6 +1,8 @@
 
 import 'dart:ui';
 
+import 'package:filmster/localization/languages/workKeys.dart';
+import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/film_detail_page.dart';
 import 'package:filmster/providers/searchProvider.dart';
@@ -61,7 +63,9 @@ class _FilmsPageState extends State<FilmsPage> {
 
   buildGenres(id) {
     return Text(
-      Provider.of<SettingsProvider>(context).mapOfGanres[id],
+      widget.type=="movie"
+          ? Provider.of<SettingsProvider>(context).movieMapOfGanres[id]
+          : Provider.of<SettingsProvider>(context).tvMapOfGanres[id],
        style:  TextStyle(
           fontFamily: "AmaticSC",
           fontSize: 25,
@@ -83,7 +87,7 @@ class _FilmsPageState extends State<FilmsPage> {
       child: GestureDetector(
         onTap: () async {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => FilmDetailPage(id: film.id.toString())));
+              MaterialPageRoute(builder: (_) => FilmDetailPage(id: film.id.toString(), type: widget.type)));
         },
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 15.0),
@@ -251,10 +255,12 @@ class _FilmsPageState extends State<FilmsPage> {
           Provider.of<ThemeProvider>(context).currentBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'Find your ${widget.type}',
+          widget.type=="movie"
+          ? AppLocalizations().translate(context, WordKeys.findYourMovie)
+          : AppLocalizations().translate(context, WordKeys.findYourTV),
           style: TextStyle(
             fontFamily: "AmaticSC",
-            fontSize: 20,
+            fontSize: 30,
           ),
         ),
       ),
@@ -303,7 +309,9 @@ class _FilmsPageState extends State<FilmsPage> {
               color: Provider.of<ThemeProvider>(context).currentSecondaryColor,
               fontFamily: "AmaticSC"
             ),
-            hintText: 'Enter ${widget.type} name',
+            hintText: widget.type=="movie"
+                ? AppLocalizations().translate(context, WordKeys.enterMovieName)
+                : AppLocalizations().translate(context, WordKeys.enterTVName),
           ),
           style: TextStyle(
             fontFamily: "AmaticSC",

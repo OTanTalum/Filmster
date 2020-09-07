@@ -14,8 +14,8 @@ class Api{
   final String imageBannerAPI = "https://image.tmdb.org/t/p/w500";
   String TMDBAPI = 'https://api.themoviedb.org/3/search/movie';
   String TMDBTrendingAPI = 'https://api.themoviedb.org/3/trending/';
-  String TMDBDetailAPI = 'https://api.themoviedb.org/3/movie/';
-  String imdbGenreAPI = 'https://api.themoviedb.org/3/genre/movie/list?api_key=';
+  String TMDBDetailAPI = 'https://api.themoviedb.org/3';
+  String imdbGenreAPI = 'https://api.themoviedb.org/3/genre/';
 
 
   searchMovie(type, query, page) async{
@@ -38,8 +38,8 @@ class Api{
     }
   }
 
-  getGenres() async{
-    final response = await http.get('$imdbGenreAPI$api_key&language=${SettingsProvider.language}');
+  getGenres(type) async{
+    final response = await http.get('$imdbGenreAPI$type/list?api_key=$api_key&language=${SettingsProvider.language}');
     if (response.statusCode == 200) {
       Map genres = json.decode(response.body);
       return genres["genres"];
@@ -49,8 +49,8 @@ class Api{
     }
   }
 
-  getFilmDetail(String id) async{
-    final response = await http.get('$TMDBDetailAPI$id?api_key=$api_key&language=${SettingsProvider.language}');
+  getFilmDetail(String id, String type) async{
+    final response = await http.get('$TMDBDetailAPI/$type/$id?api_key=$api_key&language=${SettingsProvider.language}');
     if (response.statusCode == 200) {
       return Film.fromJson(json.decode(response.body));
     }
