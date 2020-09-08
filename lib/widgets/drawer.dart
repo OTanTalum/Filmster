@@ -38,7 +38,7 @@ class DrawerMenu {
                         color: provider.currentMainColor,
                       ),
                       child: Text(
-                        'Hello ;)',
+                        '\' "" "\' ',
                         style: TextStyle(
                           fontFamily: "MPLUSRounded1c",
                           color: provider.currentFontColor,
