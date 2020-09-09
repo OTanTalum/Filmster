@@ -18,7 +18,8 @@ class addMobClass{
     if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/4339318960';
     } else if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/8865242552';
+     // return 'ca-app-pub-3940256099942544/8865242552';
+      return 'ca-app-pub-3113025288273721/1021263084';
     }
     return null;
   }
@@ -27,7 +28,8 @@ class addMobClass{
     if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544~2594085930';
     } else if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544~4354546703';
+    //  return 'ca-app-pub-3940256099942544~4354546703';
+      return 'ca-app-pub-3113025288273721~8287602911';
     }
     return null;
   }
