@@ -1,6 +1,7 @@
 
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
+import 'package:filmster/providers/trendingProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -30,35 +31,45 @@ class _DialogWindowState extends State<DialogWindow>{
   Widget build(BuildContext context) {
     var colors = Provider.of<ThemeProvider>(context);
     List <Widget> list=[];
+    print(Provider
+        .of<SettingsProvider>(context,
+        listen: false)
+        .tvMapOfGanres);
+    print(Provider
+        .of<TrendingProvider>(context,
+        listen: false)
+        .trendingMoviesDay.length);
     widget.isTV
         ? Provider
         .of<SettingsProvider>(context,
         listen: false)
         .tvMapOfGanres
         .forEach((key, value) {
+          print(value);
       list.add(
           Container(
-                  padding: EdgeInsets.all(20),
-                  width:MediaQuery.of(context).size.width*0.3,
-                height: 24,
+                width: MediaQuery.of(context).size.width * 0.45,
+                height: 48,
                 child: CheckboxListTile(
-                  title: Text("$value",
+                  title: Text(
+                    "$value",
                     style: TextStyle(
-                      color: colors.currentFontColor,
-                      fontFamily: "AmaticSC",
-                    ),
+                        color: colors.currentFontColor,
+                        fontFamily: "AmaticSC",
+                        fontSize: 20),
                   ),
-                  value: Provider.of<SettingsProvider>(context, listen: false).tvFilter["$key"],
+                  value: Provider.of<SettingsProvider>(context, listen: false)
+                      .tvFilter["$key"],
                   onChanged: (bool value) {
                     setState(() {
-                      Provider.of<SettingsProvider>(context, listen: false).tvFilter["$key"]=!Provider.of<SettingsProvider>(context, listen: false).tvFilter["$key"];
+                      Provider.of<SettingsProvider>(context, listen: false)
+                              .tvFilter["$key"] =
+                          !Provider.of<SettingsProvider>(context, listen: false)
+                              .tvFilter["$key"];
                     });
                   },
-                  secondary: const Icon(Icons.hourglass_empty),
-                )
-              )
-      );
-    })
+                )));
+          })
         : Provider.of<SettingsProvider>(context, listen: false)
             .movieMapOfGanres
             .forEach((key, value) {
@@ -68,19 +79,19 @@ class _DialogWindowState extends State<DialogWindow>{
                 height: 48,
                 child: CheckboxListTile(
                   title: Text(
-                      "$value",
+                    "$value",
                     style: TextStyle(
-                      color: colors.currentFontColor,
-                      fontFamily: "AmaticSC",
-                      fontSize: 20
-                    ),
+                        color: colors.currentFontColor,
+                        fontFamily: "AmaticSC",
+                        fontSize: 20),
                   ),
                   activeColor: colors.currentMainColor,
                   value: Provider.of<SettingsProvider>(context, listen: false)
                       .movieFilter["$key"],
                   onChanged: (bool value) {
                     setState(() {
-                      Provider.of<SettingsProvider>(context,listen: false).movieFilter["$key"] =
+                      Provider.of<SettingsProvider>(context, listen: false)
+                              .movieFilter["$key"] =
                           !Provider.of<SettingsProvider>(context, listen: false)
                               .movieFilter["$key"];
                     });

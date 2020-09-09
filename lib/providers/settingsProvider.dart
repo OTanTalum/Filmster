@@ -29,6 +29,8 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   saveFilter(bool isTV){
+    movieArrayGenres=[];
+    tvArrayGenres=[];
     isTV
     ? tvFilter.forEach((key, value) {
       if(value){

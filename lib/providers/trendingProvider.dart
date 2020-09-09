@@ -40,6 +40,14 @@ class TrendingProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  clear(){
+    trendingMoviesWeek.clear();
+    trendingMoviesDay.clear();
+    trendingTVWeek.clear();
+    trendingTVDay.clear();
+    notifyListeners();
+  }
+
   changeIsLast(bool last){
     isLast = last;
     notifyListeners();

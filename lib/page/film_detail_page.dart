@@ -470,7 +470,10 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 alignment: Alignment.topCenter,
                 width: MediaQuery.of(context).size.width,
                 //child: Image.network("${Api().imageBannerAPI}${film.poster}",),
-                child: MovieBanner("${Api().imageBannerAPI}${film.backdrop}")),
+                child: film.backdrop!=null
+                    ? MovieBanner("${Api().imageBannerAPI}${film.backdrop}")
+                    : Container()
+            ),
             _buildInfo(),
             _buildCreatorBlock(),
             SizedBox(

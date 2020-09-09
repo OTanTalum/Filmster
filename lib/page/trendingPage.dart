@@ -39,7 +39,6 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
   initTrending() async {
-    Provider.of<SettingsProvider>(context, listen: false).getGanresSettings(isTV ? "tv" : "movie");
     await Provider.of<TrendingProvider>(context, listen: false)
         .fetchData(currentPage, isTV ? "tv" : "movie", isWeek ? "week" : "day");
     setState(() {
@@ -47,23 +46,26 @@ class _TrendingPageState extends State<TrendingPage> {
     });
   }
 
-  getCards() {
+  getCards() async{
     movieTrend = [];
     int i = 0;
+    print("currentPage");
+    print(currentPage);
     isTV
         ? isWeek
             ? Provider.of<TrendingProvider>(context, listen: false)
                 .trendingTVWeek
                 .forEach((element) {
-                bool hasGenre = false;
-                element.ganres.forEach((element) {
+                int hasGenre = 0;
+                element.ganres.forEach((genre) {
                   if (Provider.of<SettingsProvider>(context, listen: false)
                       .tvArrayGenres
-                      .contains(element)) {
-                    hasGenre = true;
+                      .contains(genre)) {
+                    ++hasGenre;
                   }
                 });
-                if (!hasGenre||Provider.of<SettingsProvider>(context, listen: false)
+                if (hasGenre==Provider.of<SettingsProvider>(context, listen: false)
+                    .tvArrayGenres.length||Provider.of<SettingsProvider>(context, listen: false)
                     .tvArrayGenres.isEmpty) {
                   i++;
                   movieTrend.add(movieCard(element));
@@ -82,19 +84,21 @@ class _TrendingPageState extends State<TrendingPage> {
                     i = 0;
                   }
                 }
+
               })
             : Provider.of<TrendingProvider>(context, listen: false)
                 .trendingTVDay
                 .forEach((element) {
-                bool hasGenre = false;
-                element.ganres.forEach((element) {
+      int hasGenre = 0;
+                element.ganres.forEach((genre) {
                   if (Provider.of<SettingsProvider>(context, listen: false)
                       .tvArrayGenres
-                      .contains(element)) {
-                    hasGenre = true;
+                      .contains(genre)) {
+                    ++hasGenre;
                   }
                 });
-                if (hasGenre||Provider.of<SettingsProvider>(context, listen: false)
+                if (hasGenre==Provider.of<SettingsProvider>(context, listen: false)
+                    .tvArrayGenres.length||Provider.of<SettingsProvider>(context, listen: false)
                     .tvArrayGenres.isEmpty) {
                   i++;
                   movieTrend.add(movieCard(element));
@@ -111,20 +115,22 @@ class _TrendingPageState extends State<TrendingPage> {
                     i = 0;
                   }
                 }
+
               })
         : isWeek
             ? Provider.of<TrendingProvider>(context, listen: false)
                 .trendingMoviesWeek
                 .forEach((element) {
-                bool hasGenre = false;
-                element.ganres.forEach((element) {
+                int hasGenre = 0;
+                element.ganres.forEach((genre) {
                   if (Provider.of<SettingsProvider>(context, listen: false)
                       .movieArrayGenres
-                      .contains(element)) {
-                    hasGenre = true;
+                      .contains(genre)) {
+                    ++hasGenre;
                   }
                 });
-                if (hasGenre||Provider.of<SettingsProvider>(context, listen: false)
+                if (hasGenre==Provider.of<SettingsProvider>(context, listen: false)
+                    .movieArrayGenres.length||Provider.of<SettingsProvider>(context, listen: false)
                     .movieArrayGenres.isEmpty) {
                   i++;
                   movieTrend.add(movieCard(element));
@@ -143,18 +149,21 @@ class _TrendingPageState extends State<TrendingPage> {
                     i = 0;
                   }
                 }
+
               })
             : Provider.of<TrendingProvider>(context, listen: false)
                 .trendingMoviesDay
                 .forEach((element) {
-                  bool hasGenre = false;
-                  element.ganres.forEach((element) {
+                  int hasGenre = 0;
+                  element.ganres.forEach((genre) {
                     if(Provider.of<SettingsProvider>(context, listen: false)
-                        .movieArrayGenres.contains(element)){
-                      hasGenre=true;
+                        .movieArrayGenres.contains(genre)){
+                      ++hasGenre;
                     }
                   });
-                if (hasGenre) {
+                if (hasGenre==Provider.of<SettingsProvider>(context, listen: false)
+                    .movieArrayGenres.length||Provider.of<SettingsProvider>(context, listen: false)
+                    .movieArrayGenres.isEmpty) {
                   i++;
                   movieTrend.add(movieCard(element));
                   if (i == 10) {
@@ -171,6 +180,25 @@ class _TrendingPageState extends State<TrendingPage> {
                   }
                 }
               });
+    print(movieTrend.length);
+    print("movieTrend.length");
+    if(movieTrend.length<10) {
+       getNextPage();
+     }
+  }
+
+  getNextPage() async {
+
+      ++currentPage;
+      await Provider.of<TrendingProvider>(context, listen: false).fetchData(
+          currentPage, isTV ? "tv" : "movie", isWeek ? "week" : "day");
+      Provider
+          .of<TrendingProvider>(context, listen: false)
+          .isLoading = false;
+      setState(() {
+        getCards();
+      });
+
   }
 
   @override
@@ -255,8 +283,10 @@ class _TrendingPageState extends State<TrendingPage> {
                 ),
               );
               setState(() {
-                getCards();
+                Provider.of<TrendingProvider>(context, listen: false).clear();
+                currentPage=1;
               });
+              await initTrending();
             },
             icon: Icon(Icons.filter_list),
           )
@@ -282,12 +312,14 @@ class _TrendingPageState extends State<TrendingPage> {
               builder: (_) => FilmDetailPage(
                   id: movie.id.toString(), type: isTV ? "tv" : "movie")));
         },
-        child: Image.network(
+        child:movie.poster!=null
+            ? Image.network(
           "${Api().imageBannerAPI}${movie.poster}",
           fit: BoxFit.fill,
           width: MediaQuery.of(context).size.width * 0.5,
           height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),
-        ),
+        )
+            :Container(),
       ),
       Positioned(
         bottom: 0,
@@ -368,18 +400,11 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
   _scrollListener() async {
-    var provider = Provider.of<TrendingProvider>(context, listen: false);
     if (Provider.of<TrendingProvider>(context, listen: false).isLast) return;
     if (Provider.of<TrendingProvider>(context, listen: false).isLoading) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      ++currentPage;
-      await Provider.of<TrendingProvider>(context, listen: false).fetchData(
-          currentPage, isTV ? "tv" : "movie", isWeek ? "week" : "day");
-      provider.isLoading = false;
-      setState(() {
-        getCards();
-      });
+      await getNextPage();
     }
   }
 }

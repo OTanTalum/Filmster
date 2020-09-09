@@ -44,9 +44,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Filmster',
       home: MyHomePage(),
-      theme: Provider
-          .of<ThemeProvider>(context)
-          .currentTheme,
+      theme: Provider.of<ThemeProvider>(context).currentTheme,
     );
   }
 }
@@ -57,7 +55,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   ScrollController _scrollController = ScrollController();
   int currentPage = 1;
@@ -69,14 +66,11 @@ class _MyHomePageState extends State<MyHomePage> {
     Future.microtask(() async {
       await initLanguage();
       await initTheme();
-      await Provider.of<SettingsProvider>(context,
-          listen: false)
+      await Provider.of<SettingsProvider>(context, listen: false)
           .getGanresSettings("movie");
-      await Provider.of<SettingsProvider>(context,
-          listen: false)
+      await Provider.of<SettingsProvider>(context, listen: false)
           .getGanresSettings("tv");
     });
-
   }
 
   @override
@@ -84,10 +78,11 @@ class _MyHomePageState extends State<MyHomePage> {
     _scrollController.dispose();
     super.dispose();
   }
+
   Future initLanguage() async {
     if (await Prefs().hasString("languageCode"))
       SettingsProvider.language =
-      (await Prefs().getStringPrefs("languageCode"));
+          (await Prefs().getStringPrefs("languageCode"));
     else
       SettingsProvider.language = ("us");
   }
@@ -126,20 +121,25 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldState,
-      backgroundColor: Provider
-          .of<ThemeProvider>(context, listen: false)
-          .currentBackgroundColor,
-      appBar: AppBar(
-        title: Text(
-          'Filmster',
-          style: TextStyle(fontFamily: "AmaticSC", fontSize: 34),
+        key: scaffoldState,
+        backgroundColor: Provider.of<ThemeProvider>(context, listen: false)
+            .currentBackgroundColor,
+        appBar: AppBar(
+          title: Row(mainAxisAlignment:MainAxisAlignment.spaceBetween,
+              children: [
+            Text(
+              'Filmster',
+              style: TextStyle(fontFamily: "AmaticSC", fontSize: 34),
+            ),
+            Text(
+              'Trending NOW!',
+              style: TextStyle(fontFamily: "AmaticSC", fontSize: 34),
+            ),
+          ]),
         ),
-      ),
-      drawer: DrawerMenu().build(context),
-      body: Container(
-        child:TrendingPage(),
-      )
-    );
+        drawer: DrawerMenu().build(context),
+        body: Container(
+          child: TrendingPage(),
+        ));
   }
 }
