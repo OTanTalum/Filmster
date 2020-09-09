@@ -39,6 +39,7 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
   initTrending() async {
+    Provider.of<SettingsProvider>(context, listen: false).getGanresSettings(isTV ? "tv" : "movie");
     await Provider.of<TrendingProvider>(context, listen: false)
         .fetchData(currentPage, isTV ? "tv" : "movie", isWeek ? "week" : "day");
     setState(() {
@@ -62,7 +63,7 @@ class _TrendingPageState extends State<TrendingPage> {
                     hasGenre = true;
                   }
                 });
-                if (hasGenre||Provider.of<SettingsProvider>(context, listen: false)
+                if (!hasGenre||Provider.of<SettingsProvider>(context, listen: false)
                     .tvArrayGenres.isEmpty) {
                   i++;
                   movieTrend.add(movieCard(element));
@@ -153,8 +154,7 @@ class _TrendingPageState extends State<TrendingPage> {
                       hasGenre=true;
                     }
                   });
-                if (hasGenre||Provider.of<SettingsProvider>(context, listen: false)
-                    .movieArrayGenres.isEmpty) {
+                if (hasGenre) {
                   i++;
                   movieTrend.add(movieCard(element));
                   if (i == 10) {
