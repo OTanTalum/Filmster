@@ -14,6 +14,7 @@ import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/dialogWindow.dart';
 
 import 'package:filmster/widgets/drawer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -46,145 +47,73 @@ class _TrendingPageState extends State<TrendingPage> {
     });
   }
 
+
+  loadPage(List<SearchResults> trendingList,  List <int> arrayGenres){
+    List<Widget> pageList= [];
+    int i = 0;
+    trendingList.forEach((element) {
+      int hasGenre = 0;
+      element.ganres.forEach((genre) {
+        if (arrayGenres.contains(genre)) {
+          ++hasGenre;
+        }
+      });
+      if (hasGenre==arrayGenres.length||arrayGenres.isEmpty) {
+        i++;
+        pageList.add(movieCard(element));
+        if (i == 10) {
+          pageList.add(
+             AdmobBanner(
+              adUnitId: AddMobClass().getBannerAdUnitId(),
+              adSize: AdmobBannerSize.FULL_BANNER,
+              listener:
+                  (AdmobAdEvent event, Map<String, dynamic> args) {
+                   if(event==AdmobAdEvent.opened) {
+                      print('Admob banner opened!');
+                      FirebaseAnalytics().logEvent(name: 'adMobTrendingClick');
+                   }
+              },
+              onBannerCreated: (AdmobBannerController controller) {},
+            ),
+          );
+          i = 0;
+        }
+      }
+
+    });
+    return pageList;
+  }
+
   getCards() async{
     movieTrend = [];
-    int i = 0;
-    print("currentPage");
-    print(currentPage);
-    isTV
+    movieTrend.addAll(
+        isTV
         ? isWeek
-            ? Provider.of<TrendingProvider>(context, listen: false)
-                .trendingTVWeek
-                .forEach((element) {
-                int hasGenre = 0;
-                element.ganres.forEach((genre) {
-                  if (Provider.of<SettingsProvider>(context, listen: false)
-                      .tvArrayGenres
-                      .contains(genre)) {
-                    ++hasGenre;
-                  }
-                });
-                if (hasGenre==Provider.of<SettingsProvider>(context, listen: false)
-                    .tvArrayGenres.length||Provider.of<SettingsProvider>(context, listen: false)
-                    .tvArrayGenres.isEmpty) {
-                  i++;
-                  movieTrend.add(movieCard(element));
-                  if (i == 10) {
-                    movieTrend.add(
-                      AdmobBanner(
-                        adUnitId: addMobClass().getBannerAdUnitId(),
-                        adSize: AdmobBannerSize.FULL_BANNER,
-                        listener:
-                            (AdmobAdEvent event, Map<String, dynamic> args) {
-                          ///todo something
-                        },
-                        onBannerCreated: (AdmobBannerController controller) {},
-                      ),
-                    );
-                    i = 0;
-                  }
-                }
-
-              })
-            : Provider.of<TrendingProvider>(context, listen: false)
-                .trendingTVDay
-                .forEach((element) {
-      int hasGenre = 0;
-                element.ganres.forEach((genre) {
-                  if (Provider.of<SettingsProvider>(context, listen: false)
-                      .tvArrayGenres
-                      .contains(genre)) {
-                    ++hasGenre;
-                  }
-                });
-                if (hasGenre==Provider.of<SettingsProvider>(context, listen: false)
-                    .tvArrayGenres.length||Provider.of<SettingsProvider>(context, listen: false)
-                    .tvArrayGenres.isEmpty) {
-                  i++;
-                  movieTrend.add(movieCard(element));
-                  if (i == 10) {
-                    movieTrend.add(
-                      AdmobBanner(
-                        adUnitId: addMobClass().getBannerAdUnitId(),
-                        adSize: AdmobBannerSize.FULL_BANNER,
-                        listener:
-                            (AdmobAdEvent event, Map<String, dynamic> args) {},
-                        onBannerCreated: (AdmobBannerController controller) {},
-                      ),
-                    );
-                    i = 0;
-                  }
-                }
-
-              })
+            ? loadPage(
+                Provider.of<TrendingProvider>(context, listen: false)
+                    .trendingTVWeek,
+                Provider.of<SettingsProvider>(context, listen: false)
+                    .tvArrayGenres)
+            : loadPage(
+                Provider.of<TrendingProvider>(context, listen: false)
+                    .trendingTVDay,
+                Provider.of<SettingsProvider>(context, listen: false)
+                    .tvArrayGenres)
         : isWeek
-            ? Provider.of<TrendingProvider>(context, listen: false)
-                .trendingMoviesWeek
-                .forEach((element) {
-                int hasGenre = 0;
-                element.ganres.forEach((genre) {
-                  if (Provider.of<SettingsProvider>(context, listen: false)
-                      .movieArrayGenres
-                      .contains(genre)) {
-                    ++hasGenre;
-                  }
-                });
-                if (hasGenre==Provider.of<SettingsProvider>(context, listen: false)
-                    .movieArrayGenres.length||Provider.of<SettingsProvider>(context, listen: false)
-                    .movieArrayGenres.isEmpty) {
-                  i++;
-                  movieTrend.add(movieCard(element));
-                  if (i == 10) {
-                    movieTrend.add(
-                      AdmobBanner(
-                        adUnitId: addMobClass().getBannerAdUnitId(),
-                        adSize: AdmobBannerSize.FULL_BANNER,
-                        listener:
-                            (AdmobAdEvent event, Map<String, dynamic> args) {
-                          ///todo something
-                        },
-                        onBannerCreated: (AdmobBannerController controller) {},
-                      ),
-                    );
-                    i = 0;
-                  }
-                }
-
-              })
-            : Provider.of<TrendingProvider>(context, listen: false)
-                .trendingMoviesDay
-                .forEach((element) {
-                  int hasGenre = 0;
-                  element.ganres.forEach((genre) {
-                    if(Provider.of<SettingsProvider>(context, listen: false)
-                        .movieArrayGenres.contains(genre)){
-                      ++hasGenre;
-                    }
-                  });
-                if (hasGenre==Provider.of<SettingsProvider>(context, listen: false)
-                    .movieArrayGenres.length||Provider.of<SettingsProvider>(context, listen: false)
-                    .movieArrayGenres.isEmpty) {
-                  i++;
-                  movieTrend.add(movieCard(element));
-                  if (i == 10) {
-                    movieTrend.add(
-                      AdmobBanner(
-                        adUnitId: addMobClass().getBannerAdUnitId(),
-                        adSize: AdmobBannerSize.FULL_BANNER,
-                        listener:
-                            (AdmobAdEvent event, Map<String, dynamic> args) {},
-                        onBannerCreated: (AdmobBannerController controller) {},
-                      ),
-                    );
-                    i = 0;
-                  }
-                }
-              });
-    print(movieTrend.length);
-    print("movieTrend.length");
-    if(movieTrend.length<10) {
-       getNextPage();
-     }
+            ? loadPage(
+                Provider.of<TrendingProvider>(context, listen: false)
+                    .trendingMoviesWeek,
+                Provider.of<SettingsProvider>(context, listen: false)
+                    .movieArrayGenres)
+            : loadPage(
+                Provider.of<TrendingProvider>(context, listen: false)
+                    .trendingMoviesDay,
+                Provider.of<SettingsProvider>(context, listen: false)
+                    .movieArrayGenres)
+    );
+    if (movieTrend.length < 10) {
+      getNextPage();
+    }
   }
 
   getNextPage() async {
@@ -304,7 +233,7 @@ class _TrendingPageState extends State<TrendingPage> {
     super.dispose();
   }
 
-  movieCard(SearchResults movie) {
+ Widget movieCard(SearchResults movie) {
     return Stack(children: [
       GestureDetector(
         onTap: () async {
@@ -343,9 +272,9 @@ class _TrendingPageState extends State<TrendingPage> {
                         child: Text(movie.popularity.toString(),
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontFamily: "AmaticSC",
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                              fontFamily: "MPLUSRounded1c",
+                              fontWeight: FontWeight.w300,
+                              fontSize: 20,
                               color: Colors.white,
                             ))),
                   ]),

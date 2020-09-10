@@ -7,6 +7,7 @@ import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/setting/adMob.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -108,17 +109,38 @@ class DrawerMenu {
                       ),
                     ),
                   ),
+//                  ListTile(
+//                    onTap: () {
+////                      Navigator.of(context).pushReplacement(
+////                          MaterialPageRoute(builder: (_) => LoginPage()));
+//                    },
+//                    title: Text(
+//                      AppLocalizations().translate(context, WordKeys.login),
+//                      style: TextStyle(
+//                        fontFamily: "AmaticSC",
+//                        fontWeight: FontWeight.bold,
+//                        fontSize: 27.0,
+//                        color: provider.currentFontColor,
+//                      ),
+//                    ),
+//                  ),
                 ]),
             SizedBox(
               height: 24,
             ),
             Column(
               children: [
-                AdmobBanner(
-                  adUnitId: addMobClass().getBannerAdUnitId(),
+               AdmobBanner(
+                  adUnitId: AddMobClass().getDrawerBannerAdUnitId(),
                   adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
-                  listener: (AdmobAdEvent event, Map<String, dynamic> args) {},
-                  onBannerCreated: (AdmobBannerController controller) {},
+                  listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+                    if(event==AdmobAdEvent.opened) {
+                      print('Admob banner opened!');
+                      FirebaseAnalytics().logEvent(name: 'adMobDrawerClick');
+                    }
+                  },
+                  onBannerCreated: (AdmobBannerController controller) {
+                  },
                 ),
                 Center(
                   child: FutureBuilder<String>(

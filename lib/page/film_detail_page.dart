@@ -61,7 +61,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: "MPLUSRounded1c",
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w700,
           fontSize: size,
           color: provider.currentMainColor,
         ),
@@ -298,7 +298,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader("${film.title}", 25),
+            _buildHeader("${film.title}", 30),
             film.title != film.originalTitle
                 ? _buildHeader("${film.originalTitle}", 22)
                 : Container(),
@@ -443,16 +443,18 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   Text(
                     fieldName,
                     style: TextStyle(
-                      fontFamily: "AmaticSC",
-                      fontSize: 22,
+                      fontFamily: "MPLUSRounded1c",
+                      fontWeight: FontWeight.w300,
+                      fontSize: 18,
                       color: provider.currentFontColor,
                     ),
                   ),
                   Text(
                     field.toString(),
                     style: TextStyle(
-                      fontFamily: "AmaticSC",
-                      fontSize: 22,
+                      fontFamily: "MPLUSRounded1c",
+                      fontWeight: FontWeight.w300,
+                      fontSize: 18,
                       color: provider.currentFontColor,
                     ),
                   ),

@@ -13,4 +13,5 @@ const ENG = {
   WordKeys.enterTVName: "Enter TV name",
   WordKeys.day: "Day",
   WordKeys.week: "Week",
+  WordKeys.login: "Login",
 };
