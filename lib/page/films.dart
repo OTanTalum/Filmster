@@ -277,7 +277,7 @@ class _FilmsPageState extends State<FilmsPage> {
           child: Icon(Icons.favorite, color: myColors.currentFontColor),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        drawer: DrawerMenu().build(context),
+        //drawer: DrawerMenu().build(context),
         body: _buildBody(context),
       ),
     );

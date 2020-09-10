@@ -56,7 +56,7 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Icon(Icons.favorite, color: myColors.currentFontColor),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      drawer: DrawerMenu().build(context),
+      //drawer: DrawerMenu().build(context),
       body: _buildBody(context),
     ),);
   }

@@ -177,7 +177,7 @@ class _TrendingPageState extends State<TrendingPage> {
               });
               await initTrending();
             },
-            icon: Icon(Icons.filter_list),
+            icon: Icon(Icons.movie_filter),
           )
         ]),
       ),

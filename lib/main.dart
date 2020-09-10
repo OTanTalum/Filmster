@@ -16,6 +16,7 @@ import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
 import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
 import 'package:filmster/widgets/drawer.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 //Flutter
 import 'package:flutter/material.dart';
@@ -25,8 +26,11 @@ import 'package:provider/provider.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 
 void main() {
+
   WidgetsFlutterBinding.ensureInitialized();
   Admob.initialize();
+  Crashlytics.instance.enableInDevMode = true;
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
   runApp(
     MultiProvider(
       providers: [
@@ -62,7 +66,6 @@ class _MyHomePageState extends State<MyHomePage> {
   ScrollController _scrollController = ScrollController();
   int currentPage = 1;
   List<Widget> movieTrend = [];
-  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -124,37 +127,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-   var  myColors = Provider.of<ThemeProvider>(context, listen: false);
+    var myColors = Provider.of<ThemeProvider>(context, listen: false);
     return Scaffold(
         key: scaffoldState,
         backgroundColor: myColors.currentBackgroundColor,
         appBar: AppBar(
-          title: Row(mainAxisAlignment:MainAxisAlignment.spaceBetween,
+          title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-            Text(
-              'Filmster',
-              style: TextStyle(fontFamily: "AmaticSC", fontSize: 34),
-            ),
-          ]),
+                Text('Filmster',
+                  style: TextStyle(fontFamily: "AmaticSC", fontSize: 34),
+                ),
+              ]),
         ),
         bottomNavigationBar: CustomeBottomNavigationBar(),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-
-          },
+          onPressed: () {},
           elevation: 0,
-          backgroundColor:myColors.currentSecondaryColor ,
-          child: Icon(
-              Icons.favorite,
-              color:myColors.currentFontColor
-          ),
+          backgroundColor: myColors.currentSecondaryColor,
+          child: Icon(Icons.favorite, color: myColors.currentFontColor),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        drawer: DrawerMenu().build(context),
-        body: Stack(
-          children:[
-            TrendingPage(),
-          ]
-        ));
+        //drawer: DrawerMenu().build(context),
+        body: Stack(children: [
+          TrendingPage(),
+        ]));
   }
 }

@@ -1,5 +1,6 @@
 
 import 'package:filmster/page/films.dart';
+import 'package:filmster/page/loginPage.dart';
 import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
@@ -31,10 +32,14 @@ class CustomeBottomNavigationBar extends StatefulWidget {
             children: <Widget>[
               IconButton(
                 onPressed: () {
-                  Provider.of<SettingsProvider>(context, listen: false)
-                      .changePage(0);
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => MyHomePage()));
+                  if(Provider
+                      .of<SettingsProvider>(context,listen: false)
+                      .currentPage != 0) {
+                    Provider.of<SettingsProvider>(context, listen: false)
+                        .changePage(0);
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => MyHomePage()),(Route<dynamic> route) => false);
+                  }
                 },
                 icon: Icon(
                   Icons.home,
@@ -81,12 +86,11 @@ class CustomeBottomNavigationBar extends StatefulWidget {
                   size: 36,
                 ),
               ),
-
-              Opacity(
-                opacity: 0.5,
-                child: IconButton(
+                IconButton(
                   onPressed: () {
-                  //   Provider.of<SettingsProvider>(context, listen:false).changePage(3);
+                     Provider.of<SettingsProvider>(context, listen:false).changePage(3);
+                     Navigator.of(context).push(
+                         MaterialPageRoute(builder: (_) => LoginPage()));
                   },
                   icon: Icon(
                     Icons.account_box,
@@ -97,7 +101,6 @@ class CustomeBottomNavigationBar extends StatefulWidget {
                         : myColors.currentFontColor,
                     size: 36,
                   ),
-                ),
               ),
             ],
           ),
