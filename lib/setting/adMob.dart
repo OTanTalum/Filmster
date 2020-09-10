@@ -32,6 +32,15 @@ class AddMobClass{
     return null;
   }
 
+  String getMovieDetailBannerAdUnitId() {
+    if (Platform.isIOS) {
+      return 'ca-app-pub-3113025288273721/1682926849';
+    } else if (Platform.isAndroid) {
+      return 'ca-app-pub-3113025288273721/6607756946';
+    }
+    return null;
+  }
+
   getAdMobId(){
     if (Platform.isIOS) {
       return 'ca-app-pub-3113025288273721~7357255507';

@@ -13,6 +13,7 @@ class SettingsProvider extends ChangeNotifier {
   Map<String, bool> movieFilter ={};
   List <int> tvArrayGenres =[];
   List <int> movieArrayGenres =[];
+  int currentPage = 0;
 
   getGanresSettings(type) async{
    List list = await Api().getGenres(type);
@@ -51,6 +52,10 @@ class SettingsProvider extends ChangeNotifier {
     return language;
   }
 
+  changePage(int pageIndex){
+    currentPage = pageIndex;
+    notifyListeners();
+  }
   getLanguage(){
     return language;
   }

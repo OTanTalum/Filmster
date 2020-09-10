@@ -66,7 +66,7 @@ class DrawerMenu {
                   ),
                   ListTile(
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => FilmsPage(type: "movie")));
                     },
                     title: Text(
@@ -81,8 +81,9 @@ class DrawerMenu {
                   ),
                   ListTile(
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => FilmsPage(type: "tv")));
+
                     },
                     title: Text(
                       AppLocalizations().translate(context, WordKeys.TV),
@@ -96,7 +97,7 @@ class DrawerMenu {
                   ),
                   ListTile(
                     onTap: () {
-                      Navigator.of(context).pushReplacement(
+                      Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => SettingsPage()));
                     },
                     title: Text(
@@ -111,8 +112,8 @@ class DrawerMenu {
                   ),
 //                  ListTile(
 //                    onTap: () {
-////                      Navigator.of(context).pushReplacement(
-////                          MaterialPageRoute(builder: (_) => LoginPage()));
+// //                      Navigator.of(context).pushReplacement(
+// //                          MaterialPageRoute(builder: (_) => LoginPage()));
 //                    },
 //                    title: Text(
 //                      AppLocalizations().translate(context, WordKeys.login),

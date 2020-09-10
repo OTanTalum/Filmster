@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:filmster/localization/languages/workKeys.dart';
@@ -7,6 +6,7 @@ import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
+import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
 
 import 'package:filmster/widgets/drawer.dart';
 
@@ -15,15 +15,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
-
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
   @override
-  void initState() {
-  }
+  void initState() {}
 
   @override
   void dispose() {
@@ -32,9 +30,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:
-      Provider.of<ThemeProvider>(context).currentBackgroundColor,
+    var myColors = Provider.of<ThemeProvider>(context, listen: false);
+    return WillPopScope(
+        onWillPop: () {
+          Provider.of<SettingsProvider>(context, listen: false)
+              .changePage(0);
+          Navigator.of(context).pop();
+        },
+    child:Scaffold(
+      backgroundColor: myColors.currentBackgroundColor,
       appBar: AppBar(
         title: Text(
           AppLocalizations().translate(context, WordKeys.settings),
@@ -44,50 +48,60 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ),
       ),
-      drawer: DrawerMenu().build(context),
+      bottomNavigationBar: CustomeBottomNavigationBar(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        elevation: 0,
+        backgroundColor: myColors.currentSecondaryColor,
+        child: Icon(Icons.favorite, color: myColors.currentFontColor),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      //drawer: DrawerMenu().build(context),
       body: _buildBody(context),
-    );
+    ),);
   }
 
-  Widget _buildBody(context){
+  Widget _buildBody(context) {
     return Column(
       children: <Widget>[
-        Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _buildTitle(AppLocalizations().translate(context, WordKeys.changeYourTheme)),
-                    SizedBox(
-                      height: 40,
-                    width: MediaQuery.of(context).size.width*0.5,
-                    ),
-                    _buildThemeButton(MyThemeKeys.LIGHT, "Light"),
-                    _buildThemeButton(MyThemeKeys.DARK, "Dark"),
-                    _buildThemeButton(MyThemeKeys.DARKER, "Darker"),
-                    _buildThemeButton(MyThemeKeys.Loft, "Loft"),
-                  ]),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _buildTitle(AppLocalizations().translate(context, WordKeys.changeYourLanguage)),
-                  SizedBox(
-                    height: 40,
-                    width: MediaQuery.of(context).size.width*0.5,
-                  ),
-                  _buildLanguageButton("us", "English"),
-                  _buildLanguageButton("ru", "Russian"),
-                  _buildLanguageButton("pt", "Spanish"),
-                  SizedBox(height: 50,),
-                ],
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                _buildTitle(AppLocalizations()
+                    .translate(context, WordKeys.changeYourTheme)),
+                SizedBox(
+                  height: 40,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                ),
+                _buildThemeButton(MyThemeKeys.LIGHT, "Light"),
+                _buildThemeButton(MyThemeKeys.DARK, "Dark"),
+                _buildThemeButton(MyThemeKeys.DARKER, "Darker"),
+                _buildThemeButton(MyThemeKeys.Loft, "Loft"),
+              ]),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              _buildTitle(AppLocalizations()
+                  .translate(context, WordKeys.changeYourLanguage)),
+              SizedBox(
+                height: 40,
+                width: MediaQuery.of(context).size.width * 0.5,
               ),
-            ]),
+              _buildLanguageButton("us", "English"),
+              _buildLanguageButton("ru", "Russian"),
+              _buildLanguageButton("pt", "Spanish"),
+              SizedBox(
+                height: 50,
+              ),
+            ],
+          ),
+        ]),
       ],
     );
   }
 
-  _buildLanguageButton (String languageCode, String languageName){
+  _buildLanguageButton(String languageCode, String languageName) {
     return RaisedButton(
       onPressed: () async {
         setState(() {
@@ -95,24 +109,19 @@ class _SettingsPageState extends State<SettingsPage> {
               .changeLanguage(languageCode);
           Prefs().setStringPrefs('languageCode', languageCode);
         });
-        await Provider.of<SettingsProvider>(context,
-            listen: false)
+        await Provider.of<SettingsProvider>(context, listen: false)
             .getGanresSettings("movie");
-        await Provider.of<SettingsProvider>(context,
-            listen: false)
+        await Provider.of<SettingsProvider>(context, listen: false)
             .getGanresSettings("tv");
       },
       child: Text(
         languageName,
-        style: TextStyle(
-            fontFamily: "AmaticSC",
-            fontSize: 20
-        ),
+        style: TextStyle(fontFamily: "AmaticSC", fontSize: 20),
       ),
     );
   }
 
-  _buildThemeButton(MyThemeKeys themeKey, String themeKeyName){
+  _buildThemeButton(MyThemeKeys themeKey, String themeKeyName) {
     return RaisedButton(
       onPressed: () {
         Provider.of<ThemeProvider>(context, listen: false)
@@ -121,25 +130,20 @@ class _SettingsPageState extends State<SettingsPage> {
       },
       child: Text(
         themeKeyName,
-        style: TextStyle(
-            fontFamily: "AmaticSC",
-            fontSize: 20
-        ),
+        style: TextStyle(fontFamily: "AmaticSC", fontSize: 20),
       ),
     );
   }
 
-  _buildTitle(String titleText){
+  _buildTitle(String titleText) {
     return Text(
       titleText,
       style: TextStyle(
         fontFamily: "AmaticSC",
         fontSize: 26,
         color:
-        Provider.of<ThemeProvider>(context, listen: false)
-            .currentFontColor,
+            Provider.of<ThemeProvider>(context, listen: false).currentFontColor,
       ),
     );
   }
-
 }

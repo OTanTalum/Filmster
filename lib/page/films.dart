@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:filmster/localization/languages/workKeys.dart';
@@ -9,6 +8,7 @@ import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/setting/api.dart';
+import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
 
 import 'package:filmster/widgets/drawer.dart';
 
@@ -42,97 +42,97 @@ class _FilmsPageState extends State<FilmsPage> {
 
   _buildVoteBlock(icon, text) {
     var provider = Provider.of<ThemeProvider>(context);
-    return Row(
-        children: [
-          Icon(
-           icon,
-            color: provider.currentFontColor,
-          ),
-          Container(
-              padding: EdgeInsets.only(left: 5),
-              child: Text(text,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: "AmaticSC",
-                    fontSize: 25,
-                    //  fontWeight: FontWeight.bold,
-                    color: provider.currentFontColor,
-                  )))
-        ]);
+    return Row(children: [
+      Icon(
+        icon,
+        color: provider.currentFontColor,
+      ),
+      Container(
+          padding: EdgeInsets.only(left: 5),
+          child: Text(text,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: "AmaticSC",
+                fontSize: 25,
+                //  fontWeight: FontWeight.bold,
+                color: provider.currentFontColor,
+              )))
+    ]);
   }
 
   buildGenres(id) {
     return Text(
-      widget.type=="movie"
+      widget.type == "movie"
           ? Provider.of<SettingsProvider>(context).movieMapOfGanres[id]
           : Provider.of<SettingsProvider>(context).tvMapOfGanres[id],
-       style:  TextStyle(
-          fontFamily: "AmaticSC",
-          fontSize: 25,
-          //  fontWeight: FontWeight.bold,
-          color: Provider.of<ThemeProvider>(context).currentFontColor,
-        ),
+      style: TextStyle(
+        fontFamily: "AmaticSC",
+        fontSize: 25,
+        //  fontWeight: FontWeight.bold,
+        color: Provider.of<ThemeProvider>(context).currentFontColor,
+      ),
     );
   }
 
   _buildFilm(SearchResults film) {
     var provider = Provider.of<ThemeProvider>(context);
-    List<Widget> list=[];
-    if(film.ganres!=null&& film.ganres.isNotEmpty) {
-       film.ganres.forEach((element) {
-         list.add(buildGenres(element));
-       }) ;
-      }
+    List<Widget> list = [];
+    if (film.ganres != null && film.ganres.isNotEmpty) {
+      film.ganres.forEach((element) {
+        list.add(buildGenres(element));
+      });
+    }
     return Container(
       child: GestureDetector(
         onTap: () async {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => FilmDetailPage(id: film.id.toString(), type: widget.type)));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) =>
+                  FilmDetailPage(id: film.id.toString(), type: widget.type)));
         },
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 15.0),
             child: Container(
-              height: MediaQuery.of(context).size.height*0.26,
+              height: MediaQuery.of(context).size.height * 0.26,
               decoration: BoxDecoration(
                 color: provider.currentSecondaryColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-               Column(
-              children:[
-                film.poster != null
-                    ? Image.network(
-                      "${Api().imageBannerAPI}${film.poster}",
-                        height: 139,
-                        width: 100,
+                    Column(children: [
+                      film.poster != null
+                          ? Image.network(
+                              "${Api().imageBannerAPI}${film.poster}",
+                              height: 139,
+                              width: 100,
+                            )
+                          : Container(
+                              height: 139,
+                              width: 100,
+                              child: Icon(
+                                Icons.do_not_disturb_on,
+                                size: 100.0,
+                                color: provider.currentAcidColor,
+                              )),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          _buildVoteBlock(
+                              Icons.trending_up, film.popularity.toString()),
+                          _buildVoteBlock(Icons.grade, film.voteAverage),
+                        ],
                       )
-                    : Container(
-                        height: 139,
-                        width: 100,
-                        child: Icon(
-                          Icons.do_not_disturb_on,
-                          size: 100.0,
-                          color: provider.currentAcidColor,
-                        )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    _buildVoteBlock(Icons.trending_up, film.popularity.toString()),
-                    _buildVoteBlock( Icons.grade, film.voteAverage),
-                  ],
-                )
-                ]),
-                Container(
-                  padding: EdgeInsets.only(left: 10),
-                  width: MediaQuery.of(context).size.width*0.5,
-                    height: MediaQuery.of(context).size.height*0.23,
-                    child:Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
+                    ]),
+                    Container(
+                      padding: EdgeInsets.only(left: 10),
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      height: MediaQuery.of(context).size.height * 0.23,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
                             Row(children: [
                               Expanded(
                                 child: Text(
@@ -147,47 +147,47 @@ class _FilmsPageState extends State<FilmsPage> {
                                   ),
                                 ),
                               ),
-
                             ]),
-                      film.isAdult
-                          ? Text("18+",
-                          style: TextStyle(
-                            fontFamily: "AmaticSC",
-                            fontSize: 30,
-                            color: provider.currentAcidColor,
-                            fontWeight: FontWeight.w700,
-                          ))
-                          : Container(),
-                            film.title!=film.originalTitle
-                         ? Expanded(
-                          child: Text(film.originalTitle,
-                              overflow: TextOverflow.ellipsis,
+                            film.isAdult
+                                ? Text("18+",
+                                    style: TextStyle(
+                                      fontFamily: "AmaticSC",
+                                      fontSize: 30,
+                                      color: provider.currentAcidColor,
+                                      fontWeight: FontWeight.w700,
+                                    ))
+                                : Container(),
+                            film.title != film.originalTitle
+                                ? Expanded(
+                                    child: Text(
+                                      film.originalTitle,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: "AmaticSC",
+                                        fontSize: 23,
+                                        //  fontWeight: FontWeight.bold,
+                                        color: provider.currentFontColor,
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            Expanded(
+                                child: Text(
+                              film.release ?? "-",
                               style: TextStyle(
+                                fontSize: 20,
                                 fontFamily: "AmaticSC",
-                                fontSize: 23,
-                              //  fontWeight: FontWeight.bold,
                                 color: provider.currentFontColor,
                               ),
-                          ),
-                     )
-                      :Container(),
-                      Expanded(
-                          child: Text(
-                            film.release??"-",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: "AmaticSC",
-                              color: provider.currentFontColor,
+                            )),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.46,
+                              child: Wrap(
+                                direction: Axis.horizontal,
+                                spacing: 6,
+                                children: list,
+                              ),
                             ),
-                          )),
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.46,
-                        child: Wrap(
-                          direction: Axis.horizontal,
-                          spacing: 6,
-                          children: list,
-                        ),
-                      ),
 //                      Row(
 //                        mainAxisAlignment: MainAxisAlignment.spaceAround,
 //                        children: <Widget>[
@@ -205,9 +205,9 @@ class _FilmsPageState extends State<FilmsPage> {
 //                              color: provider.currentFontColor,
 //                            ),
 //                          ))
-                    ]),
-                ),
-              ]),
+                          ]),
+                    ),
+                  ]),
             )),
       ),
     );
@@ -242,30 +242,44 @@ class _FilmsPageState extends State<FilmsPage> {
     if (textController.text.length >= 3) {
       setState(() {
         currentPage = 1;
-        Provider.of<SearchProvider>(context, listen: false).fetchData(textController.text, currentPage, widget.type);
+        Provider.of<SearchProvider>(context, listen: false)
+            .fetchData(textController.text, currentPage, widget.type);
       });
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:
-          Provider.of<ThemeProvider>(context).currentBackgroundColor,
-      appBar: AppBar(
-        title: Text(
-          widget.type=="movie"
-          ? AppLocalizations().translate(context, WordKeys.findYourMovie)
-          : AppLocalizations().translate(context, WordKeys.findYourTV),
-          style: TextStyle(
-            fontFamily: "AmaticSC",
-            fontSize: 30,
+    var myColors = Provider.of<ThemeProvider>(context, listen: false);
+    return WillPopScope(
+      onWillPop: () {
+        Provider.of<SettingsProvider>(context, listen: false).changePage(0);
+        Navigator.of(context).pop();
+      },
+      child: Scaffold(
+        backgroundColor: myColors.currentBackgroundColor,
+        appBar: AppBar(
+          title: Text(
+            widget.type == "movie"
+                ? AppLocalizations().translate(context, WordKeys.findYourMovie)
+                : AppLocalizations().translate(context, WordKeys.findYourTV),
+            style: TextStyle(
+              fontFamily: "AmaticSC",
+              fontSize: 30,
+            ),
           ),
         ),
+        bottomNavigationBar: CustomeBottomNavigationBar(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          elevation: 12,
+          backgroundColor: myColors.currentSecondaryColor,
+          child: Icon(Icons.favorite, color: myColors.currentFontColor),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        //drawer: DrawerMenu().build(context),
+        body: _buildBody(context),
       ),
-      drawer: DrawerMenu().build(context),
-      body: _buildBody(context),
     );
   }
 
@@ -306,10 +320,10 @@ class _FilmsPageState extends State<FilmsPage> {
                   width: 1.0),
             ),
             hintStyle: TextStyle(
-              color: Provider.of<ThemeProvider>(context).currentSecondaryColor,
-              fontFamily: "AmaticSC"
-            ),
-            hintText: widget.type=="movie"
+                color:
+                    Provider.of<ThemeProvider>(context).currentSecondaryColor,
+                fontFamily: "AmaticSC"),
+            hintText: widget.type == "movie"
                 ? AppLocalizations().translate(context, WordKeys.enterMovieName)
                 : AppLocalizations().translate(context, WordKeys.enterTVName),
           ),
@@ -324,25 +338,26 @@ class _FilmsPageState extends State<FilmsPage> {
   }
 
   _buildBody(BuildContext context) {
-    return  Stack(
-          children: <Widget>[
-            buildInput(),
-            Padding(
-              padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.107, left: 24, right: 24),
-            child: _buildResults(context))
-      ]
-    );
+    return Stack(children: <Widget>[
+      buildInput(),
+      Padding(
+          padding: EdgeInsets.only(
+              top: MediaQuery.of(context).size.height * 0.107,
+              left: 24,
+              right: 24),
+          child: _buildResults(context))
+    ]);
   }
 
   _scrollListener() async {
     var provider = Provider.of<SearchProvider>(context, listen: false);
-    if(provider.isLoading)
-      return;
+    if (provider.isLoading) return;
     if (Provider.of<SearchProvider>(context, listen: false).isLast) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       ++currentPage;
-      await Provider.of<SearchProvider>(context, listen: false).fetchData(provider.oldValue, currentPage, widget.type);
+      await Provider.of<SearchProvider>(context, listen: false)
+          .fetchData(provider.oldValue, currentPage, widget.type);
       setState(() {
         provider.isLoading = false;
       });
