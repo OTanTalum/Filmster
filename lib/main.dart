@@ -131,10 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
               'Filmster',
               style: TextStyle(fontFamily: "AmaticSC", fontSize: 34),
             ),
-            Text(
-              'Trending NOW!',
-              style: TextStyle(fontFamily: "AmaticSC", fontSize: 34),
-            ),
           ]),
         ),
         drawer: DrawerMenu().build(context),

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
 
-class addMobClass{
+class AddMobClass{
   AdmobInterstitial interstitialAd;
   AdmobReward rewardAd;
 
@@ -16,19 +16,26 @@ class addMobClass{
 
   String getBannerAdUnitId() {
     if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/4339318960';
+      return 'ca-app-pub-3113025288273721/9709739067';
     } else if (Platform.isAndroid) {
-     // return 'ca-app-pub-3940256099942544/8865242552';
       return 'ca-app-pub-3113025288273721/1021263084';
+    }
+    return null;
+  }
+
+  String getDrawerBannerAdUnitId() {
+    if (Platform.isIOS) {
+      return 'ca-app-pub-3113025288273721/3962795196';
+    } else if (Platform.isAndroid) {
+      return 'ca-app-pub-3113025288273721/5425703062';
     }
     return null;
   }
 
   getAdMobId(){
     if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544~2594085930';
+      return 'ca-app-pub-3113025288273721~7357255507';
     } else if (Platform.isAndroid) {
-    //  return 'ca-app-pub-3940256099942544~4354546703';
       return 'ca-app-pub-3113025288273721~8287602911';
     }
     return null;
