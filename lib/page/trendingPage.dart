@@ -28,7 +28,6 @@ class TrendingPage extends StatefulWidget {
 class _TrendingPageState extends State<TrendingPage> {
   ScrollController _scrollController = ScrollController();
   int currentPage = 1;
-  List<Widget> movieTrend = [];
   bool isWeek = false;
   bool isTV = false;
 
@@ -42,9 +41,6 @@ class _TrendingPageState extends State<TrendingPage> {
   initTrending() async {
     await Provider.of<TrendingProvider>(context, listen: false)
         .fetchData(currentPage, isTV ? "tv" : "movie", isWeek ? "week" : "day");
-    setState(() {
-      getCards();
-    });
   }
 
 
@@ -79,55 +75,19 @@ class _TrendingPageState extends State<TrendingPage> {
           i = 0;
         }
       }
-
     });
     return pageList;
   }
 
-  getCards() async{
-    movieTrend = [];
-    movieTrend.addAll(
-        isTV
-        ? isWeek
-            ? loadPage(
-                Provider.of<TrendingProvider>(context, listen: false)
-                    .trendingTVWeek,
-                Provider.of<SettingsProvider>(context, listen: false)
-                    .tvArrayGenres)
-            : loadPage(
-                Provider.of<TrendingProvider>(context, listen: false)
-                    .trendingTVDay,
-                Provider.of<SettingsProvider>(context, listen: false)
-                    .tvArrayGenres)
-        : isWeek
-            ? loadPage(
-                Provider.of<TrendingProvider>(context, listen: false)
-                    .trendingMoviesWeek,
-                Provider.of<SettingsProvider>(context, listen: false)
-                    .movieArrayGenres)
-            : loadPage(
-                Provider.of<TrendingProvider>(context, listen: false)
-                    .trendingMoviesDay,
-                Provider.of<SettingsProvider>(context, listen: false)
-                    .movieArrayGenres)
-    );
-    if (movieTrend.length < 10) {
-      getNextPage();
-    }
-  }
-
   getNextPage() async {
-
       ++currentPage;
       await Provider.of<TrendingProvider>(context, listen: false).fetchData(
           currentPage, isTV ? "tv" : "movie", isWeek ? "week" : "day");
       Provider
           .of<TrendingProvider>(context, listen: false)
           .isLoading = false;
-      setState(() {
-        getCards();
-      });
-
+      Provider
+          .of<TrendingProvider>(context,listen: false).notifyListeners();
   }
 
   @override
@@ -308,10 +268,36 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
   _buildBody(BuildContext context) {
+    List<Widget> caramba=[];
+    List movieList =isTV
+        ? isWeek
+        ? Provider.of<TrendingProvider>(context)
+            .trendingTVWeek
+        : Provider.of<TrendingProvider>(context)
+            .trendingTVDay
+        : isWeek
+        ?
+        Provider.of<TrendingProvider>(context)
+            .trendingMoviesWeek
+        :
+        Provider.of<TrendingProvider>(context)
+            .trendingMoviesDay;
+    caramba.addAll(
+      loadPage(
+        movieList,
+          isTV
+              ? Provider.of<SettingsProvider>(context).tvArrayGenres
+              : Provider.of<SettingsProvider>(context).movieArrayGenres
+      ));
+    if(caramba.length<10)
+      getNextPage();
+    // movieList.forEach((element) {
+    //   caramba.add(movieCard(element));
+    // });
     return SafeArea(
       child: SingleChildScrollView(
         controller: _scrollController,
-        child: Provider.of<TrendingProvider>(context, listen: false).isLoading
+        child: Provider.of<TrendingProvider>(context).isLoading
             ? Container(
                 height: 200,
                 child: Center(
@@ -322,7 +308,7 @@ class _TrendingPageState extends State<TrendingPage> {
                 ),
               )
             : Wrap(
-                children: movieTrend,
+                children: caramba,
               ),
       ),
     );

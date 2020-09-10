@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:dartpedia/dartpedia.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
+import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/movieBanner.dart';
 import 'package:filmster/widgets/progressBarWidget.dart';
@@ -10,6 +12,7 @@ import 'dart:async';
 import 'package:filmster/widgets/drawer.dart';
 
 import 'package:filmster/model/film.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dartpedia/dartpedia.dart' as wiki;
@@ -482,6 +485,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               height: 20,
             ),
             _buildProduction(),
+            _buildBannerField(),
             _buildWebLinkBlock(),
             //  Container( child: getDesc(movie),)
           ]),
@@ -496,6 +500,21 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             ),
           ),
         ]));
+  }
+
+  _buildBannerField(){
+    return AdmobBanner(
+      adUnitId: AddMobClass().getMovieDetailBannerAdUnitId(),
+      adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
+      listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+        if(event==AdmobAdEvent.opened) {
+          print('Admob banner opened!');
+          FirebaseAnalytics().logEvent(name: 'adMobMovieDetailClick');
+        }
+      },
+      onBannerCreated: (AdmobBannerController controller) {
+      },
+    );
   }
 
   List<Widget> getRaiting(movie) {

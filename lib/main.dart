@@ -3,6 +3,8 @@
 import 'dart:io';
 
 import 'package:filmster/model/search.dart';
+import 'package:filmster/page/films.dart';
+import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/page/trendingPage.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
@@ -12,6 +14,7 @@ import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
+import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
 import 'package:filmster/widgets/drawer.dart';
 
 //Flutter
@@ -59,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ScrollController _scrollController = ScrollController();
   int currentPage = 1;
   List<Widget> movieTrend = [];
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -120,10 +124,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+   var  myColors = Provider.of<ThemeProvider>(context, listen: false);
     return Scaffold(
         key: scaffoldState,
-        backgroundColor: Provider.of<ThemeProvider>(context, listen: false)
-            .currentBackgroundColor,
+        backgroundColor: myColors.currentBackgroundColor,
         appBar: AppBar(
           title: Row(mainAxisAlignment:MainAxisAlignment.spaceBetween,
               children: [
@@ -133,9 +137,24 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ]),
         ),
+        bottomNavigationBar: CustomeBottomNavigationBar(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+
+          },
+          elevation: 0,
+          backgroundColor:myColors.currentSecondaryColor ,
+          child: Icon(
+              Icons.favorite,
+              color:myColors.currentFontColor
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         drawer: DrawerMenu().build(context),
-        body: Container(
-          child: TrendingPage(),
+        body: Stack(
+          children:[
+            TrendingPage(),
+          ]
         ));
   }
 }
