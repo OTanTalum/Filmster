@@ -13,4 +13,5 @@ const RUS = {
   WordKeys.enterTVName: "Введите название сериала",
   WordKeys.day: "День",
   WordKeys.week: "Неделя",
+  WordKeys.login: "Вход",
 };

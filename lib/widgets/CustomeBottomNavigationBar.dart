@@ -30,81 +30,37 @@ class CustomeBottomNavigationBar extends StatefulWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              IconButton(
-                onPressed: () {
-                  if(Provider
-                      .of<SettingsProvider>(context,listen: false)
-                      .currentPage != 0) {
-                    Provider.of<SettingsProvider>(context, listen: false)
-                        .changePage(0);
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (_) => MyHomePage()),(Route<dynamic> route) => false);
-                  }
-                },
-                icon: Icon(
-                  Icons.home,
-                  color: Provider
-                      .of<SettingsProvider>(context)
-                      .currentPage == 0
-                      ? myColors.currentMainColor
-                      : myColors.currentFontColor,
-                  size: 36,
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  Provider.of<SettingsProvider>(context, listen: false)
-                      .changePage(1);
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => FilmsPage(type: "movie")));
-                },
-                icon: Icon(
-                  Icons.search,
-                  color: Provider
-                      .of<SettingsProvider>(context)
-                      .currentPage == 1
-                      ? myColors.currentMainColor
-                      : myColors.currentFontColor,
-                  size: 36,
-                ),
-              ),
+              _buildIcon(0, MyHomePage(), Icons.home),
+              _buildIcon(1, FilmsPage(type: "movie"), Icons.search),
               SizedBox(width: 24),
-              IconButton(
-                onPressed: () {
-                  Provider.of<SettingsProvider>(context, listen: false)
-                      .changePage(2);
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => SettingsPage()));
-                },
-                icon: Icon(
-                  Icons.settings,
-                  color: Provider
-                      .of<SettingsProvider>(context)
-                      .currentPage == 2
-                      ? myColors.currentMainColor
-                      : myColors.currentFontColor,
-                  size: 36,
-                ),
-              ),
-                IconButton(
-                  onPressed: () {
-                     Provider.of<SettingsProvider>(context, listen:false).changePage(3);
-                     Navigator.of(context).push(
-                         MaterialPageRoute(builder: (_) => LoginPage()));
-                  },
-                  icon: Icon(
-                    Icons.account_box,
-                    color: Provider
-                        .of<SettingsProvider>(context)
-                        .currentPage == 3
-                        ? myColors.currentMainColor
-                        : myColors.currentFontColor,
-                    size: 36,
-                  ),
-              ),
+              _buildIcon(2, SettingsPage(), Icons.settings),
+              _buildIcon(3, LoginPage(), Icons.account_box),
             ],
           ),
         ),
       );
+  }
+
+  _buildIcon(int index, page, icon) {
+    var myColors = Provider.of<ThemeProvider>(context, listen: false);
+    return IconButton(
+      onPressed: () {
+        if (Provider.of<SettingsProvider>(context, listen: false).currentPage !=
+            index) {
+          Provider.of<SettingsProvider>(context, listen: false)
+              .changePage(index);
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => page),
+              (Route<dynamic> route) => false);
+        }
+      },
+      icon: Icon(
+       icon,
+        color: Provider.of<SettingsProvider>(context).currentPage == index
+            ? myColors.currentMainColor
+            : myColors.currentFontColor,
+        size: 36,
+      ),
+    );
   }
 }

@@ -13,4 +13,5 @@ const PT = {
   WordKeys.enterTVName: "Ingrese el nombre de la TV",
   WordKeys.day: "Día",
   WordKeys.week: "Semana",
+  WordKeys.login: "Login",
 };

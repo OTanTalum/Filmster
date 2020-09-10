@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
@@ -7,10 +8,12 @@ import 'package:filmster/page/film_detail_page.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
+import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
 
 import 'package:filmster/widgets/drawer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -230,8 +233,30 @@ class _FilmsPageState extends State<FilmsPage> {
 
   _buildResults(context) {
     List<Widget> list = [];
+    int i=0;
     var films = Provider.of<SearchProvider>(context).listOfFilms;
-    films.forEach((element) => list.add(_buildFilm(element)));
+    films.forEach((element){
+      list.add(_buildFilm(element));
+          if (i == 5){
+              list.add(
+                Container(
+                  height: 120,
+                  child: AdmobBanner(
+                    adUnitId: AddMobClass().getDrawerBannerAdUnitId(),
+                    adSize: AdmobBannerSize.LARGE_BANNER,
+                    listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+                      if (event == AdmobAdEvent.opened) {
+                        FirebaseAnalytics().logEvent(name: 'adMobDrawerClick');
+                      }
+                    },
+                    onBannerCreated: (AdmobBannerController controller) {},
+                  ),
+                ),
+              );
+              i=0;
+            }
+          i++;
+        });
     return ListView(
       children: list,
       controller: _scrollController,

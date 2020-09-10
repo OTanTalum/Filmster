@@ -43,9 +43,8 @@ class _TrendingPageState extends State<TrendingPage> {
         .fetchData(currentPage, isTV ? "tv" : "movie", isWeek ? "week" : "day");
   }
 
-
-  loadPage(List<SearchResults> trendingList,  List <int> arrayGenres){
-    List<Widget> pageList= [];
+  loadPage(List<SearchResults> trendingList, List<int> arrayGenres) {
+    List<Widget> pageList = [];
     int i = 0;
     trendingList.forEach((element) {
       int hasGenre = 0;
@@ -54,20 +53,19 @@ class _TrendingPageState extends State<TrendingPage> {
           ++hasGenre;
         }
       });
-      if (hasGenre==arrayGenres.length||arrayGenres.isEmpty) {
+      if (hasGenre == arrayGenres.length || arrayGenres.isEmpty) {
         i++;
         pageList.add(movieCard(element));
         if (i == 10) {
           pageList.add(
-             AdmobBanner(
+            AdmobBanner(
               adUnitId: AddMobClass().getBannerAdUnitId(),
               adSize: AdmobBannerSize.FULL_BANNER,
-              listener:
-                  (AdmobAdEvent event, Map<String, dynamic> args) {
-                   if(event==AdmobAdEvent.opened) {
-                      print('Admob banner opened!');
-                      FirebaseAnalytics().logEvent(name: 'adMobTrendingClick');
-                   }
+              listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+                if (event == AdmobAdEvent.opened) {
+                  print('Admob banner opened!');
+                  FirebaseAnalytics().logEvent(name: 'adMobTrendingClick');
+                }
               },
               onBannerCreated: (AdmobBannerController controller) {},
             ),
@@ -80,14 +78,11 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
   getNextPage() async {
-      ++currentPage;
-      await Provider.of<TrendingProvider>(context, listen: false).fetchData(
-          currentPage, isTV ? "tv" : "movie", isWeek ? "week" : "day");
-      Provider
-          .of<TrendingProvider>(context, listen: false)
-          .isLoading = false;
-      Provider
-          .of<TrendingProvider>(context,listen: false).notifyListeners();
+    ++currentPage;
+    await Provider.of<TrendingProvider>(context, listen: false)
+        .fetchData(currentPage, isTV ? "tv" : "movie", isWeek ? "week" : "day");
+    Provider.of<TrendingProvider>(context, listen: false).isLoading = false;
+    Provider.of<TrendingProvider>(context, listen: false).notifyListeners();
   }
 
   @override
@@ -155,29 +150,31 @@ class _TrendingPageState extends State<TrendingPage> {
               ),
             ),
           ]),
-          IconButton(
-            onPressed: () async {
-              await showDialog(
-                context: context,
-                builder: (_) => DialogWindow(
-                  onDoneTap: () async {
-                    Navigator.pop(context);
-                  },
-                  isTV: isTV,
-                  title: "Filter",
-                  body:
-                      "Dispetcher optimized your route based on data from all orders",
-                  imageH: 96,
-                  imagew: 96,
-                ),
-              );
-              setState(() {
-                Provider.of<TrendingProvider>(context, listen: false).clear();
-                currentPage=1;
-              });
-              await initTrending();
-            },
-            icon: Icon(Icons.movie_filter),
+          Expanded(
+            child: IconButton(
+              onPressed: () async {
+                await showDialog(
+                  context: context,
+                  builder: (_) => DialogWindow(
+                    onDoneTap: () async {
+                      Navigator.pop(context);
+                    },
+                    isTV: isTV,
+                    title: "Filter",
+                    body:
+                        "Dispetcher optimized your route based on data from all orders",
+                    imageH: 96,
+                    imagew: 96,
+                  ),
+                );
+                setState(() {
+                  Provider.of<TrendingProvider>(context, listen: false).clear();
+                  currentPage = 1;
+                });
+                await initTrending();
+              },
+              icon: Icon(Icons.movie_filter),
+            ),
           )
         ]),
       ),
@@ -193,7 +190,7 @@ class _TrendingPageState extends State<TrendingPage> {
     super.dispose();
   }
 
- Widget movieCard(SearchResults movie) {
+  Widget movieCard(SearchResults movie) {
     return Stack(children: [
       GestureDetector(
         onTap: () async {
@@ -201,14 +198,14 @@ class _TrendingPageState extends State<TrendingPage> {
               builder: (_) => FilmDetailPage(
                   id: movie.id.toString(), type: isTV ? "tv" : "movie")));
         },
-        child:movie.poster!=null
+        child: movie.poster != null
             ? Image.network(
-          "${Api().imageBannerAPI}${movie.poster}",
-          fit: BoxFit.fill,
-          width: MediaQuery.of(context).size.width * 0.5,
-          height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),
-        )
-            :Container(),
+                "${Api().imageBannerAPI}${movie.poster}",
+                fit: BoxFit.fill,
+                width: MediaQuery.of(context).size.width * 0.5,
+                height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),
+              )
+            : Container(),
       ),
       Positioned(
         bottom: 0,
@@ -268,29 +265,20 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
   _buildBody(BuildContext context) {
-    List<Widget> caramba=[];
-    List movieList =isTV
+    List<Widget> caramba = [];
+    List movieList = isTV
         ? isWeek
-        ? Provider.of<TrendingProvider>(context)
-            .trendingTVWeek
-        : Provider.of<TrendingProvider>(context)
-            .trendingTVDay
+            ? Provider.of<TrendingProvider>(context).trendingTVWeek
+            : Provider.of<TrendingProvider>(context).trendingTVDay
         : isWeek
-        ?
-        Provider.of<TrendingProvider>(context)
-            .trendingMoviesWeek
-        :
-        Provider.of<TrendingProvider>(context)
-            .trendingMoviesDay;
-    caramba.addAll(
-      loadPage(
+            ? Provider.of<TrendingProvider>(context).trendingMoviesWeek
+            : Provider.of<TrendingProvider>(context).trendingMoviesDay;
+    caramba.addAll(loadPage(
         movieList,
-          isTV
-              ? Provider.of<SettingsProvider>(context).tvArrayGenres
-              : Provider.of<SettingsProvider>(context).movieArrayGenres
-      ));
-    if(caramba.length<10)
-      getNextPage();
+        isTV
+            ? Provider.of<SettingsProvider>(context).tvArrayGenres
+            : Provider.of<SettingsProvider>(context).movieArrayGenres));
+    if (caramba.length < 10) getNextPage();
     // movieList.forEach((element) {
     //   caramba.add(movieCard(element));
     // });
