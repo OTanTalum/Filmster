@@ -8,6 +8,7 @@ import 'package:filmster/page/film_detail_page.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
+import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
@@ -18,6 +19,8 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'library.dart';
 
 class FilmsPage extends StatefulWidget {
   final String type;
@@ -276,9 +279,10 @@ class _FilmsPageState extends State<FilmsPage> {
   @override
   Widget build(BuildContext context) {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
+    var mySettings = Provider.of<SettingsProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: () {
-        Provider.of<SettingsProvider>(context, listen: false).changePage(0);
+        mySettings.changePage(0);
         Navigator.of(context).pop();
       },
       child: Scaffold(
@@ -296,10 +300,21 @@ class _FilmsPageState extends State<FilmsPage> {
         ),
         bottomNavigationBar: CustomeBottomNavigationBar(),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            mySettings.changePage(4);
+            if(Provider.of<UserProvider>(context, listen: false).currentUser!=null){
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => LibraryPage()));
+            }
+          },
           elevation: 12,
           backgroundColor: myColors.currentSecondaryColor,
-          child: Icon(Icons.favorite, color: myColors.currentFontColor),
+          child: Icon(
+              Icons.favorite,
+              color: mySettings.currentPage==4
+                  ? myColors.currentMainColor
+                  : myColors.currentFontColor
+          ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         //drawer: DrawerMenu().build(context),

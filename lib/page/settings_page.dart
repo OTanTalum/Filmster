@@ -4,6 +4,7 @@ import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
+import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
 import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
@@ -13,6 +14,8 @@ import 'package:filmster/widgets/drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'library.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -31,10 +34,10 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
+    var mySettings = Provider.of<SettingsProvider>(context, listen: false);
     return WillPopScope(
         onWillPop: () {
-          Provider.of<SettingsProvider>(context, listen: false)
-              .changePage(0);
+          mySettings.changePage(0);
           Navigator.of(context).pop();
         },
     child:Scaffold(
@@ -50,10 +53,21 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       bottomNavigationBar: CustomeBottomNavigationBar(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        elevation: 0,
+        onPressed: () {
+          mySettings.changePage(4);
+          if(Provider.of<UserProvider>(context, listen: false).currentUser!=null){
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => LibraryPage()));
+          }
+        },
+        elevation: 12,
         backgroundColor: myColors.currentSecondaryColor,
-        child: Icon(Icons.favorite, color: myColors.currentFontColor),
+        child: Icon(
+            Icons.favorite,
+            color: mySettings.currentPage==4
+                ? myColors.currentMainColor
+                : myColors.currentFontColor
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       //drawer: DrawerMenu().build(context),

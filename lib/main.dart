@@ -4,12 +4,14 @@ import 'dart:io';
 
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/films.dart';
+import 'package:filmster/page/library.dart';
 import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/page/trendingPage.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/trendingProvider.dart';
+import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
@@ -38,6 +40,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => SearchProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ChangeNotifierProvider(create: (_) => TrendingProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: MyApp(),
     ),
@@ -71,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     Future.microtask(() async {
+      await initUser();
       await initLanguage();
       await initTheme();
       await Provider.of<SettingsProvider>(context, listen: false)
@@ -84,6 +88,17 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future initUser()async {
+    print(await Prefs().hasString("username"));
+    if (await Prefs().hasString("username")) {
+    String username =  await Prefs().getStringPrefs("username");
+    String password =   await Prefs().getStringPrefs("password");
+    print(username);
+    print(password);
+    await Provider.of<UserProvider>(context, listen: false).auth(username,password);
+    }
   }
 
   Future initLanguage() async {
@@ -128,6 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
+    var mySettings = Provider.of<SettingsProvider>(context, listen: false);
     return Scaffold(
         key: scaffoldState,
         backgroundColor: myColors.currentBackgroundColor,
@@ -142,10 +158,21 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         bottomNavigationBar: CustomeBottomNavigationBar(),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          elevation: 0,
+          onPressed: () {
+            mySettings.changePage(4);
+            if(Provider.of<UserProvider>(context, listen: false).currentUser!=null){
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => LibraryPage()));
+            }
+          },
+          elevation: 12,
           backgroundColor: myColors.currentSecondaryColor,
-          child: Icon(Icons.favorite, color: myColors.currentFontColor),
+          child: Icon(
+              Icons.favorite,
+              color: mySettings.currentPage==4
+                  ? myColors.currentMainColor
+                  : myColors.currentFontColor
+          ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         //drawer: DrawerMenu().build(context),

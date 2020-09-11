@@ -18,4 +18,19 @@ class Prefs{
     await prefs.setString(nameOfPrefs, value);
   }
 
+  setIntPrefs(String nameOfPrefs, int value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(nameOfPrefs, value);
+  }
+
+  getIntPrefs(String nameOfPrefs) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(nameOfPrefs);
+  }
+
+  removeValues(String nameOfPrefs) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(nameOfPrefs);
+  }
+
 }
