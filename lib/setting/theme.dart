@@ -63,7 +63,7 @@ class MyThemes {
         Provider.of<ThemeProvider>(context,listen: false).changeColor(
           fontColor:Colors.black,
           backgroundColor: Color(0xffffdab9),
-          mainColor:Colors.blueGrey[700],
+          mainColor:Colors.orange[800],
           acidColor:Colors.white,
           secondaryColor: Color(0xffffC488),
         );
