@@ -110,18 +110,18 @@ class _FilmsPageState extends State<FilmsPage> {
                     Column(children: [
                       film.poster != null
                           ? Image.network(
-                              "${Api().imageBannerAPI}${film.poster}",
-                              height: 139,
-                              width: 100,
-                            )
+                        "${Api().imageBannerAPI}${film.poster}",
+                        height: 139,
+                        width: 100,
+                      )
                           : Container(
-                              height: 139,
-                              width: 100,
-                              child: Icon(
-                                Icons.do_not_disturb_on,
-                                size: 100.0,
-                                color: provider.currentAcidColor,
-                              )),
+                          height: 139,
+                          width: 100,
+                          child: Icon(
+                            Icons.do_not_disturb_on,
+                            size: 100.0,
+                            color: provider.currentAcidColor,
+                          )),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
@@ -156,36 +156,36 @@ class _FilmsPageState extends State<FilmsPage> {
                             ]),
                             film.isAdult
                                 ? Text("18+",
-                                    style: TextStyle(
-                                      fontFamily: "AmaticSC",
-                                      fontSize: 30,
-                                      color: provider.currentAcidColor,
-                                      fontWeight: FontWeight.w700,
-                                    ))
+                                style: TextStyle(
+                                  fontFamily: "AmaticSC",
+                                  fontSize: 30,
+                                  color: provider.currentAcidColor,
+                                  fontWeight: FontWeight.w700,
+                                ))
                                 : Container(),
                             film.title != film.originalTitle
                                 ? Expanded(
-                                    child: Text(
-                                      film.originalTitle,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontFamily: "AmaticSC",
-                                        fontSize: 23,
-                                        //  fontWeight: FontWeight.bold,
-                                        color: provider.currentFontColor,
-                                      ),
-                                    ),
-                                  )
+                              child: Text(
+                                film.originalTitle,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: "AmaticSC",
+                                  fontSize: 23,
+                                  //  fontWeight: FontWeight.bold,
+                                  color: provider.currentFontColor,
+                                ),
+                              ),
+                            )
                                 : Container(),
                             Expanded(
                                 child: Text(
-                              film.release ?? "-",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: "AmaticSC",
-                                color: provider.currentFontColor,
-                              ),
-                            )),
+                                  film.release ?? "-",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: "AmaticSC",
+                                    color: provider.currentFontColor,
+                                  ),
+                                )),
                             Container(
                               width: MediaQuery.of(context).size.width * 0.46,
                               child: Wrap(

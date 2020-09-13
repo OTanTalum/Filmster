@@ -9,6 +9,7 @@ import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/trendingProvider.dart';
+import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/dialogWindow.dart';
@@ -191,6 +192,7 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
   Widget movieCard(SearchResults movie) {
+    var userProfile = Provider.of<UserProvider>(context);
     return Stack(children: [
       GestureDetector(
         onTap: () async {
@@ -248,12 +250,16 @@ class _TrendingPageState extends State<TrendingPage> {
                   ),
                   Expanded(
                     child: IconButton(
-                      onPressed: () {
-                        ///TODO add isFavorite
+                      onPressed: () async{
+                      await userProfile.markAsFavorite(movie.id, !userProfile.favoriteIds.contains(movie.id));
                       },
                       icon: Icon(
-                        Icons.favorite_border,
-                        color: Colors.white,
+                        userProfile.favoriteIds.contains(movie.id)
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                        color: userProfile.favoriteIds.contains(movie.id)
+                            ? Colors.red
+                            : Colors.white,
                       ),
                     ),
                   ),

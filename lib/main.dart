@@ -95,9 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (await Prefs().hasString("username")) {
     String username =  await Prefs().getStringPrefs("username");
     String password =   await Prefs().getStringPrefs("password");
-    print(username);
-    print(password);
     await Provider.of<UserProvider>(context, listen: false).auth(username,password);
+    await Provider.of<UserProvider>(context, listen: false).getFavorite();
     }
   }
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:filmster/model/authentication.dart';
 import 'package:filmster/model/film.dart';
+import 'package:filmster/model/responses.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
@@ -109,4 +110,31 @@ class Api{
       print("ERROR Session");
     }
   }
+
+  getFavoriteMovies(int id, String sessionId)async {
+    final response = await http.get('$tMDBApi/account/$id/favorite/movies?api_key=$apiKey&session_id=$sessionId&sort_by=created_at.asc');
+    if (response.statusCode == 200) {
+      return FavoriteResponse.fromJson(json.decode(response.body));
+    }
+    else {
+      print("ERROR Favorite");
+    }
+  }
+
+  markAsFavorite(int mediaId, bool isFavorite, String  sessionId, int  userId) async {
+    final response = await http.post('$tMDBApi/account/$userId/favorite?api_key=$apiKey&session_id=$sessionId',
+        body: {
+          "favorite": isFavorite.toString(),
+          "media_type": "movie",
+          "media_id": mediaId.toString(),
+        });
+    print(json.decode(response.body));
+    if (json.decode(response.body)["success"]) {
+      return json.decode(response.body);
+    }
+    else {
+      print("ERROR Favorite");
+    }
+  }
+
 }

@@ -1,4 +1,7 @@
 import 'package:filmster/model/authentication.dart';
+import 'package:filmster/model/film.dart';
+import 'package:filmster/model/responses.dart';
+import 'package:filmster/model/search.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +14,8 @@ class UserProvider extends ChangeNotifier {
   String sesion_id;
   bool isloged;
   User currentUser;
+  List<SearchResults> favoriteList=[];
+  List<int> favoriteIds=[];
 
   auth(String username, String password) async {
     await createRequest();
@@ -63,6 +68,30 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  getFavorite() async {
+    favoriteIds=[];
+    favoriteList=[];
+    FavoriteResponse response =
+        await Api().getFavoriteMovies(currentUser.id, sesion_id);
+    favoriteList = response.results;
+    favoriteList.forEach((element) {
+      favoriteIds.add(element.id);
+    });
+    print(favoriteIds);
+    notifyListeners();
+  }
+
+  markAsFavorite(int id, bool isFavorite) async {
+    print(isFavorite);
+    var response =
+        await Api().markAsFavorite( id, isFavorite, sesion_id, currentUser.id);
+    if (response["success"]) {
+      await getFavorite();
+      print("update favorite");
+    }
+    notifyListeners();
+  }
+
   exit() async{
     await Prefs().removeValues('userID');
     await Prefs().removeValues('username');
@@ -71,5 +100,6 @@ class UserProvider extends ChangeNotifier {
     currentUser=null;
     notifyListeners();
   }
+
 }
 
