@@ -112,7 +112,7 @@ class Api{
   }
 
   getFavoriteMovies(int id, String sessionId, page)async {
-    final response = await http.get('$tMDBApi/account/$id/favorite/movies?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc');
+    final response = await http.get('$tMDBApi/account/$id/favorite/movies?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc&language=${SettingsProvider.language}');
     if (response.statusCode == 200) {
       return ListResponse.fromJson(json.decode(response.body));
     }
@@ -122,7 +122,7 @@ class Api{
   }
 
   getWatchListMovies(int id, String sessionId, page)async {
-    final response = await http.get('$tMDBApi/account/$id/watchlist/movies?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc');
+    final response = await http.get('$tMDBApi/account/$id/watchlist/movies?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc&language=${SettingsProvider.language}');
     if (response.statusCode == 200) {
       return ListResponse.fromJson(json.decode(response.body));
     }

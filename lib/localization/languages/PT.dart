@@ -14,4 +14,8 @@ const PT = {
   WordKeys.day: "Día",
   WordKeys.week: "Semana",
   WordKeys.login: "Login",
+  WordKeys.profile: "Perfil",
+  WordKeys.favorite: "Favoritos",
+  WordKeys.watchlist: "Lista de seguimiento",
+  WordKeys.library: "Biblioteca",
 };

@@ -14,4 +14,8 @@ const ENG = {
   WordKeys.day: "Day",
   WordKeys.week: "Week",
   WordKeys.login: "Login",
+  WordKeys.profile: "Profile",
+  WordKeys.favorite: "Favorite",
+  WordKeys.watchlist: "Watchlist",
+  WordKeys.library: "Library",
 };

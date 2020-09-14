@@ -95,20 +95,6 @@ class MovieCard extends StatelessWidget {
                                   fontWeight: FontWeight.w700,
                                 ))
                                 : Container(),
-                            film.title != film.originalTitle
-                                ? Expanded(
-                              child: Text(
-                                film.originalTitle,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontFamily: "AmaticSC",
-                                  fontSize: 23,
-                                  //  fontWeight: FontWeight.bold,
-                                  color: provider.currentFontColor,
-                                ),
-                              ),
-                            )
-                                : Container(),
                             Expanded(
                                 child: Text(
                                   film.release ?? "-",

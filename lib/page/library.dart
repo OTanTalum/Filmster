@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:filmster/localization/languages/workKeys.dart';
+import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
@@ -81,18 +83,19 @@ class _LibraryPageState extends State<LibraryPage>
               indicatorColor: myColors.currentMainColor,
               tabs: [
               Tab(
-                text: "Favorite",
+                text: AppLocalizations().translate(context, WordKeys.favorite),
+
               ),
               Tab(
-                text: "Watchlist",
+                text: AppLocalizations().translate(context, WordKeys.watchlist),
               ),
               Tab(
-                  text: "In progress"
+                  text: AppLocalizations().translate(context, WordKeys.favorite),
               ),
             ],
             ),
             title: Text(
-              "Library",
+              AppLocalizations().translate(context, WordKeys.library),
               style: TextStyle(
                 fontFamily: "AmaticSC",
                 fontSize: 30,

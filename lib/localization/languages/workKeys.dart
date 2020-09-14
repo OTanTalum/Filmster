@@ -11,5 +11,9 @@ enum WordKeys {
   enterTVName,
   day,
   week,
-  login
+  login,
+  profile,
+  favorite,
+  watchlist,
+  library
 }

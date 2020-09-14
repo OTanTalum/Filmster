@@ -15,6 +15,7 @@ import 'package:filmster/widgets/drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 
 import 'library.dart';
@@ -52,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: myColors.currentBackgroundColor,
         appBar: AppBar(
           title: Text(
-            "Profile",
+            AppLocalizations().translate(context, WordKeys.profile),
             style: TextStyle(
               fontFamily: "AmaticSC",
               fontSize: 30,
@@ -60,14 +61,12 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           actions: <Widget>[
             IconButton(
-              onPressed: ()async {
-              await userProfile.exit();
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => LoginPage()));
+              onPressed: () async {
+                await userProfile.exit();
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => LoginPage()));
               },
-              icon: Icon(
-                Icons.exit_to_app
-              ),
+              icon: Icon(Icons.exit_to_app),
             )
           ],
         ),
@@ -75,60 +74,73 @@ class _ProfilePageState extends State<ProfilePage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             mySettings.changePage(4);
-            if(Provider.of<UserProvider>(context, listen: false).currentUser!=null){
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => LibraryPage()));
+            if (Provider.of<UserProvider>(context, listen: false).currentUser !=
+                null) {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => LibraryPage()));
             }
           },
           elevation: 12,
           backgroundColor: myColors.currentSecondaryColor,
-          child: Icon(
-              Icons.favorite,
-              color: mySettings.currentPage==4
+          child: Icon(Icons.favorite,
+              color: mySettings.currentPage == 4
                   ? myColors.currentMainColor
-                  : myColors.currentFontColor
-          ),
+                  : myColors.currentFontColor),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         //drawer: DrawerMenu().build(context),
-        body: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                  height: 36,
-                ),
-              CircleAvatar(
-                radius:48,
+        body: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            SizedBox(
+              height: 36,
+            ),
+            CircleAvatar(
+                radius: 48,
                 backgroundColor: myColors.currentSecondaryColor,
                 child: Icon(
                   Icons.person,
                   color: myColors.currentFontColor,
                   size: 48,
-                )
+                )),
+            Center(
+              child: Text(
+                userProfile.currentUser.userName,
+                style: TextStyle(
+                    fontFamily: "MPLUSRounded1c",
+                    fontWeight: FontWeight.w300,
+                    fontSize: 35,
+                    color: myColors.currentFontColor),
               ),
-              Center(
-                child: Text(userProfile.currentUser.userName,
-                  style: TextStyle(
-                      fontFamily: "MPLUSRounded1c",
-                      fontWeight: FontWeight.w300,
-                      fontSize: 35,
-                      color: myColors.currentFontColor),
-                ),
-              ),
-          userProfile.currentUser.name != null
-              ? Container(
-                  child: Text(
-                  "Hi, ${userProfile.currentUser.name}\n Watch you favorite list!",
-                  style: TextStyle(
-                      fontFamily: "MPLUSRounded1c",
-                      fontWeight: FontWeight.w300,
-                      fontSize: 20,
-                      color: myColors.currentFontColor),
-                ))
-              : Container(),
-          Container(),
+            ),
+          ]),
+          Padding(
+            padding:EdgeInsets.only(bottom: 24),
+            child: FutureBuilder<String>(
+              future: getVersion(),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  return Container(
+                      child: Text(
+                    "Version: ${snapshot.data}",
+                    style: TextStyle(
+                      fontFamily: "AmaticSC",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 26.0,
+                      color: myColors.currentFontColor,
+                    ),
+                  ));
+                }
+                return Container();
+              },
+            ),
+          ),
         ]),
       ),
     );
+  }
+
+  Future<String> getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    return "${packageInfo.version}+${packageInfo.buildNumber}";
   }
 }

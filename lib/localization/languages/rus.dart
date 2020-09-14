@@ -14,4 +14,8 @@ const RUS = {
   WordKeys.day: "День",
   WordKeys.week: "Неделя",
   WordKeys.login: "Вход",
+  WordKeys.profile: "Профиль",
+  WordKeys.favorite: "Избранное",
+  WordKeys.watchlist: "К просморту",
+  WordKeys.library: "Библиотека",
 };
