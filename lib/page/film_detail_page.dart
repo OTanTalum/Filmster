@@ -3,6 +3,7 @@ import 'package:admob_flutter/admob_flutter.dart';
 import 'package:dartpedia/dartpedia.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
+import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/movieBanner.dart';
@@ -75,6 +76,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<ThemeProvider>(context);
+    var userProfile = Provider.of<UserProvider>(context);
     return film == null
         ? Container(
             color: provider.currentBackgroundColor,
@@ -118,6 +120,21 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   ),
                 ),
               ),
+              actions: <Widget>[
+                IconButton(
+                  onPressed: () async {
+                    await userProfile.markAsFavorite(film.id, !userProfile.favoriteIds.contains(film.id));
+                  },
+                  icon: Icon(
+                    userProfile.favoriteIds.contains(int.parse(film.id))
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: userProfile.favoriteIds.contains(int.parse(film.id))
+                        ? Colors.red
+                        : Colors.white,
+                  ),
+                ),
+              ],
             ),
             //drawer: DrawerMenu().build(context),
             body: buildBody(context),

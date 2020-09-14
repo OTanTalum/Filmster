@@ -239,19 +239,23 @@ class _TrendingPageState extends State<TrendingPage> {
                   ]),
                   Expanded(
                     child: IconButton(
-                      onPressed: () {
-                        ///TODO add isWatched
+                      onPressed: () async{
+                      await userProfile.markAsWatch(movie.id, !userProfile.watchListIds.contains(movie.id));
                       },
                       icon: Icon(
-                        Icons.remove_red_eye,
-                        color: Colors.white,
+                        userProfile.watchListIds.contains(movie.id)
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                        color: !userProfile.watchListIds.contains(movie.id)
+                            ? Colors.white
+                            : Colors.lightGreen,
                       ),
                     ),
                   ),
                   Expanded(
                     child: IconButton(
-                      onPressed: () async{
-                      await userProfile.markAsFavorite(movie.id, !userProfile.favoriteIds.contains(movie.id));
+                      onPressed: () async {
+                          await userProfile.markAsFavorite(movie.id, !userProfile.favoriteIds.contains(movie.id));
                       },
                       icon: Icon(
                         userProfile.favoriteIds.contains(movie.id)

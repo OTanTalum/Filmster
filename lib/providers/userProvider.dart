@@ -14,8 +14,14 @@ class UserProvider extends ChangeNotifier {
   String sesion_id;
   bool isloged;
   User currentUser;
+
   List<SearchResults> favoriteList=[];
   List<int> favoriteIds=[];
+
+  List<SearchResults> watchList=[];
+  List<int> watchListIds=[];
+
+  int currentPage = 1;
 
   auth(String username, String password) async {
     await createRequest();
@@ -69,25 +75,63 @@ class UserProvider extends ChangeNotifier {
   }
 
   getFavorite() async {
-    favoriteIds=[];
-    favoriteList=[];
-    FavoriteResponse response =
-        await Api().getFavoriteMovies(currentUser.id, sesion_id);
-    favoriteList = response.results;
-    favoriteList.forEach((element) {
-      favoriteIds.add(element.id);
-    });
-    print(favoriteIds);
+    favoriteIds = [];
+    favoriteList = [];
+    int totalResults = 21;
+    for (int i = 1; (i-1)*20< totalResults; i++) {
+      ListResponse response =
+          await Api().getFavoriteMovies(currentUser.id, sesion_id, i);
+      totalResults = response.totalResults;
+      response.results.forEach((element) {
+        if (!favoriteList.contains(element)) {
+          favoriteList.add(element);
+        }
+      });
+      favoriteList.forEach((element) {
+        if(!favoriteIds.contains(element.id)) {
+          favoriteIds.add(element.id);
+        }
+      });
+    }
     notifyListeners();
   }
 
-  markAsFavorite(int id, bool isFavorite) async {
-    print(isFavorite);
+  getWatchList() async {
+    watchListIds = [];
+    watchList = [];
+    int totalResults = 21;
+    for (int i = 1; (i-1)*20< totalResults; i++) {
+      ListResponse response =
+          await Api().getWatchListMovies(currentUser.id, sesion_id, i);
+      totalResults = response.totalResults;
+      response.results.forEach((element) {
+        if (!watchList.contains(element)) {
+          watchList.add(element);
+        }
+      });
+      watchList.forEach((element) {
+        if(!watchListIds.contains(element.id)) {
+          watchListIds.add(element.id);
+        }
+      });
+    }
+    notifyListeners();
+  }
+
+  markAsFavorite(id, isRemove) async {
     var response =
-        await Api().markAsFavorite( id, isFavorite, sesion_id, currentUser.id);
+        await Api().markAsFavorite( id, isRemove, sesion_id, currentUser.id);
     if (response["success"]) {
       await getFavorite();
-      print("update favorite");
+    }
+    notifyListeners();
+  }
+
+  markAsWatch(id, isRemove) async {
+    var response =
+        await Api().markAsWatch( id, isRemove, sesion_id, currentUser.id);
+    if (response["success"]) {
+      await getWatchList();
     }
     notifyListeners();
   }

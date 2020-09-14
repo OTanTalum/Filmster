@@ -15,10 +15,10 @@ class Api{
   final String apiKey = "22e195d94c2274b3dcf6484e58a1715f";
   final String imageBannerAPI = "https://image.tmdb.org/t/p/w500";
   String tMDBApi = 'https://api.themoviedb.org/3';
-
+  bool includeAdult = false;
 
   searchMovie(String type, String query, int page) async{
-    final response = await http.get('$tMDBApi/search/$type?api_key=$apiKey&query=$query&page=$page&language=${SettingsProvider.language}&include_adult=true');
+    final response = await http.get('$tMDBApi/search/$type?api_key=$apiKey&query=$query&page=$page&language=${SettingsProvider.language}&include_adult=$includeAdult');
     if (response.statusCode == 200) {
       return Search.fromJson(json.decode(response.body));
     }
@@ -28,7 +28,7 @@ class Api{
   }
 
   getTrending(String type, String period, int page) async{
-    final response = await http.get('$tMDBApi/trending/$type/$period?api_key=$apiKey&page=$page&language=${SettingsProvider.language}&include_adult=true');
+    final response = await http.get('$tMDBApi/trending/$type/$period?api_key=$apiKey&page=$page&language=${SettingsProvider.language}&include_adult=$includeAdult');
     if (response.statusCode == 200) {
       return Search.fromJson(json.decode(response.body));
     }
@@ -111,29 +111,59 @@ class Api{
     }
   }
 
-  getFavoriteMovies(int id, String sessionId)async {
-    final response = await http.get('$tMDBApi/account/$id/favorite/movies?api_key=$apiKey&session_id=$sessionId&sort_by=created_at.asc');
+  getFavoriteMovies(int id, String sessionId, page)async {
+    final response = await http.get('$tMDBApi/account/$id/favorite/movies?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc');
     if (response.statusCode == 200) {
-      return FavoriteResponse.fromJson(json.decode(response.body));
+      return ListResponse.fromJson(json.decode(response.body));
     }
     else {
       print("ERROR Favorite");
     }
   }
 
-  markAsFavorite(int mediaId, bool isFavorite, String  sessionId, int  userId) async {
+  getWatchListMovies(int id, String sessionId, page)async {
+    final response = await http.get('$tMDBApi/account/$id/watchlist/movies?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc');
+    if (response.statusCode == 200) {
+      return ListResponse.fromJson(json.decode(response.body));
+    }
+    else {
+      print("ERROR WatchList");
+    }
+  }
+
+  markAsFavorite(mediaId, bool isRemove, String  sessionId,  userId) async {
     final response = await http.post('$tMDBApi/account/$userId/favorite?api_key=$apiKey&session_id=$sessionId',
-        body: {
-          "favorite": isFavorite.toString(),
+        headers: {"Content-Type":"application/json;charset=utf-8"},
+        body: jsonEncode({
+          "favorite": isRemove,
           "media_type": "movie",
           "media_id": mediaId.toString(),
-        });
+        })
+    );
     print(json.decode(response.body));
     if (json.decode(response.body)["success"]) {
       return json.decode(response.body);
     }
     else {
       print("ERROR Favorite");
+    }
+  }
+
+  markAsWatch(mediaId, bool isRemove, String  sessionId,  userId) async {
+    final response = await http.post('$tMDBApi/account/$userId/watchlist?api_key=$apiKey&session_id=$sessionId',
+        headers: {"Content-Type":"application/json;charset=utf-8"},
+        body: jsonEncode({
+          "watchlist": isRemove,
+          "media_type": "movie",
+          "media_id": mediaId.toString(),
+        })
+    );
+    print(json.decode(response.body));
+    if (json.decode(response.body)["success"]) {
+      return json.decode(response.body);
+    }
+    else {
+      print("ERROR WatchList");
     }
   }
 

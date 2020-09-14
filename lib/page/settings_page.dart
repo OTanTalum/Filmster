@@ -33,7 +33,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    var myColors = Provider.of<ThemeProvider>(context, listen: false);
+    var myColors = Provider.of<ThemeProvider>(context);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
     return WillPopScope(
         onWillPop: () {
