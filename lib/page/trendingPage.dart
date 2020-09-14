@@ -30,18 +30,25 @@ class _TrendingPageState extends State<TrendingPage> {
   ScrollController _scrollController = ScrollController();
   int currentPage = 1;
   bool isWeek = false;
-  bool isTV = false;
 
   @override
   void initState() {
     super.initState();
+    Future.microtask(() => initTrending());
     _scrollController.addListener(_scrollListener);
-    initTrending();
   }
 
   initTrending() async {
     await Provider.of<TrendingProvider>(context, listen: false)
-        .fetchData(currentPage, isTV ? "tv" : "movie", isWeek ? "week" : "day");
+        .fetchData(
+        currentPage,
+        Provider.of<UserProvider>(context,listen: false).currentType!="movie"
+            ? "tv"
+            : "movie",
+        isWeek
+            ? "week"
+            : "day"
+    );
   }
 
   loadPage(List<SearchResults> trendingList, List<int> arrayGenres) {
@@ -81,13 +88,16 @@ class _TrendingPageState extends State<TrendingPage> {
   getNextPage() async {
     ++currentPage;
     await Provider.of<TrendingProvider>(context, listen: false)
-        .fetchData(currentPage, isTV ? "tv" : "movie", isWeek ? "week" : "day");
+        .fetchData(currentPage,  Provider.of<UserProvider>(context, listen: false).currentType!="movie"
+        ? "tv"
+        : "movie", isWeek ? "week" : "day");
     Provider.of<TrendingProvider>(context, listen: false).isLoading = false;
     Provider.of<TrendingProvider>(context, listen: false).notifyListeners();
   }
 
   @override
   Widget build(BuildContext context) {
+    var userProfile = Provider.of<UserProvider>(context);
     return Scaffold(
       backgroundColor:
           Provider.of<ThemeProvider>(context).currentBackgroundColor,
@@ -132,11 +142,11 @@ class _TrendingPageState extends State<TrendingPage> {
               ),
             ),
             Switch(
-              value: isTV,
+              value: userProfile.currentType != "movie",
               onChanged: (value) {
                 setState(() {
-                  isTV = value;
-                  initTrending();
+                  userProfile.changeCurrentType(
+                      userProfile.currentType == "movie" ? "tv" : "movie");
                 });
               },
               activeTrackColor:
@@ -160,7 +170,7 @@ class _TrendingPageState extends State<TrendingPage> {
                     onDoneTap: () async {
                       Navigator.pop(context);
                     },
-                    isTV: isTV,
+                    isTV:  Provider.of<UserProvider>(context).currentType!="movie",
                     title: "Filter",
                     body:
                         "Dispetcher optimized your route based on data from all orders",
@@ -193,12 +203,20 @@ class _TrendingPageState extends State<TrendingPage> {
 
   Widget movieCard(SearchResults movie) {
     var userProfile = Provider.of<UserProvider>(context);
+    List favoriteId = userProfile.currentType=="tv"
+        ? userProfile.favoriteTVIds
+        : userProfile.favoriteMovieIds;
+    List watchedId = userProfile.currentType=="tv"
+        ? userProfile.watchTVListIds
+        : userProfile.watchMovieListIds;
     return Stack(children: [
       GestureDetector(
         onTap: () async {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => FilmDetailPage(
-                  id: movie.id.toString(), type: isTV ? "tv" : "movie")));
+                  id: movie.id.toString(), type:  Provider.of<UserProvider>(context).currentType!="movie"
+                  ? "tv"
+                  : "movie", )));
         },
         child: movie.poster != null
             ? Image.network(
@@ -239,14 +257,15 @@ class _TrendingPageState extends State<TrendingPage> {
                   ]),
                   Expanded(
                     child: IconButton(
-                      onPressed: () async{
-                      await userProfile.markAsWatch(movie.id, !userProfile.watchListIds.contains(movie.id));
+                      onPressed: () async {
+                        await userProfile.markAsWatch(movie.id,
+                            !watchedId.contains(movie.id));
                       },
                       icon: Icon(
-                        userProfile.watchListIds.contains(movie.id)
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                        color: !userProfile.watchListIds.contains(movie.id)
+                        watchedId.contains(movie.id)
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: !watchedId.contains(movie.id)
                             ? Colors.white
                             : Colors.lightGreen,
                       ),
@@ -255,13 +274,14 @@ class _TrendingPageState extends State<TrendingPage> {
                   Expanded(
                     child: IconButton(
                       onPressed: () async {
-                          await userProfile.markAsFavorite(movie.id, !userProfile.favoriteIds.contains(movie.id));
+                        await userProfile.markAsFavorite(movie.id,
+                            !favoriteId.contains(movie.id));
                       },
                       icon: Icon(
-                        userProfile.favoriteIds.contains(movie.id)
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                        color: userProfile.favoriteIds.contains(movie.id)
+                        favoriteId.contains(movie.id)
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: favoriteId.contains(movie.id)
                             ? Colors.red
                             : Colors.white,
                       ),
@@ -276,8 +296,8 @@ class _TrendingPageState extends State<TrendingPage> {
 
   _buildBody(BuildContext context) {
     List<Widget> caramba = [];
-    List movieList = isTV
-        ? isWeek
+    List movieList =  Provider.of<UserProvider>(context).currentType!="movie"
+    ? isWeek
             ? Provider.of<TrendingProvider>(context).trendingTVWeek
             : Provider.of<TrendingProvider>(context).trendingTVDay
         : isWeek
@@ -285,13 +305,10 @@ class _TrendingPageState extends State<TrendingPage> {
             : Provider.of<TrendingProvider>(context).trendingMoviesDay;
     caramba.addAll(loadPage(
         movieList,
-        isTV
+        Provider.of<UserProvider>(context).currentType!="movie"
             ? Provider.of<SettingsProvider>(context).tvArrayGenres
             : Provider.of<SettingsProvider>(context).movieArrayGenres));
     if (caramba.length < 10) getNextPage();
-    // movieList.forEach((element) {
-    //   caramba.add(movieCard(element));
-    // });
     return SafeArea(
       child: SingleChildScrollView(
         controller: _scrollController,

@@ -15,11 +15,20 @@ class UserProvider extends ChangeNotifier {
   bool isloged;
   User currentUser;
 
-  List<SearchResults> favoriteList=[];
-  List<int> favoriteIds=[];
+  List<SearchResults> favoriteMovieList=[];
+  List<int> favoriteMovieIds=[];
 
-  List<SearchResults> watchList=[];
-  List<int> watchListIds=[];
+  List<SearchResults> watchMovieList=[];
+  List<int> watchMovieListIds=[];
+
+
+  List<SearchResults> favoriteTVList=[];
+  List<int> favoriteTVIds=[];
+
+  List<SearchResults> watchTVList=[];
+  List<int> watchTVListIds=[];
+
+  String currentType = 'movie';
 
   int currentPage = 1;
 
@@ -75,52 +84,98 @@ class UserProvider extends ChangeNotifier {
   }
 
   getFavorite() async {
-    favoriteIds = [];
-    favoriteList = [];
-    int totalResults = 21;
-    for (int i = 1; (i-1)*20< totalResults; i++) {
-      ListResponse response =
-          await Api().getFavoriteMovies(currentUser.id, sesion_id, i);
-      totalResults = response.totalResults;
-      response.results.forEach((element) {
-        if (!favoriteList.contains(element)) {
-          favoriteList.add(element);
-        }
-      });
-      favoriteList.forEach((element) {
-        if(!favoriteIds.contains(element.id)) {
-          favoriteIds.add(element.id);
-        }
-      });
+    if (currentType == "tv") {
+      favoriteTVIds = [];
+      favoriteTVList = [];
+      int totalResults = 21;
+      for (int i = 1; (i - 1) * 20 < totalResults; i++) {
+        ListResponse response = await Api().getFavoriteMovies(currentUser.id,
+            sesion_id, i, currentType != "tv" ? "movies" : "tv");
+        totalResults = response.totalResults;
+        response.results.forEach((element) {
+          if (!favoriteTVList.contains(element)) {
+            favoriteTVList.add(element);
+          }
+        });
+        favoriteTVList.forEach((element) {
+          if (!favoriteTVIds.contains(element.id)) {
+            favoriteTVIds.add(element.id);
+          }
+        });
+      }
+    }
+    else{
+      favoriteMovieIds = [];
+      favoriteMovieList = [];
+      int totalResults = 21;
+      for (int i = 1; (i - 1) * 20 < totalResults; i++) {
+        ListResponse response = await Api().getFavoriteMovies(currentUser.id,
+            sesion_id, i, currentType != "tv" ? "movies" : "tv");
+        totalResults = response.totalResults;
+        response.results.forEach((element) {
+          if (!favoriteMovieList.contains(element)) {
+            favoriteMovieList.add(element);
+          }
+        });
+        favoriteMovieList.forEach((element) {
+          if (!favoriteMovieIds.contains(element.id)) {
+            favoriteMovieIds.add(element.id);
+          }
+        });
+      }
     }
     notifyListeners();
   }
 
   getWatchList() async {
-    watchListIds = [];
-    watchList = [];
-    int totalResults = 21;
-    for (int i = 1; (i-1)*20< totalResults; i++) {
-      ListResponse response =
-          await Api().getWatchListMovies(currentUser.id, sesion_id, i);
-      totalResults = response.totalResults;
-      response.results.forEach((element) {
-        if (!watchList.contains(element)) {
-          watchList.add(element);
-        }
-      });
-      watchList.forEach((element) {
-        if(!watchListIds.contains(element.id)) {
-          watchListIds.add(element.id);
-        }
-      });
+    if (currentType == "tv") {
+      watchTVListIds = [];
+      watchTVList = [];
+      int totalResults = 21;
+      for (int i = 1; (i - 1) * 20 < totalResults; i++) {
+        ListResponse response =
+        await Api().getWatchListMovies(currentUser.id, sesion_id, i,
+            currentType != "tv" ? "movies" : "tv");
+        totalResults = response.totalResults;
+        response.results.forEach((element) {
+          if (!watchTVList.contains(element)) {
+            watchTVList.add(element);
+          }
+        });
+        watchTVList.forEach((element) {
+          if (!watchTVListIds.contains(element.id)) {
+            watchTVListIds.add(element.id);
+          }
+        });
+      }
+    }
+    else {
+      watchMovieListIds = [];
+      watchMovieList = [];
+      int totalResults = 21;
+      for (int i = 1; (i - 1) * 20 < totalResults; i++) {
+        ListResponse response =
+        await Api().getWatchListMovies(currentUser.id, sesion_id, i,
+            currentType != "tv" ? "movies" : "tv");
+        totalResults = response.totalResults;
+        response.results.forEach((element) {
+          if (!watchMovieList.contains(element)) {
+            watchMovieList.add(element);
+          }
+        });
+        watchMovieList.forEach((element) {
+          if (!watchMovieListIds.contains(element.id)) {
+            watchMovieListIds.add(element.id);
+          }
+        });
+      }
     }
     notifyListeners();
   }
 
   markAsFavorite(id, isRemove) async {
     var response =
-        await Api().markAsFavorite( id, isRemove, sesion_id, currentUser.id);
+        await Api().markAsFavorite( id, isRemove, sesion_id, currentUser.id, currentType);
     if (response["success"]) {
       await getFavorite();
     }
@@ -129,10 +184,16 @@ class UserProvider extends ChangeNotifier {
 
   markAsWatch(id, isRemove) async {
     var response =
-        await Api().markAsWatch( id, isRemove, sesion_id, currentUser.id);
+        await Api().markAsWatch( id, isRemove, sesion_id, currentUser.id, currentType);
     if (response["success"]) {
       await getWatchList();
     }
+    notifyListeners();
+  }
+
+  changeCurrentType(type){
+    currentType = type;
+    print(currentType);
     notifyListeners();
   }
 

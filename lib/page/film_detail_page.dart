@@ -77,6 +77,12 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   Widget build(BuildContext context) {
     var provider = Provider.of<ThemeProvider>(context);
     var userProfile = Provider.of<UserProvider>(context);
+    List favoriteId = userProfile.currentType=="tv"
+        ? userProfile.favoriteTVIds
+        : userProfile.favoriteMovieIds;
+    List watchedId = userProfile.currentType=="tv"
+        ? userProfile.watchTVListIds
+        : userProfile.watchMovieListIds;
     return film == null
         ? Container(
             color: provider.currentBackgroundColor,
@@ -122,14 +128,27 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               ),
               actions: <Widget>[
                 IconButton(
-                  onPressed: () async {
-                    await userProfile.markAsFavorite(film.id, !userProfile.favoriteIds.contains(film.id));
+                  onPressed: () async{
+                    await userProfile.markAsWatch(film.id, !watchedId.contains(film.id));
                   },
                   icon: Icon(
-                    userProfile.favoriteIds.contains(int.parse(film.id))
+                    watchedId.contains(film.id)
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                    color: !watchedId.contains(film.id)
+                        ? Colors.white
+                        : Colors.lightGreen,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    await userProfile.markAsFavorite(film.id, !favoriteId.contains(film.id));
+                  },
+                  icon: Icon(
+                    favoriteId.contains(int.parse(film.id))
                         ? Icons.favorite
                         : Icons.favorite_border,
-                    color: userProfile.favoriteIds.contains(int.parse(film.id))
+                    color: favoriteId.contains(int.parse(film.id))
                         ? Colors.red
                         : Colors.white,
                   ),

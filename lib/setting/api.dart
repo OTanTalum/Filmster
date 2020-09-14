@@ -111,8 +111,8 @@ class Api{
     }
   }
 
-  getFavoriteMovies(int id, String sessionId, page)async {
-    final response = await http.get('$tMDBApi/account/$id/favorite/movies?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc&language=${SettingsProvider.language}');
+  getFavoriteMovies(int id, String sessionId, page, type)async {
+    final response = await http.get('$tMDBApi/account/$id/favorite/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc&language=${SettingsProvider.language}');
     if (response.statusCode == 200) {
       return ListResponse.fromJson(json.decode(response.body));
     }
@@ -121,8 +121,8 @@ class Api{
     }
   }
 
-  getWatchListMovies(int id, String sessionId, page)async {
-    final response = await http.get('$tMDBApi/account/$id/watchlist/movies?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc&language=${SettingsProvider.language}');
+  getWatchListMovies(int id, String sessionId, page, type)async {
+    final response = await http.get('$tMDBApi/account/$id/watchlist/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc&language=${SettingsProvider.language}');
     if (response.statusCode == 200) {
       return ListResponse.fromJson(json.decode(response.body));
     }
@@ -131,12 +131,12 @@ class Api{
     }
   }
 
-  markAsFavorite(mediaId, bool isRemove, String  sessionId,  userId) async {
+  markAsFavorite(mediaId, bool isRemove, String  sessionId,  userId, type) async {
     final response = await http.post('$tMDBApi/account/$userId/favorite?api_key=$apiKey&session_id=$sessionId',
         headers: {"Content-Type":"application/json;charset=utf-8"},
         body: jsonEncode({
           "favorite": isRemove,
-          "media_type": "movie",
+          "media_type": type,
           "media_id": mediaId.toString(),
         })
     );
@@ -149,12 +149,12 @@ class Api{
     }
   }
 
-  markAsWatch(mediaId, bool isRemove, String  sessionId,  userId) async {
+  markAsWatch(mediaId, bool isRemove, String  sessionId,  userId, type) async {
     final response = await http.post('$tMDBApi/account/$userId/watchlist?api_key=$apiKey&session_id=$sessionId',
         headers: {"Content-Type":"application/json;charset=utf-8"},
         body: jsonEncode({
           "watchlist": isRemove,
-          "media_type": "movie",
+          "media_type": type,
           "media_id": mediaId.toString(),
         })
     );

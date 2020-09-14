@@ -23,12 +23,18 @@ class MovieCard extends StatelessWidget {
         list.add(buildGenres(element, context));
       });
     }
+    List favoriteId = userProfile.currentType == "tv"
+        ? userProfile.favoriteTVIds
+        : userProfile.favoriteMovieIds;
+    List watchedId = userProfile.currentType == "tv"
+        ? userProfile.watchTVListIds
+        : userProfile.watchMovieListIds;
     return Container(
       child: GestureDetector(
         onTap: () async {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) =>
-                  FilmDetailPage(id: film.id.toString(), type: "movie")));
+                  FilmDetailPage(id: film.id.toString(), type: userProfile.currentType)));
         },
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -72,6 +78,7 @@ class MovieCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Row(children: [
+                              film.title!=null?
                               Expanded(
                                 child: Text(
                                   film.title,
@@ -84,17 +91,8 @@ class MovieCard extends StatelessWidget {
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                              ),
+                              ):Container(),
                             ]),
-                            film.isAdult
-                                ? Text("18+",
-                                style: TextStyle(
-                                  fontFamily: "AmaticSC",
-                                  fontSize: 30,
-                                  color: provider.currentAcidColor,
-                                  fontWeight: FontWeight.w700,
-                                ))
-                                : Container(),
                             Expanded(
                                 child: Text(
                                   film.release ?? "-",
@@ -131,27 +129,26 @@ class MovieCard extends StatelessWidget {
                       children: <Widget>[
                         IconButton(
                           onPressed: () async {
-                            await userProfile.markAsFavorite(film.id,
-                                !userProfile.favoriteIds.contains(film.id));
+                            await userProfile.markAsFavorite(film.id, !favoriteId.contains(film.id));
                           },
                           icon: Icon(
-                            userProfile.favoriteIds.contains(film.id)
+                            favoriteId.contains(film.id)
                                 ? Icons.favorite
                                 : Icons.favorite_border,
-                            color: userProfile.favoriteIds.contains(film.id)
+                            color: favoriteId.contains(film.id)
                                 ? Colors.red
                                 : Colors.white,
                           ),
                         ),
                         IconButton(
                           onPressed: () async{
-                            await userProfile.markAsWatch(film.id, !userProfile.watchListIds.contains(film.id));
+                            await userProfile.markAsWatch(film.id, !watchedId.contains(film.id));
                           },
                           icon: Icon(
-                            userProfile.watchListIds.contains(film.id)
+                            watchedId.contains(film.id)
                                 ? Icons.visibility
                                 : Icons.visibility_off,
-                            color: !userProfile.watchListIds.contains(film.id)
+                            color: !watchedId.contains(film.id)
                                 ? Colors.white
                                 : Colors.lightGreen,
                           ),
@@ -165,8 +162,13 @@ class MovieCard extends StatelessWidget {
   }
 
   buildGenres(id, context) {
+    var userProfile = Provider.of<UserProvider>(context);
+    var text = userProfile.currentType!="tv"
+        ? Provider.of<SettingsProvider>(context).movieMapOfGanres[id]
+        : Provider.of<SettingsProvider>(context).tvMapOfGanres[id];
+    if(text!=null)
     return Text(
-      Provider.of<SettingsProvider>(context).movieMapOfGanres[id],
+      text,
       style: TextStyle(
         fontFamily: "AmaticSC",
         fontSize: 25,
@@ -174,6 +176,7 @@ class MovieCard extends StatelessWidget {
         color: Provider.of<ThemeProvider>(context).currentFontColor,
       ),
     );
+    else return Container();
   }
 
   _buildVoteBlock(icon, text, context) {

@@ -30,7 +30,6 @@ class _LibraryPageState extends State<LibraryPage>
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   ScrollController _scroll = ScrollController();
   TabController _tabController;
-  int currentTab=0;
   List<Widget> list=[];
 
 
@@ -60,14 +59,22 @@ class _LibraryPageState extends State<LibraryPage>
     var userProfile = Provider.of<UserProvider>(context);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
 
-    List<Widget> favoritList=[];
-    userProfile.favoriteList.forEach((element) {
-        favoritList.add(MovieCard(element));
-    });
-    List<Widget> watchList=[];
-    userProfile.watchList.forEach((element) {
-        watchList.add(MovieCard(element));
-    });
+    List<Widget> favoritList = [];
+    userProfile.currentType == "tv"
+        ? userProfile.favoriteTVList.forEach((element) {
+            favoritList.add(MovieCard(element));
+          })
+        : userProfile.favoriteMovieList.forEach((element) {
+            favoritList.add(MovieCard(element));
+          });
+    List<Widget> watchList = [];
+    userProfile.currentType == "tv"
+        ? userProfile.watchTVList.forEach((element) {
+            watchList.add(MovieCard(element));
+          })
+        : userProfile.watchMovieList.forEach((element) {
+            watchList.add(MovieCard(element));
+          });
     return WillPopScope(
       onWillPop: () async {
      //   mySettings.changePage(0);
@@ -94,6 +101,42 @@ class _LibraryPageState extends State<LibraryPage>
               ),
             ],
             ),
+            actions: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(right: 12),
+                child: Row(children: [
+                  Text(
+                    AppLocalizations().translate(context, WordKeys.films),
+                    style: TextStyle(
+                      fontFamily: "AmaticSC",
+                      fontSize: 22,
+                    ),
+                  ),
+                  Switch(
+                    value: userProfile.currentType!="movie",
+                    onChanged: (value) {
+                      setState(() {
+                        userProfile.changeCurrentType(
+                            userProfile.currentType=="movie"
+                                ? "tv"
+                                :"movie"
+                        );
+                      });
+                    },
+                    activeTrackColor:
+                    Provider.of<ThemeProvider>(context).currentSecondaryColor,
+                    activeColor: Provider.of<ThemeProvider>(context).currentMainColor,
+                  ),
+                  Text(
+                    AppLocalizations().translate(context, WordKeys.TV),
+                    style: TextStyle(
+                      fontFamily: "AmaticSC",
+                      fontSize: 22,
+                    ),
+                  ),
+                ]),
+              ),
+            ],
             title: Text(
               AppLocalizations().translate(context, WordKeys.library),
               style: TextStyle(

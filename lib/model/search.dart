@@ -70,7 +70,10 @@ class SearchResults{
    originalTitle=json['original_title'];
    if(json['genre_ids']!=null)
       json['genre_ids'].forEach((element)=>ganres.add(element));
-   title=json['title'];
+   if(json['title']!=null)
+    title=json['title'];
+   else if(json['name']!=null)
+     title = json['name'];
    voteAverage=json['vote_average'].toString();
    overview=json['overview'];
    release=json['release_date'];
