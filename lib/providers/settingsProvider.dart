@@ -14,6 +14,7 @@ class SettingsProvider extends ChangeNotifier {
   List <int> tvArrayGenres =[];
   List <int> movieArrayGenres =[];
   int currentPage = 0;
+  String currentYear;
 
   getGanresSettings(type) async{
    List list = await Api().getGenres(type);
@@ -50,6 +51,11 @@ class SettingsProvider extends ChangeNotifier {
     language = newLanguage;
     notifyListeners();
     return language;
+  }
+
+  saveYearFilter(year){
+    currentYear = year;
+    notifyListeners();
   }
 
   changePage(int pageIndex){

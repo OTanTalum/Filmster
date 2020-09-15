@@ -3,10 +3,12 @@
 import 'dart:io';
 
 import 'package:filmster/model/search.dart';
+import 'package:filmster/page/discoverPage.dart';
 import 'package:filmster/page/films.dart';
 import 'package:filmster/page/library.dart';
 import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/page/trendingPage.dart';
+import 'package:filmster/providers/discoverProvider.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
@@ -41,6 +43,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ChangeNotifierProvider(create: (_) => TrendingProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => DiscoverProvider()),
       ],
       child: MyApp(),
     ),
@@ -64,15 +67,17 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderStateMixin{
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   ScrollController _scrollController = ScrollController();
+  TabController _tabController;
   int currentPage = 1;
   List<Widget> movieTrend = [];
 
   @override
   void initState() {
     super.initState();
+    _tabController =  new TabController(length: 3, vsync: this);
     Future.microtask(() async {
       await initUser();
       await initLanguage();
@@ -87,6 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -98,6 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await Provider.of<UserProvider>(context, listen: false).auth(username,password);
     await Provider.of<UserProvider>(context, listen: false).getFavorite();
     await Provider.of<UserProvider>(context, listen: false).getWatchList();
+    Provider.of<TrendingProvider>(context,listen: false).currentPage=1;
     }
   }
 
@@ -148,8 +155,25 @@ class _MyHomePageState extends State<MyHomePage> {
         key: scaffoldState,
         backgroundColor: myColors.currentBackgroundColor,
         appBar: AppBar(
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: myColors.currentMainColor,
+            tabs: [
+              Tab(
+                text: "Trending",
+
+              ),
+              Tab(
+                text: "Discover",
+              ),
+              Tab(
+                icon: Icon(Icons.highlight),
+              ),
+            ],
+          ),
+          centerTitle: true,
           title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Filmster',
                   style: TextStyle(fontFamily: "AmaticSC", fontSize: 34),
@@ -158,6 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         bottomNavigationBar: CustomeBottomNavigationBar(),
         floatingActionButton: FloatingActionButton(
+          heroTag: "btn1",
           onPressed: () {
             mySettings.changePage(4);
             if(Provider.of<UserProvider>(context, listen: false).currentUser!=null){
@@ -165,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   MaterialPageRoute(builder: (_) => LibraryPage()));
             }
           },
-          elevation: 12,
+          elevation: 10,
           backgroundColor: myColors.currentSecondaryColor,
           child: Icon(
               Icons.favorite,
@@ -176,8 +201,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         //drawer: DrawerMenu().build(context),
-        body: Stack(children: [
-          TrendingPage(),
-        ]));
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            TrendingPage(),
+            DiscoverPage(),
+            Icon(Icons.settings_input_svideo),
+          ],
+        ),
+    );
   }
 }

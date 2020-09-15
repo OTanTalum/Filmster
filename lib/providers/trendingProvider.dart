@@ -12,6 +12,7 @@ class TrendingProvider extends ChangeNotifier {
   List<SearchResults> trendingMoviesDay= [];
   List<SearchResults> trendingTVWeek= [];
   List<SearchResults> trendingTVDay= [];
+  int currentPage = 1;
   bool isLoading = false;
   bool isLast = false;
 
@@ -54,7 +55,7 @@ class TrendingProvider extends ChangeNotifier {
   }
 
 
-  Future<bool> fetchData(currentPage, type, period) async {
+  Future<bool> fetchData(type, period) async {
     if (!isLoading) {
       isLoading = true;
       Search response = await Api().getTrending(type, period, currentPage);

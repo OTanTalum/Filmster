@@ -38,7 +38,7 @@ class _LibraryPageState extends State<LibraryPage>
     super.initState();
     initFavorite();
     _tabController =  new TabController(length: 3, vsync: this);
-   // _scroll.addListener(addMore);
+    _scroll.addListener(addMore);
   }
 
   @override
@@ -48,9 +48,20 @@ class _LibraryPageState extends State<LibraryPage>
     _tabController.dispose();
   }
 
+  addMore() async {
+  var provider =  Provider.of<UserProvider>(context, listen: false);
+    if (_scroll.position.pixels ==
+        _scroll.position.maxScrollExtent&&
+        provider.totalPage>=provider.currentPage) {
+      provider.currentPage++;
+      await provider.getChristian();
+    }
+  }
+
   initFavorite() async{
     await Provider.of<UserProvider>(context, listen: false).getFavorite();
     await Provider.of<UserProvider>(context, listen: false).getWatchList();
+    await Provider.of<UserProvider>(context, listen: false).getChristian();
   }
 
   @override
@@ -59,6 +70,10 @@ class _LibraryPageState extends State<LibraryPage>
     var userProfile = Provider.of<UserProvider>(context);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
 
+    List<Widget> christianList = [];
+    userProfile.christianMovie.forEach((element) {
+      christianList.add(MovieCard(element));
+    });
     List<Widget> favoritList = [];
     userProfile.currentType == "tv"
         ? userProfile.favoriteTVList.forEach((element) {
@@ -97,7 +112,7 @@ class _LibraryPageState extends State<LibraryPage>
                 text: AppLocalizations().translate(context, WordKeys.watchlist),
               ),
               Tab(
-                  text: AppLocalizations().translate(context, WordKeys.favorite),
+                 icon: Icon(Icons.highlight),
               ),
             ],
             ),
@@ -169,10 +184,11 @@ class _LibraryPageState extends State<LibraryPage>
                 child: Column(
               children: watchList,
             )),
-            Icon(
-              Icons.timer,
-            size: 64,
-            color: myColors.currentMainColor,)
+            SingleChildScrollView(
+              controller: _scroll,
+                child: Column(
+                  children: christianList,
+                )),
             ],
           ),
         ),

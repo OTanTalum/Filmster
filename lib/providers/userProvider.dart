@@ -28,9 +28,13 @@ class UserProvider extends ChangeNotifier {
   List<SearchResults> watchTVList=[];
   List<int> watchTVListIds=[];
 
+  List<SearchResults> christianMovie=[];
+  
   String currentType = 'movie';
+  String currentPeriod = 'day';
 
   int currentPage = 1;
+  int totalPage;
 
   auth(String username, String password) async {
     await createRequest();
@@ -193,10 +197,25 @@ class UserProvider extends ChangeNotifier {
 
   changeCurrentType(type){
     currentType = type;
-    print(currentType);
     notifyListeners();
   }
 
+  changeCurrentPeriod(type){
+    currentPeriod = type;
+    notifyListeners();
+  }
+
+  getChristian() async {
+  ListResponse response = await Api().getChristianMovies(currentPage);
+  totalPage = response.totalPage;
+    response.results.forEach((element) {
+      if (!christianMovie.contains(element)) {
+        christianMovie.add(element);
+      }
+    });
+    notifyListeners();
+  }
+  
   exit() async{
     await Prefs().removeValues('userID');
     await Prefs().removeValues('username');

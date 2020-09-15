@@ -5,9 +5,7 @@ import 'package:filmster/model/authentication.dart';
 import 'package:filmster/model/film.dart';
 import 'package:filmster/model/responses.dart';
 import 'package:filmster/model/search.dart';
-import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
-import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 class Api{
@@ -111,6 +109,17 @@ class Api{
     }
   }
 
+
+  getChristianMovies(page)async {
+    final response = await http.get('$tMDBApi/keyword/253695/movies?api_key=$apiKey&language=${SettingsProvider.language}&page=$page');
+    if (response.statusCode == 200) {
+      return ListResponse.fromJson(json.decode(response.body));
+    }
+    else {
+      print("ERROR Cristian");
+    }
+  }
+
   getFavoriteMovies(int id, String sessionId, page, type)async {
     final response = await http.get('$tMDBApi/account/$id/favorite/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc&language=${SettingsProvider.language}');
     if (response.statusCode == 200) {
@@ -120,6 +129,7 @@ class Api{
       print("ERROR Favorite");
     }
   }
+
 
   getWatchListMovies(int id, String sessionId, page, type)async {
     final response = await http.get('$tMDBApi/account/$id/watchlist/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc&language=${SettingsProvider.language}');
@@ -164,6 +174,27 @@ class Api{
     }
     else {
       print("ERROR WatchList");
+    }
+  }
+
+
+  getDiscover(String type, int page, String genres, year) async{
+    final response = await http.get(''
+        '$tMDBApi/discover/''$type?'
+        'api_key=$apiKey'
+        '&page=$page'
+        '&language=${SettingsProvider.language}'
+        '&include_adult=$includeAdult'
+        "$year"
+        '&with_genres=$genres'
+        '&sort_by=popularity.desc'
+    );
+    print(response.request);
+    if (response.statusCode == 200) {
+      return Search.fromJson(json.decode(response.body));
+    }
+    else {
+      print("ERROR Trending");
     }
   }
 

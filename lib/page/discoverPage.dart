@@ -5,6 +5,7 @@ import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/film_detail_page.dart';
+import 'package:filmster/providers/discoverProvider.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
@@ -21,37 +22,36 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class TrendingPage extends StatefulWidget {
+class DiscoverPage extends StatefulWidget {
   @override
-  _TrendingPageState createState() => _TrendingPageState();
+  _DiscoverPageState createState() => _DiscoverPageState();
 }
 
-class _TrendingPageState extends State<TrendingPage> {
+class _DiscoverPageState extends State<DiscoverPage> {
   ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => initTrending());
+    Future.microtask(() => initDiscover());
     _scrollController.addListener(_scrollListener);
   }
 
-  initTrending() async {
-    await Provider.of<TrendingProvider>(context, listen: false).fetchData(
+  initDiscover() async {
+    await Provider.of<DiscoverProvider>(context, listen: false).fetchData(
         Provider.of<UserProvider>(context, listen: false).currentType != "movie"
             ? "tv"
             : "movie",
-        Provider.of<UserProvider>(context, listen: false).currentPeriod != "day"
-            ? "week"
-            : "day");
+    context
+    );
   }
 
-  loadPage(List<SearchResults> trendingList, List<int> arrayGenres) {
+  loadPage(List<SearchResults> discoverList) {
     List<Widget> pageList = [];
     int i = 0;
-    trendingList.forEach((element) {
-        i++;
+    discoverList.forEach((element) {
         pageList.add(movieCard(element));
+        i++;
         if (i == 10) {
           pageList.add(
             AdmobBanner(
@@ -68,27 +68,52 @@ class _TrendingPageState extends State<TrendingPage> {
           );
           i = 0;
         }
-    });
+      });
     return pageList;
   }
 
   getNextPage() async {
-    var trendProvider = Provider.of<TrendingProvider>(context, listen: false);
-    trendProvider.currentPage++;
-    await trendProvider.fetchData(
+    var discoverProvider = Provider.of<DiscoverProvider>(context, listen: false);
+    discoverProvider.currentPage++;
+    await discoverProvider.fetchData(
         Provider.of<UserProvider>(context, listen: false).currentType != "movie"
             ? "tv"
             : "movie",
-        Provider.of<UserProvider>(context, listen: false).currentPeriod != "day"
-            ? "week"
-            : "day");
+    context);
   }
 
   @override
   Widget build(BuildContext context) {
+    var userProfile = Provider.of<UserProvider>(context);
     var themeProfile = Provider.of<ThemeProvider>(context);
     return Scaffold(
       backgroundColor: themeProfile.currentBackgroundColor,
+      floatingActionButton: FloatingActionButton(
+        heroTag: "btn3",
+        elevation: 2,
+        backgroundColor: themeProfile.currentSecondaryColor,
+        onPressed: () async {
+          await showDialog(
+            context: context,
+            builder: (_) => DialogWindow(
+              onDoneTap: () async {
+                Navigator.pop(context);
+              },
+              isTV: userProfile.currentType != "movie",
+              title: "Filter",
+              imageH: 96,
+              imagew: 96,
+            ),
+          );
+          setState(() {
+            Provider.of<DiscoverProvider>(context, listen: false).clear();
+            Provider.of<DiscoverProvider>(context, listen: false).currentPage = 1;
+          });
+          await initDiscover();
+          print(Provider.of<SettingsProvider>(context, listen:false).movieArrayGenres);
+        },
+        child: Icon(Icons.movie_filter),
+      ),
       body: _buildBody(context),
     );
   }
@@ -114,20 +139,20 @@ class _TrendingPageState extends State<TrendingPage> {
         onTap: () async {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => FilmDetailPage(
-                    id: movie.id.toString(),
-                    type: Provider.of<UserProvider>(context).currentType !=
-                            "movie"
-                        ? "tv"
-                        : "movie",
-                  )));
+                id: movie.id.toString(),
+                type: Provider.of<UserProvider>(context).currentType !=
+                    "movie"
+                    ? "tv"
+                    : "movie",
+              )));
         },
         child: movie.poster != null
             ? Image.network(
-                "${Api().imageBannerAPI}${movie.poster}",
-                fit: BoxFit.fill,
-                width: MediaQuery.of(context).size.width * 0.5,
-                height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),
-              )
+          "${Api().imageBannerAPI}${movie.poster}",
+          fit: BoxFit.fill,
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),
+        )
             : Container(),
       ),
       Positioned(
@@ -198,45 +223,37 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
   _buildBody(BuildContext context) {
-    var trendingProvider = Provider.of<TrendingProvider>(context);
+    var discoverProvider = Provider.of<DiscoverProvider>(context);
     var userProvider = Provider.of<UserProvider>(context);
     List<Widget> caramba = [];
     List movieList = userProvider.currentType != "movie"
-        ? userProvider.currentPeriod != "day"
-            ? trendingProvider.trendingTVWeek
-            : trendingProvider.trendingTVDay
-        : userProvider.currentPeriod != "day"
-            ? trendingProvider.trendingMoviesWeek
-            : trendingProvider.trendingMoviesDay;
-    caramba.addAll(loadPage(
-        movieList,
-        userProvider.currentType != "movie"
-            ? Provider.of<SettingsProvider>(context).tvArrayGenres
-            : Provider.of<SettingsProvider>(context).movieArrayGenres));
+        ? discoverProvider.discoverTv
+        : discoverProvider.discoverMovie;
+    caramba.addAll(loadPage(movieList));
     if (caramba.length < 10) getNextPage();
     return SafeArea(
       child: SingleChildScrollView(
         controller: _scrollController,
-        child: trendingProvider.isLoading
+        child: discoverProvider.isLoading
             ? Container(
-                height: 200,
-                child: Center(
-                  child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(
-                          Provider.of<ThemeProvider>(context)
-                              .currentMainColor)),
-                ),
-              )
+          height: 200,
+          child: Center(
+            child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(
+                    Provider.of<ThemeProvider>(context)
+                        .currentMainColor)),
+          ),
+        )
             : Wrap(
-                children: caramba,
-              ),
+          children: caramba,
+        ),
       ),
     );
   }
 
   _scrollListener() async {
-    if (Provider.of<TrendingProvider>(context, listen: false).isLast) return;
-    if (Provider.of<TrendingProvider>(context, listen: false).isLoading) return;
+    if (Provider.of<DiscoverProvider>(context, listen: false).isLast) return;
+    if (Provider.of<DiscoverProvider>(context, listen: false).isLoading) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       await getNextPage();
