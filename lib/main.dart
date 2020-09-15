@@ -20,6 +20,7 @@ import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
 import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
 import 'package:filmster/widgets/drawer.dart';
+import 'package:filmster/widgets/movieCard.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 //Flutter
@@ -78,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
   void initState() {
     super.initState();
     _tabController =  new TabController(length: 3, vsync: this);
+    _scrollController.addListener(addMore);
     Future.microtask(() async {
       await initUser();
       await initLanguage();
@@ -104,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
     await Provider.of<UserProvider>(context, listen: false).auth(username,password);
     await Provider.of<UserProvider>(context, listen: false).getFavorite();
     await Provider.of<UserProvider>(context, listen: false).getWatchList();
+    await Provider.of<UserProvider>(context, listen: false).getChristian();
     Provider.of<TrendingProvider>(context,listen: false).currentPage=1;
     }
   }
@@ -142,6 +145,16 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
           .changeTheme(context, MyThemeKeys.DARK);
   }
 
+  addMore() async {
+    var provider =  Provider.of<UserProvider>(context, listen: false);
+    if ( _scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent&&
+        provider.totalPage>=provider.currentPage) {
+      provider.currentPage++;
+      await provider.getChristian();
+    }
+  }
+
   ///TODO 3. Attribution
   ///You shall use the TMDb logo to identify your use of the TMDb APIs.
   ///You shall place the following notice prominently on your application: "This product uses the TMDb API but is not endorsed or certified by TMDb."
@@ -151,6 +164,11 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
   Widget build(BuildContext context) {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
+    var userProvider = Provider.of<UserProvider>(context, listen: false);
+    List<Widget> christianList = [];
+    userProvider.christianMovie.forEach((element) {
+      christianList.add(MovieCard(element));
+    });
     return Scaffold(
         key: scaffoldState,
         backgroundColor: myColors.currentBackgroundColor,
@@ -206,7 +224,11 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
           children: [
             TrendingPage(),
             DiscoverPage(),
-            Icon(Icons.settings_input_svideo),
+            SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  children: christianList,
+                )),
           ],
         ),
     );

@@ -61,7 +61,6 @@ class _LibraryPageState extends State<LibraryPage>
   initFavorite() async{
     await Provider.of<UserProvider>(context, listen: false).getFavorite();
     await Provider.of<UserProvider>(context, listen: false).getWatchList();
-    await Provider.of<UserProvider>(context, listen: false).getChristian();
   }
 
   @override
@@ -70,10 +69,6 @@ class _LibraryPageState extends State<LibraryPage>
     var userProfile = Provider.of<UserProvider>(context);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
 
-    List<Widget> christianList = [];
-    userProfile.christianMovie.forEach((element) {
-      christianList.add(MovieCard(element));
-    });
     List<Widget> favoritList = [];
     userProfile.currentType == "tv"
         ? userProfile.favoriteTVList.forEach((element) {
@@ -184,11 +179,7 @@ class _LibraryPageState extends State<LibraryPage>
                 child: Column(
               children: watchList,
             )),
-            SingleChildScrollView(
-              controller: _scroll,
-                child: Column(
-                  children: christianList,
-                )),
+            Icon(Icons.highlight),
             ],
           ),
         ),

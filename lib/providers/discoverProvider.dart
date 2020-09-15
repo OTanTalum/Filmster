@@ -16,8 +16,8 @@ class DiscoverProvider extends ChangeNotifier {
   bool isLoading = false;
   bool isLast = false;
 
-  addFilms(List<SearchResults> list, int page, type) {
-    if (page != 1) {
+  addFilms(List<SearchResults> list,  type) {
+    if (currentPage != 1) {
       type == "movie"
           ? list.forEach((element) {
           discoverMovie.add(element);
@@ -66,7 +66,7 @@ class DiscoverProvider extends ChangeNotifier {
           ganres,
           year);
       List<SearchResults> list = response.search;
-      addFilms(list, currentPage, type);
+      addFilms(list, type);
       isLoading = false;
       changeIsLast(
           (response

@@ -513,7 +513,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 //child: Image.network("${Api().imageBannerAPI}${film.poster}",),
                 child: film.backdrop!=null
                     ? MovieBanner("${Api().imageBannerAPI}${film.backdrop}")
-                    : Container()
+                    : MovieBanner("${Api().imageBannerAPI}${film.poster}")
             ),
             _buildInfo(),
             _buildCreatorBlock(),

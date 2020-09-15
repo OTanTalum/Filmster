@@ -36,8 +36,7 @@ class _DialogWindowState extends State<DialogWindow> {
         Provider.of<SettingsProvider>(context, listen: false);
     var colors = Provider.of<ThemeProvider>(context, listen: false);
     showModalBottomSheet(
-        backgroundColor: Provider.of<ThemeProvider>(context, listen: false)
-            .currentSecondaryColor,
+        backgroundColor: colors.currentSecondaryColor,
         context: context,
         builder: (BuildContext context) {
           return Stack(

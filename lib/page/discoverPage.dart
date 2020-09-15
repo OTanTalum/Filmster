@@ -33,11 +33,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => initDiscover());
+    Future.microtask(() => initDiscover(context));
     _scrollController.addListener(_scrollListener);
   }
 
-  initDiscover() async {
+  initDiscover(context) async {
     await Provider.of<DiscoverProvider>(context, listen: false).fetchData(
         Provider.of<UserProvider>(context, listen: false).currentType != "movie"
             ? "tv"
@@ -74,7 +74,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   getNextPage() async {
     var discoverProvider = Provider.of<DiscoverProvider>(context, listen: false);
-    discoverProvider.currentPage++;
+    ++discoverProvider.currentPage;
     await discoverProvider.fetchData(
         Provider.of<UserProvider>(context, listen: false).currentType != "movie"
             ? "tv"
@@ -109,8 +109,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             Provider.of<DiscoverProvider>(context, listen: false).clear();
             Provider.of<DiscoverProvider>(context, listen: false).currentPage = 1;
           });
-          await initDiscover();
-          print(Provider.of<SettingsProvider>(context, listen:false).movieArrayGenres);
+          await initDiscover(context);
         },
         child: Icon(Icons.movie_filter),
       ),
