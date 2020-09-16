@@ -15,5 +15,7 @@ enum WordKeys {
   profile,
   favorite,
   watchlist,
-  library
+  library,
+  watched
+
 }

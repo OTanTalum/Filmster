@@ -26,9 +26,10 @@ class MovieCard extends StatelessWidget {
     List favoriteId = userProfile.currentType == "tv"
         ? userProfile.favoriteTVIds
         : userProfile.favoriteMovieIds;
-    List watchedId = userProfile.currentType == "tv"
-        ? userProfile.watchTVListIds
-        : userProfile.watchMovieListIds;
+    List markedId = userProfile.currentType == "tv"
+        ? userProfile.markedTVListIds
+        : userProfile.markedMovieListIds;
+    List watchedId = userProfile.watchedListIds;
     return Container(
       child: GestureDetector(
         onTap: () async {
@@ -129,7 +130,22 @@ class MovieCard extends StatelessWidget {
                       children: <Widget>[
                         IconButton(
                           onPressed: () async {
-                            await userProfile.markAsFavorite(film.id, !favoriteId.contains(film.id));
+                            await userProfile.mark(
+                                film.id, !markedId.contains(film.id));
+                          },
+                          icon: Icon(
+                            markedId.contains(film.id)
+                                ? Icons.turned_in
+                                : Icons.turned_in_not,
+                            color: !markedId.contains(film.id)
+                                ? Colors.white
+                                : Provider.of<ThemeProvider>(context).currentMainColor,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            await userProfile.markAsFavorite(
+                                film.id, !favoriteId.contains(film.id));
                           },
                           icon: Icon(
                             favoriteId.contains(film.id)
@@ -141,16 +157,17 @@ class MovieCard extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                          onPressed: () async{
-                            await userProfile.markAsWatch(film.id, !watchedId.contains(film.id));
+                          onPressed: () async {
+                            await userProfile.markAsWatched(
+                                film.id, !watchedId.contains(film.id));
                           },
                           icon: Icon(
                             watchedId.contains(film.id)
                                 ? Icons.visibility
                                 : Icons.visibility_off,
-                            color: !watchedId.contains(film.id)
-                                ? Colors.white
-                                : Colors.lightGreen,
+                            color: watchedId.contains(film.id)
+                                ? Provider.of<ThemeProvider>(context).currentMainColor
+                                : Colors.white,
                           ),
                         ),
                       ],

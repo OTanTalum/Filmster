@@ -36,7 +36,7 @@ class _LibraryPageState extends State<LibraryPage>
   @override
   void initState() {
     super.initState();
-    initFavorite();
+    init();
     _tabController =  new TabController(length: 3, vsync: this);
     _scroll.addListener(addMore);
   }
@@ -54,13 +54,26 @@ class _LibraryPageState extends State<LibraryPage>
         _scroll.position.maxScrollExtent&&
         provider.totalPage>=provider.currentPage) {
       provider.currentPage++;
-      await provider.getChristian();
+      await provider.getLists();
     }
   }
 
-  initFavorite() async{
+  initList(tvList, movieList, provider){
+    List<Widget> list = [];
+    provider.currentType == "tv"
+        ? tvList.forEach((element) {
+            list.add(MovieCard(element));
+          })
+        : movieList.forEach((element) {
+            list.add(MovieCard(element));
+          });
+    return list;
+  }
+
+  init() async{
     await Provider.of<UserProvider>(context, listen: false).getFavorite();
-    await Provider.of<UserProvider>(context, listen: false).getWatchList();
+    await Provider.of<UserProvider>(context, listen: false).getMarkList();
+    await Provider.of<UserProvider>(context, listen: false).getLists();
   }
 
   @override
@@ -69,22 +82,12 @@ class _LibraryPageState extends State<LibraryPage>
     var userProfile = Provider.of<UserProvider>(context);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
 
-    List<Widget> favoritList = [];
-    userProfile.currentType == "tv"
-        ? userProfile.favoriteTVList.forEach((element) {
-            favoritList.add(MovieCard(element));
-          })
-        : userProfile.favoriteMovieList.forEach((element) {
-            favoritList.add(MovieCard(element));
-          });
-    List<Widget> watchList = [];
-    userProfile.currentType == "tv"
-        ? userProfile.watchTVList.forEach((element) {
-            watchList.add(MovieCard(element));
-          })
-        : userProfile.watchMovieList.forEach((element) {
-            watchList.add(MovieCard(element));
-          });
+    List<Widget> favoritList = initList(
+        userProfile.favoriteTVList, userProfile.favoriteMovieList, userProfile);
+    List<Widget> markedList = initList(
+        userProfile.markedTVList, userProfile.markedMovieList, userProfile);
+    List<Widget> watchedList = initList(
+        userProfile.watchedList, userProfile.watchedList, userProfile);
     return WillPopScope(
       onWillPop: () async {
      //   mySettings.changePage(0);
@@ -107,7 +110,7 @@ class _LibraryPageState extends State<LibraryPage>
                 text: AppLocalizations().translate(context, WordKeys.watchlist),
               ),
               Tab(
-                 icon: Icon(Icons.highlight),
+                text: AppLocalizations().translate(context, WordKeys.watched),
               ),
             ],
             ),
@@ -177,9 +180,13 @@ class _LibraryPageState extends State<LibraryPage>
             )),
             SingleChildScrollView(
                 child: Column(
-              children: watchList,
+              children: markedList,
             )),
-            Icon(Icons.highlight),
+            SingleChildScrollView(
+              controller: _scroll,
+                child: Column(
+                  children: watchedList,
+                )),
             ],
           ),
         ),

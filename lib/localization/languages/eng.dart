@@ -16,6 +16,7 @@ const ENG = {
   WordKeys.login: "Login",
   WordKeys.profile: "Profile",
   WordKeys.favorite: "Favorite",
-  WordKeys.watchlist: "Watchlist",
+  WordKeys.watchlist: "Marked",
   WordKeys.library: "Library",
+  WordKeys.watched: "Watched",
 };

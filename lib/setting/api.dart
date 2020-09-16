@@ -121,7 +121,7 @@ class Api{
   }
 
   getFavoriteMovies(int id, String sessionId, page, type)async {
-    final response = await http.get('$tMDBApi/account/$id/favorite/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc&language=${SettingsProvider.language}');
+    final response = await http.get('$tMDBApi/account/$id/favorite/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.desc&language=${SettingsProvider.language}');
     if (response.statusCode == 200) {
       return ListResponse.fromJson(json.decode(response.body));
     }
@@ -131,8 +131,8 @@ class Api{
   }
 
 
-  getWatchListMovies(int id, String sessionId, page, type)async {
-    final response = await http.get('$tMDBApi/account/$id/watchlist/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.asc&language=${SettingsProvider.language}');
+  getMarkedListMovies(int id, String sessionId, page, type)async {
+    final response = await http.get('$tMDBApi/account/$id/watchlist/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.desc&language=${SettingsProvider.language}');
     if (response.statusCode == 200) {
       return ListResponse.fromJson(json.decode(response.body));
     }
@@ -159,7 +159,7 @@ class Api{
     }
   }
 
-  markAsWatch(mediaId, bool isRemove, String  sessionId,  userId, type) async {
+  mark(mediaId, bool isRemove, String  sessionId,  userId, type) async {
     final response = await http.post('$tMDBApi/account/$userId/watchlist?api_key=$apiKey&session_id=$sessionId',
         headers: {"Content-Type":"application/json;charset=utf-8"},
         body: jsonEncode({
@@ -177,7 +177,6 @@ class Api{
     }
   }
 
-
   getDiscover(String type, int page, String genres, year) async{
     final response = await http.get(''
         '$tMDBApi/discover/''$type?'
@@ -194,8 +193,93 @@ class Api{
       return Search.fromJson(json.decode(response.body));
     }
     else {
-      print("ERROR Trending");
+      print("ERROR Discover");
     }
   }
+
+  getLists(int userId, String sessionId) async {
+    final response = await http.get(
+        '$tMDBApi/account/$userId/lists?'
+            'api_key=$apiKey'
+            '&language=${SettingsProvider.language}'
+            '&session_id=$sessionId');
+    print(response.request);
+    if (response.statusCode == 200) {
+      return CustomListResponse.fromJson(json.decode(response.body));
+    }
+    else {
+      print("ERROR Get LIST");
+    }
+  }
+
+
+  createWatchedList(String sessionId)async {
+    final response = await http.post(
+        '$tMDBApi/list?api_key=$apiKey&session_id=$sessionId',
+        body: {
+          "name": "Watched list by Filmster",
+          "description": "List watched Movie by Filmster",
+          "language": "${SettingsProvider.language}"
+        });
+    print("response");
+    if (response.statusCode==200) {
+      return json.decode(response.body);
+    }
+    else {
+      print("ERROR Session");
+    }
+  }
+
+  getWatchedList(String sessionId, String listId, page)async {
+    final response = await http.get(
+        '$tMDBApi/list/$listId?'
+            'api_key=$apiKey'
+            '&language=${SettingsProvider.language}'
+            '&page=$page',);
+    if (response.statusCode==200) {
+      return CustomList.fromJson(json.decode(response.body));
+    }
+    else {
+      print("ERROR Session");
+    }
+  }
+
+
+  markAsWatched(String listId, String sessionId, mediaId) async {
+    final response = await http.post('$tMDBApi/list/$listId/add_item'
+        '?api_key=$apiKey'
+        '&session_id=$sessionId',
+        headers: {"Content-Type":"application/json;charset=utf-8"},
+        body: jsonEncode({
+          "media_id": mediaId.toString(),
+        })
+    );
+    print(json.decode(response.body));
+    if (json.decode(response.body)["success"]) {
+      return json.decode(response.body);
+    }
+    else {
+      print("ERROR Mark WatchList");
+    }
+  }
+
+  deleteFromWatched(String listId, String sessionId, mediaId) async {
+    final response = await http.post('$tMDBApi/list/$listId/remove_item'
+        '?api_key=$apiKey'
+        '&session_id=$sessionId',
+        headers: {"Content-Type":"application/json;charset=utf-8"},
+        body: jsonEncode({
+          "media_id": mediaId.toString(),
+        })
+    );
+    if (json.decode(response.body)["success"]) {
+      return json.decode(response.body);
+    }
+    else {
+      print("ERROR Remove From WatchList");
+    }
+  }
+
+
 
 }

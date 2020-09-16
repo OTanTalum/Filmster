@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
     String password =   await Prefs().getStringPrefs("password");
     await Provider.of<UserProvider>(context, listen: false).auth(username,password);
     await Provider.of<UserProvider>(context, listen: false).getFavorite();
-    await Provider.of<UserProvider>(context, listen: false).getWatchList();
+    await Provider.of<UserProvider>(context, listen: false).getMarkList();
     await Provider.of<UserProvider>(context, listen: false).getChristian();
     Provider.of<TrendingProvider>(context,listen: false).currentPage=1;
     }

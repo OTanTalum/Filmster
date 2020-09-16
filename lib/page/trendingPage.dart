@@ -50,24 +50,24 @@ class _TrendingPageState extends State<TrendingPage> {
     List<Widget> pageList = [];
     int i = 0;
     trendingList.forEach((element) {
-        i++;
-        pageList.add(movieCard(element));
-        if (i == 10) {
-          pageList.add(
-            AdmobBanner(
-              adUnitId: AddMobClass().getBannerAdUnitId(),
-              adSize: AdmobBannerSize.FULL_BANNER,
-              listener: (AdmobAdEvent event, Map<String, dynamic> args) {
-                if (event == AdmobAdEvent.opened) {
-                  print('Admob banner opened!');
-                  FirebaseAnalytics().logEvent(name: 'adMobTrendingClick');
-                }
-              },
-              onBannerCreated: (AdmobBannerController controller) {},
-            ),
-          );
-          i = 0;
-        }
+      i++;
+      pageList.add(movieCard(element));
+      if (i == 10) {
+        pageList.add(
+          AdmobBanner(
+            adUnitId: AddMobClass().getBannerAdUnitId(),
+            adSize: AdmobBannerSize.FULL_BANNER,
+            listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+              if (event == AdmobAdEvent.opened) {
+                print('Admob banner opened!');
+                FirebaseAnalytics().logEvent(name: 'adMobTrendingClick');
+              }
+            },
+            onBannerCreated: (AdmobBannerController controller) {},
+          ),
+        );
+        i = 0;
+      }
     });
     return pageList;
   }
@@ -106,9 +106,10 @@ class _TrendingPageState extends State<TrendingPage> {
     List favoriteId = userProfile.currentType == "tv"
         ? userProfile.favoriteTVIds
         : userProfile.favoriteMovieIds;
-    List watchedId = userProfile.currentType == "tv"
-        ? userProfile.watchTVListIds
-        : userProfile.watchMovieListIds;
+    List markedId = userProfile.currentType == "tv"
+        ? userProfile.markedTVListIds
+        : userProfile.markedMovieListIds;
+    List watchedId = userProfile.watchedListIds;
     return Stack(children: [
       GestureDetector(
         onTap: () async {
@@ -142,52 +143,46 @@ class _TrendingPageState extends State<TrendingPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Row(children: [
-                    Icon(
-                      Icons.trending_up,
-                      color: Colors.white,
-                    ),
-                    Container(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Text(movie.popularity.toString(),
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: "MPLUSRounded1c",
-                              fontWeight: FontWeight.w300,
-                              fontSize: 20,
-                              color: Colors.white,
-                            ))),
-                  ]),
-                  Expanded(
-                    child: IconButton(
-                      onPressed: () async {
-                        await userProfile.markAsWatch(
-                            movie.id, !watchedId.contains(movie.id));
-                      },
-                      icon: Icon(
-                        watchedId.contains(movie.id)
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: !watchedId.contains(movie.id)
-                            ? Colors.white
-                            : Colors.lightGreen,
-                      ),
+                  IconButton(
+                    onPressed: () async {
+                      await userProfile.mark(
+                          movie.id, !markedId.contains(movie.id));
+                    },
+                    icon: Icon(
+                      markedId.contains(movie.id)
+                          ? Icons.turned_in
+                          : Icons.turned_in_not,
+                      color: !markedId.contains(movie.id)
+                          ? Colors.white
+                          : Colors.lightGreen,
                     ),
                   ),
-                  Expanded(
-                    child: IconButton(
-                      onPressed: () async {
-                        await userProfile.markAsFavorite(
-                            movie.id, !favoriteId.contains(movie.id));
-                      },
-                      icon: Icon(
-                        favoriteId.contains(movie.id)
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        color: favoriteId.contains(movie.id)
-                            ? Colors.red
-                            : Colors.white,
-                      ),
+                  IconButton(
+                    onPressed: () async {
+                      await userProfile.markAsFavorite(
+                          movie.id, !favoriteId.contains(movie.id));
+                    },
+                    icon: Icon(
+                      favoriteId.contains(movie.id)
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: favoriteId.contains(movie.id)
+                          ? Colors.red
+                          : Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      await userProfile.markAsWatched(
+                          movie.id, !watchedId.contains(movie.id));
+                    },
+                    icon: Icon(
+                      watchedId.contains(movie.id)
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: watchedId.contains(movie.id)
+                          ? Provider.of<ThemeProvider>(context).currentMainColor
+                          : Colors.white,
                     ),
                   ),
                 ],

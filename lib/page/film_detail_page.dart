@@ -77,12 +77,17 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   Widget build(BuildContext context) {
     var provider = Provider.of<ThemeProvider>(context);
     var userProfile = Provider.of<UserProvider>(context);
-    List favoriteId = userProfile.currentType=="tv"
-        ? userProfile.favoriteTVIds
-        : userProfile.favoriteMovieIds;
-    List watchedId = userProfile.currentType=="tv"
-        ? userProfile.watchTVListIds
-        : userProfile.watchMovieListIds;
+    List favoriteId =
+    // userProfile.currentType == "tv"
+    //     ? userProfile.favoriteTVIds
+    //    :
+    userProfile.favoriteMovieIds;
+    List markedId =
+    // userProfile.currentType == "tv"
+    //     ? userProfile.markedTVListIds
+    //     :
+    userProfile.markedMovieListIds;
+    List watchedId = userProfile.watchedListIds;
     return film == null
         ? Container(
             color: provider.currentBackgroundColor,
@@ -128,28 +133,44 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               ),
               actions: <Widget>[
                 IconButton(
-                  onPressed: () async{
-                    await userProfile.markAsWatch(film.id, !watchedId.contains(film.id));
+                  onPressed: () async {
+                    await userProfile.mark(
+                        film.id, !markedId.contains(film.id));
+                  },
+                  icon: Icon(
+                    markedId.contains(film.id)
+                        ? Icons.turned_in
+                        : Icons.turned_in_not,
+                    color: !markedId.contains(film.id)
+                        ? Colors.white
+                        : Provider.of<ThemeProvider>(context).currentMainColor,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    await userProfile.markAsFavorite(
+                        film.id, !favoriteId.contains(film.id));
+                  },
+                  icon: Icon(
+                    favoriteId.contains(film.id)
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: favoriteId.contains(film.id)
+                        ? Colors.red
+                        : Colors.white,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    await userProfile.markAsWatched(
+                        film.id, !watchedId.contains(film.id));
                   },
                   icon: Icon(
                     watchedId.contains(film.id)
                         ? Icons.visibility
                         : Icons.visibility_off,
-                    color: !watchedId.contains(film.id)
-                        ? Colors.white
-                        : Colors.lightGreen,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () async {
-                    await userProfile.markAsFavorite(film.id, !favoriteId.contains(film.id));
-                  },
-                  icon: Icon(
-                    favoriteId.contains(int.parse(film.id))
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color: favoriteId.contains(int.parse(film.id))
-                        ? Colors.red
+                    color: watchedId.contains(film.id)
+                        ? Provider.of<ThemeProvider>(context).currentMainColor
                         : Colors.white,
                   ),
                 ),

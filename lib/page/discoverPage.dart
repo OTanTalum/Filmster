@@ -131,8 +131,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
         ? userProfile.favoriteTVIds
         : userProfile.favoriteMovieIds;
     List watchedId = userProfile.currentType == "tv"
-        ? userProfile.watchTVListIds
-        : userProfile.watchMovieListIds;
+        ? userProfile.markedTVListIds
+        : userProfile.markedMovieListIds;
     return Stack(children: [
       GestureDetector(
         onTap: () async {
@@ -185,7 +185,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   Expanded(
                     child: IconButton(
                       onPressed: () async {
-                        await userProfile.markAsWatch(
+                        await userProfile.mark(
                             movie.id, !watchedId.contains(movie.id));
                       },
                       icon: Icon(

@@ -18,4 +18,5 @@ const RUS = {
   WordKeys.favorite: "Избранное",
   WordKeys.watchlist: "К просморту",
   WordKeys.library: "Библиотека",
+  WordKeys.watched: "Просмотренное",
 };

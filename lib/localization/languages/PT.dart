@@ -18,4 +18,5 @@ const PT = {
   WordKeys.favorite: "Favoritos",
   WordKeys.watchlist: "Lista de seguimiento",
   WordKeys.library: "Biblioteca",
+  WordKeys.watched: "Vista",
 };
