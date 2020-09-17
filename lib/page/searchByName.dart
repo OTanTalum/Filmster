@@ -47,26 +47,6 @@ class _FilmsPageState extends State<FilmsPage> {
     textController.addListener(onTextChange);
   }
 
-  _buildVoteBlock(icon, text) {
-    var provider = Provider.of<ThemeProvider>(context);
-    return Row(children: [
-      Icon(
-        icon,
-        color: provider.currentFontColor,
-      ),
-      Container(
-          padding: EdgeInsets.only(left: 5),
-          child: Text(text,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: "AmaticSC",
-                fontSize: 25,
-                //  fontWeight: FontWeight.bold,
-                color: provider.currentFontColor,
-              )))
-    ]);
-  }
-
   buildGenres(id) {
     return Text(
       widget.type == "movie"
@@ -144,9 +124,10 @@ class _FilmsPageState extends State<FilmsPage> {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
     return WillPopScope(
-      onWillPop: () {
+      onWillPop: () async {
         mySettings.changePage(0);
         Navigator.of(context).pop();
+        return true;
       },
       child: Scaffold(
         backgroundColor: myColors.currentBackgroundColor,

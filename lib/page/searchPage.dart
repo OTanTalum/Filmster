@@ -91,17 +91,18 @@ class _SearchPageState extends State<SearchPage> {
       controller: _scrollController,
       child: Column(
         children: <Widget>[
-      _buildCard("Sarch by title"),
+        _buildCard("Search movie by title", 'assets/image/mrRobotBackground.jpg', "movie"),
+        _buildCard("Search tv by title", 'assets/image/riverdaleBackground.jpg', "tv"),
         ],
       ),
     );
   }
-  _buildCard(String title){
-    var myColors = Provider.of<ThemeProvider>(context, listen: false);
+  _buildCard(String title, String imageURL, String type){
     return GestureDetector(
       onTap: (){
+        Provider.of<UserProvider>(context, listen: false).changeCurrentType(type);
         Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => FilmsPage()));
+            MaterialPageRoute(builder: (_) => FilmsPage(type:type)));
       },
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 24),
@@ -115,9 +116,7 @@ class _SearchPageState extends State<SearchPage> {
                 width: 1.4,
                 style: BorderStyle.solid),
             image: DecorationImage(
-              image: AssetImage(
-                  'assets/image/mrRobotBackground.jpg',
-              ),
+              image: AssetImage(imageURL),
               fit: BoxFit.fitWidth,
               alignment: Alignment.topLeft
             ),
@@ -132,16 +131,19 @@ class _SearchPageState extends State<SearchPage> {
             ],
           ),
           child: Padding(
-            padding: EdgeInsets.only(right: 12, top: MediaQuery.of(context).size.height*0.2),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontFamily: "MPLUSRounded1c",
-                fontWeight: FontWeight.w500,
-                fontSize: 27.0,
-                color: Colors.white,
+            padding: EdgeInsets.only(right: 12, top: MediaQuery.of(context).size.height*0.17),
+            child: Opacity(
+              opacity: 0.4,
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontFamily: "MPLUSRounded1c",
+                  fontWeight: FontWeight.w700,
+                  fontSize: 30.0,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.end,
             ),
           ),
         ),
