@@ -87,7 +87,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     //     ? userProfile.markedTVListIds
     //     :
     userProfile.markedMovieListIds;
-    List watchedId = userProfile.watchedListIds;
+    List watchedId = userProfile.watchedMovieListIds;
     return film == null
         ? Container(
             color: provider.currentBackgroundColor,

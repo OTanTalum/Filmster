@@ -33,11 +33,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => initDiscover(context));
+    Future.microtask(() => initDiscover());
     _scrollController.addListener(_scrollListener);
   }
 
-  initDiscover(context) async {
+  initDiscover() async {
     await Provider.of<DiscoverProvider>(context, listen: false).fetchData(
         Provider.of<UserProvider>(context, listen: false).currentType != "movie"
             ? "tv"
@@ -109,7 +109,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             Provider.of<DiscoverProvider>(context, listen: false).clear();
             Provider.of<DiscoverProvider>(context, listen: false).currentPage = 1;
           });
-          await initDiscover(context);
+          await initDiscover();
         },
         child: Icon(Icons.movie_filter),
       ),
@@ -130,9 +130,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
     List favoriteId = userProfile.currentType == "tv"
         ? userProfile.favoriteTVIds
         : userProfile.favoriteMovieIds;
-    List watchedId = userProfile.currentType == "tv"
+    List markedId = userProfile.currentType == "tv"
         ? userProfile.markedTVListIds
         : userProfile.markedMovieListIds;
+    List watchedId = userProfile.watchedMovieListIds;
     return Stack(children: [
       GestureDetector(
         onTap: () async {
@@ -166,56 +167,51 @@ class _DiscoverPageState extends State<DiscoverPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Row(children: [
-                    Icon(
-                      Icons.trending_up,
-                      color: Colors.white,
-                    ),
-                    Container(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Text(movie.popularity.toString(),
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: "MPLUSRounded1c",
-                              fontWeight: FontWeight.w300,
-                              fontSize: 20,
-                              color: Colors.white,
-                            ))),
-                  ]),
-                  Expanded(
-                    child: IconButton(
-                      onPressed: () async {
-                        await userProfile.mark(
-                            movie.id, !watchedId.contains(movie.id));
-                      },
-                      icon: Icon(
-                        watchedId.contains(movie.id)
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: !watchedId.contains(movie.id)
-                            ? Colors.white
-                            : Colors.lightGreen,
-                      ),
+                  IconButton(
+                    onPressed: () async {
+                      await userProfile.mark(
+                          movie.id, !markedId.contains(movie.id));
+                    },
+                    icon: Icon(
+                      markedId.contains(movie.id)
+                          ? Icons.turned_in
+                          : Icons.turned_in_not,
+                      color: !markedId.contains(movie.id)
+                          ? Colors.white
+                          : Colors.lightGreen,
                     ),
                   ),
-                  Expanded(
-                    child: IconButton(
-                      onPressed: () async {
-                        await userProfile.markAsFavorite(
-                            movie.id, !favoriteId.contains(movie.id));
-                      },
-                      icon: Icon(
-                        favoriteId.contains(movie.id)
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        color: favoriteId.contains(movie.id)
-                            ? Colors.red
-                            : Colors.white,
-                      ),
+                  IconButton(
+                    onPressed: () async {
+                      await userProfile.markAsFavorite(
+                          movie.id, !favoriteId.contains(movie.id));
+                    },
+                    icon: Icon(
+                      favoriteId.contains(movie.id)
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: favoriteId.contains(movie.id)
+                          ? Colors.red
+                          : Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      await userProfile.markAsWatched(
+                          movie.id, !watchedId.contains(movie.id));
+                    },
+                    icon: Icon(
+                      watchedId.contains(movie.id)
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: watchedId.contains(movie.id)
+                          ? Provider.of<ThemeProvider>(context).currentMainColor
+                          : Colors.white,
                     ),
                   ),
                 ],
-              )),
+              ),
+          ),
         ),
       )
     ]);

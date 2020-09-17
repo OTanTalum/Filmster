@@ -87,7 +87,7 @@ class _LibraryPageState extends State<LibraryPage>
     List<Widget> markedList = initList(
         userProfile.markedTVList, userProfile.markedMovieList, userProfile);
     List<Widget> watchedList = initList(
-        userProfile.watchedList, userProfile.watchedList, userProfile);
+        userProfile.watchedTvList, userProfile.watchedMovieList, userProfile);
     return WillPopScope(
       onWillPop: () async {
      //   mySettings.changePage(0);

@@ -2,9 +2,9 @@
 
 import 'dart:io';
 
+import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/discoverPage.dart';
-import 'package:filmster/page/films.dart';
 import 'package:filmster/page/library.dart';
 import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/page/trendingPage.dart';
@@ -29,6 +29,8 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:admob_flutter/admob_flutter.dart';
+
+import 'localization/languages/workKeys.dart';
 
 void main() {
 
@@ -178,11 +180,11 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
             indicatorColor: myColors.currentMainColor,
             tabs: [
               Tab(
-                text: "Trending",
+                text: AppLocalizations().translate(context, WordKeys.trending),
 
               ),
               Tab(
-                text: "Discover",
+                text: AppLocalizations().translate(context, WordKeys.discover),
               ),
               Tab(
                 icon: Icon(Icons.highlight),

@@ -104,7 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               _buildLanguageButton("us", "English"),
               _buildLanguageButton("ru", "Russian"),
-              _buildLanguageButton("pt", "Spanish"),
+              _buildLanguageButton("pt", "Portugalish"),
               SizedBox(
                 height: 50,
               ),

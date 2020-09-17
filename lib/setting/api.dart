@@ -204,6 +204,7 @@ class Api{
             '&language=${SettingsProvider.language}'
             '&session_id=$sessionId');
     print(response.request);
+    print(json.decode(response.body));
     if (response.statusCode == 200) {
       return CustomListResponse.fromJson(json.decode(response.body));
     }
@@ -230,12 +231,32 @@ class Api{
     }
   }
 
+  createWatchedTVList(String sessionId)async {
+    final response = await http.post(
+        '$tMDBApi/list?api_key=$apiKey&session_id=$sessionId',
+        body: {
+          "name": "Watched TVlist by Filmster",
+          "description": "List watched Movie by Filmster",
+          "list_type": "tv",
+          "language": "${SettingsProvider.language}"
+        });
+    print("response");
+    if (response.statusCode==200) {
+      return json.decode(response.body);
+    }
+    else {
+      print("ERROR Session");
+    }
+  }
+
   getWatchedList(String sessionId, String listId, page)async {
     final response = await http.get(
         '$tMDBApi/list/$listId?'
             'api_key=$apiKey'
             '&language=${SettingsProvider.language}'
-            '&page=$page',);
+            '&page=$page'
+    );
+    print(json.decode(response.body));
     if (response.statusCode==200) {
       return CustomList.fromJson(json.decode(response.body));
     }

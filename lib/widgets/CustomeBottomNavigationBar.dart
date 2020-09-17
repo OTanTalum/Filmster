@@ -1,7 +1,8 @@
 
-import 'package:filmster/page/films.dart';
 import 'package:filmster/page/loginPage.dart';
 import 'package:filmster/page/profilePage.dart';
+import 'package:filmster/page/searchByName.dart';
+import 'package:filmster/page/searchPage.dart';
 import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
@@ -33,7 +34,7 @@ class CustomeBottomNavigationBar extends StatefulWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               _buildIcon(0, MyHomePage(), Icons.home),
-              _buildIcon(1, FilmsPage(type: "movie"), Icons.search),
+              _buildIcon(1, SearchPage(), Icons.search),
               SizedBox(width: 24),
               _buildIcon(2, SettingsPage(), Icons.settings),
               _buildIcon(3, Provider.of<UserProvider>(context, listen: false).currentUser==null

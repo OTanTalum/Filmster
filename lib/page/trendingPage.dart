@@ -109,7 +109,7 @@ class _TrendingPageState extends State<TrendingPage> {
     List markedId = userProfile.currentType == "tv"
         ? userProfile.markedTVListIds
         : userProfile.markedMovieListIds;
-    List watchedId = userProfile.watchedListIds;
+    List watchedId = userProfile.watchedMovieListIds;
     return Stack(children: [
       GestureDetector(
         onTap: () async {
@@ -186,7 +186,8 @@ class _TrendingPageState extends State<TrendingPage> {
                     ),
                   ),
                 ],
-              )),
+              ),
+          ),
         ),
       )
     ]);

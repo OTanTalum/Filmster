@@ -26,6 +26,7 @@ class Search{
 
 class SearchResults{
   int id;
+  String mediaType;
   double popularity;
   int voteCount;
   bool isVideo;
@@ -54,11 +55,13 @@ class SearchResults{
     this.voteAverage,
     this.overview,
     this.release,
+    this.mediaType,
   });
 
 
   SearchResults.fromJson(Map<String, dynamic> json) {
    id=json['id'];
+   mediaType=json['media_type'];
    if(json['popularity']!=null)
    popularity=json['popularity']*1.0;
    voteCount=json['vote_count'];

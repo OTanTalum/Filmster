@@ -29,7 +29,7 @@ class MovieCard extends StatelessWidget {
     List markedId = userProfile.currentType == "tv"
         ? userProfile.markedTVListIds
         : userProfile.markedMovieListIds;
-    List watchedId = userProfile.watchedListIds;
+    List watchedId = userProfile.watchedMovieListIds;
     return Container(
       child: GestureDetector(
         onTap: () async {

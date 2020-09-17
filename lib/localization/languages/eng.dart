@@ -19,4 +19,6 @@ const ENG = {
   WordKeys.watchlist: "Marked",
   WordKeys.library: "Library",
   WordKeys.watched: "Watched",
+  WordKeys.trending: "Trending",
+  WordKeys.discover: "Discover",
 };

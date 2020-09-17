@@ -8,33 +8,35 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserProvider extends ChangeNotifier {
-
   String requestToken;
   String logedToken;
   String sesion_id;
   bool isloged;
   User currentUser;
 
-  String watchedId;
+  String watchedmovieId;
+  String watchedTVId;
 
-  List<SearchResults> favoriteMovieList=[];
-  List<int> favoriteMovieIds=[];
-  List<SearchResults> favoriteTVList=[];
-  List<int> favoriteTVIds=[];
+  List<SearchResults> favoriteMovieList = [];
+  List<int> favoriteMovieIds = [];
+  List<SearchResults> favoriteTVList = [];
+  List<int> favoriteTVIds = [];
 
-  List<SearchResults> markedMovieList=[];
-  List<int> markedMovieListIds=[];
-  List<SearchResults> markedTVList=[];
-  List<int> markedTVListIds=[];
+  List<SearchResults> markedMovieList = [];
+  List<int> markedMovieListIds = [];
+  List<SearchResults> markedTVList = [];
+  List<int> markedTVListIds = [];
 
-  List<SearchResults> watchedList=[];
-  List<int> watchedListIds=[];
+  List<SearchResults> watchedMovieList = [];
+  List<int> watchedMovieListIds = [];
+  List<SearchResults> watchedTvList = [];
+  List<int> watchedTvListIds = [];
 
+  List<CustomList> listOfLists = [];
+  List<CustomList> listOfLists2 = [];
 
-  List <CustomList> listOfLists=[];
+  List<SearchResults> christianMovie = [];
 
-  List<SearchResults> christianMovie=[];
-  
   String currentType = 'movie';
   String currentPeriod = 'day';
 
@@ -58,7 +60,8 @@ class UserProvider extends ChangeNotifier {
   }
 
   validate(String username, String password) async {
-    TokenRequestResponse response = await Api().login(username, password, requestToken);
+    TokenRequestResponse response =
+        await Api().login(username, password, requestToken);
     logedToken = response.requestToken;
     isloged = response.success;
     notifyListeners();
@@ -73,7 +76,7 @@ class UserProvider extends ChangeNotifier {
     return response;
   }
 
-  getUser()async{
+  getUser() async {
     User response = await Api().getUser(sesion_id);
     currentUser = response;
     notifyListeners();
@@ -113,8 +116,7 @@ class UserProvider extends ChangeNotifier {
           }
         });
       }
-    }
-    else{
+    } else {
       favoriteMovieIds = [];
       favoriteMovieList = [];
       int totalResults = 21;
@@ -143,9 +145,8 @@ class UserProvider extends ChangeNotifier {
       markedTVList = [];
       int totalResults = 21;
       for (int i = 1; (i - 1) * 20 < totalResults; i++) {
-        ListResponse response =
-        await Api().getMarkedListMovies(currentUser.id, sesion_id, i,
-            currentType != "tv" ? "movies" : "tv");
+        ListResponse response = await Api().getMarkedListMovies(currentUser.id,
+            sesion_id, i, currentType != "tv" ? "movies" : "tv");
         totalResults = response.totalResults;
         response.results.forEach((element) {
           if (!markedTVList.contains(element)) {
@@ -158,15 +159,13 @@ class UserProvider extends ChangeNotifier {
           }
         });
       }
-    }
-    else {
+    } else {
       markedMovieListIds = [];
       markedMovieList = [];
       int totalResults = 21;
       for (int i = 1; (i - 1) * 20 < totalResults; i++) {
-        ListResponse response =
-        await Api().getMarkedListMovies(currentUser.id, sesion_id, i,
-            currentType != "tv" ? "movies" : "tv");
+        ListResponse response = await Api().getMarkedListMovies(currentUser.id,
+            sesion_id, i, currentType != "tv" ? "movies" : "tv");
         totalResults = response.totalResults;
         response.results.forEach((element) {
           if (!markedMovieList.contains(element)) {
@@ -184,8 +183,8 @@ class UserProvider extends ChangeNotifier {
   }
 
   markAsFavorite(id, isRemove) async {
-    var response =
-        await Api().markAsFavorite( id, isRemove, sesion_id, currentUser.id, currentType);
+    var response = await Api()
+        .markAsFavorite(id, isRemove, sesion_id, currentUser.id, currentType);
     if (response["success"]) {
       await getFavorite();
     }
@@ -194,8 +193,9 @@ class UserProvider extends ChangeNotifier {
 
   markAsWatched(mediaId, bool isWatched) async {
     var response = isWatched
-        ? await Api().markAsWatched(watchedId, sesion_id, mediaId)
-        : await Api().deleteFromWatched(watchedId, sesion_id, mediaId);
+        ? await Api().markAsWatched(watchedmovieId, sesion_id, mediaId)
+        : await Api().deleteFromWatched(watchedmovieId, sesion_id, mediaId);
+    print(response);
     if (response["success"]) {
       await getWatched();
     }
@@ -204,25 +204,26 @@ class UserProvider extends ChangeNotifier {
 
   mark(id, isRemove) async {
     var response =
-        await Api().mark( id, isRemove, sesion_id, currentUser.id, currentType);
+        await Api().mark(id, isRemove, sesion_id, currentUser.id, currentType);
     if (response["success"]) {
       await getMarkList();
     }
     notifyListeners();
   }
 
-  changeCurrentType(type){
+  changeCurrentType(type) {
     currentType = type;
     notifyListeners();
   }
 
-  changeCurrentPeriod(type){
+  changeCurrentPeriod(type) {
     currentPeriod = type;
     notifyListeners();
   }
+
   getChristian() async {
-  ListResponse response = await Api().getChristianMovies(currentPage);
-  totalPage = response.totalPage;
+    ListResponse response = await Api().getChristianMovies(currentPage);
+    totalPage = response.totalPage;
     response.results.forEach((element) {
       if (!christianMovie.contains(element)) {
         christianMovie.add(element);
@@ -230,56 +231,78 @@ class UserProvider extends ChangeNotifier {
     });
     notifyListeners();
   }
+
   getWatched() async {
-      watchedListIds = [];
-      watchedList = [];
-      int totalResults = 21;
-      for (int i = 1; (i - 1) * 20 < totalResults; i++) {
-        print(i);
-        CustomList response =
-        await Api().getWatchedList(sesion_id, watchedId, i);
-        totalResults = response.itemCount;
-        response.items.forEach((element) {
-          if (!watchedList.contains(element)) {
-            watchedList.add(element);
+    watchedMovieListIds = [];
+    watchedMovieList = [];
+    watchedTvList = [];
+    watchedTvListIds = [];
+    int totalResults = 21;
+    for (int i = 1; (i - 1) * 20 < totalResults; i++) {
+      CustomList response = currentType == "movie"
+          ? await Api().getWatchedList(sesion_id, watchedmovieId, i)
+          : await Api().getWatchedList(sesion_id, watchedTVId, i);
+      totalResults = response.itemCount;
+      print(response.name);
+      print(response.itemCount);
+      response.items.forEach((element) {
+        if (!watchedMovieList.contains(element)&& currentType == "movie") {
+          watchedMovieList.add(element);
+        } else if (!watchedTvList.contains(element) && currentType == "tv") {
+          watchedTvList.add(element);
+        }
+      });
+      if (currentType == "movie") {
+        watchedMovieList.forEach((element) {
+          if (!watchedMovieListIds.contains(element.id)) {
+            watchedMovieListIds.add(element.id);
           }
         });
-        watchedList.forEach((element) {
-          if (!watchedListIds.contains(element.id)) {
-            watchedListIds.add(element.id);
+      } else {
+        watchedTvList.forEach((element) {
+          if (!watchedTvListIds.contains(element.id)) {
+            watchedTvListIds.add(element.id);
           }
         });
       }
+    }
     notifyListeners();
   }
 
   getLists() async {
     listOfLists = [];
-    CustomListResponse response = await Api().getLists(
-        currentUser.id, sesion_id);
+    listOfLists2 = [];
+    CustomListResponse response =
+        await Api().getLists(currentUser.id, sesion_id);
     response.results.forEach((element) {
-      print(element.name);
       if (element.name == "Watched list by Filmster") {
-        watchedId= element.id.toString();
+        watchedmovieId = element.id.toString();
         listOfLists.add(element);
       }
-
+      if (element.name == "Watched TVlist by Filmster") {
+        watchedTVId = element.id.toString();
+        listOfLists2.add(element);
+      }
     });
+
     if (listOfLists.isEmpty) {
-    var res =  await Api().createWatchedList(sesion_id);
-    watchedId= res['list_id'];
+      var res = await Api().createWatchedList(sesion_id);
+      watchedmovieId = res['list_id'];
+    }
+    if (listOfLists2.isEmpty) {
+      var res2 = await Api().createWatchedTVList(sesion_id);
+      watchedTVId = res2['list_id'];
     }
     await getWatched();
     notifyListeners();
   }
 
-  exit() async{
+  exit() async {
     await Prefs().removeValues('userID');
     await Prefs().removeValues('username');
     await Prefs().removeValues('password');
     isloged = false;
-    currentUser=null;
+    currentUser = null;
     notifyListeners();
   }
 }
-
