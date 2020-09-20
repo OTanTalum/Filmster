@@ -231,7 +231,7 @@ class _TrendingPageState extends State<TrendingPage> {
 
   _scrollListener() async {
     if (Provider.of<TrendingProvider>(context, listen: false).isLast) return;
-    if (Provider.of<TrendingProvider>(context).isLoading) return;
+    if (Provider.of<TrendingProvider>(context, listen: false).isLoading) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       await getNextPage();
