@@ -43,6 +43,8 @@ class UserProvider extends ChangeNotifier {
   int currentPage = 1;
   int totalPage;
 
+  bool isLoading = false;
+
   auth(String username, String password) async {
     await createRequest();
     await validate(username, password);
@@ -222,6 +224,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   getChristian() async {
+    isLoading = true;
     ListResponse response = await Api().getChristianMovies(currentPage);
     totalPage = response.totalPage;
     response.results.forEach((element) {
@@ -229,6 +232,7 @@ class UserProvider extends ChangeNotifier {
         christianMovie.add(element);
       }
     });
+    isLoading = false;
     notifyListeners();
   }
 

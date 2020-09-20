@@ -140,10 +140,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => FilmDetailPage(
                 id: movie.id.toString(),
-                type: Provider.of<UserProvider>(context).currentType !=
-                    "movie"
-                    ? "tv"
-                    : "movie",
+                type: userProfile.currentType
               )));
         },
         child: movie.poster != null

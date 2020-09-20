@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
+import 'package:filmster/page/HomePage.dart';
 import 'package:filmster/page/discoverPage.dart';
 import 'package:filmster/page/library.dart';
 import 'package:filmster/page/settings_page.dart';
@@ -33,11 +34,11 @@ import 'package:admob_flutter/admob_flutter.dart';
 import 'localization/languages/workKeys.dart';
 
 void main() {
-
   WidgetsFlutterBinding.ensureInitialized();
   Admob.initialize();
   Crashlytics.instance.enableInDevMode = true;
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
+
   runApp(
     MultiProvider(
       providers: [
@@ -72,16 +73,18 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderStateMixin{
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
-  ScrollController _scrollController = ScrollController();
   TabController _tabController;
   int currentPage = 1;
   List<Widget> movieTrend = [];
+  bool isLoading =false;
 
   @override
   void initState() {
     super.initState();
     _tabController =  new TabController(length: 3, vsync: this);
-    _scrollController.addListener(addMore);
+    setState(() {
+      isLoading = true;
+    });
     Future.microtask(() async {
       await initUser();
       await initLanguage();
@@ -91,26 +94,29 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
       await Provider.of<SettingsProvider>(context, listen: false)
           .getGanresSettings("tv");
     });
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     _tabController.dispose();
     super.dispose();
   }
 
   Future initUser()async {
+    var userProvider = Provider.of<UserProvider>(context, listen: false);
     print(await Prefs().hasString("username"));
     if (await Prefs().hasString("username")) {
     String username =  await Prefs().getStringPrefs("username");
     String password =   await Prefs().getStringPrefs("password");
-    await Provider.of<UserProvider>(context, listen: false).auth(username,password);
-    await Provider.of<UserProvider>(context, listen: false).getFavorite();
-    await Provider.of<UserProvider>(context, listen: false).getMarkList();
-    await Provider.of<UserProvider>(context, listen: false).getChristian();
-    Provider.of<TrendingProvider>(context,listen: false).currentPage=1;
+    await userProvider.auth(username,password);
+    await userProvider.getFavorite();
+    await userProvider.getMarkList();
+    await userProvider.getChristian();
     }
+    Provider.of<TrendingProvider>(context,listen: false).currentPage=1;
   }
 
   Future initLanguage() async {
@@ -147,16 +153,6 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
           .changeTheme(context, MyThemeKeys.DARK);
   }
 
-  addMore() async {
-    var provider =  Provider.of<UserProvider>(context, listen: false);
-    if ( _scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent&&
-        provider.totalPage>=provider.currentPage) {
-      provider.currentPage++;
-      await provider.getChristian();
-    }
-  }
-
   ///TODO 3. Attribution
   ///You shall use the TMDb logo to identify your use of the TMDb APIs.
   ///You shall place the following notice prominently on your application: "This product uses the TMDb API but is not endorsed or certified by TMDb."
@@ -164,75 +160,13 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
-    var myColors = Provider.of<ThemeProvider>(context, listen: false);
-    var mySettings = Provider.of<SettingsProvider>(context, listen: false);
-    var userProvider = Provider.of<UserProvider>(context, listen: false);
-    List<Widget> christianList = [];
-    userProvider.christianMovie.forEach((element) {
-      christianList.add(MovieCard(element));
-    });
     return Scaffold(
         key: scaffoldState,
-        backgroundColor: myColors.currentBackgroundColor,
-        appBar: AppBar(
-          bottom: TabBar(
-            controller: _tabController,
-            indicatorColor: myColors.currentMainColor,
-            tabs: [
-              Tab(
-                text: AppLocalizations().translate(context, WordKeys.trending),
-
-              ),
-              Tab(
-                text: AppLocalizations().translate(context, WordKeys.discover),
-              ),
-              Tab(
-                icon: Icon(Icons.highlight),
-              ),
-            ],
-          ),
-          centerTitle: true,
-          title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Filmster',
-                  style: TextStyle(fontFamily: "AmaticSC", fontSize: 34),
-                ),
-              ]),
-        ),
-        bottomNavigationBar: CustomeBottomNavigationBar(),
-        floatingActionButton: FloatingActionButton(
-          heroTag: "btn1",
-          onPressed: () {
-            mySettings.changePage(4);
-            if(Provider.of<UserProvider>(context, listen: false).currentUser!=null){
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => LibraryPage()));
-            }
-          },
-          elevation: 10,
-          backgroundColor: myColors.currentSecondaryColor,
-          child: Icon(
-              Icons.favorite,
-              color: mySettings.currentPage==4
-                  ? myColors.currentMainColor
-                  : myColors.currentFontColor
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        backgroundColor: Provider.of<ThemeProvider>(context, listen: false).currentBackgroundColor,
+     body: isLoading
+      ?CircularProgressIndicator()
+      :HomePage(),
         //drawer: DrawerMenu().build(context),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            TrendingPage(),
-            DiscoverPage(),
-            SingleChildScrollView(
-                controller: _scrollController,
-                child: Column(
-                  children: christianList,
-                )),
-          ],
-        ),
     );
   }
 }

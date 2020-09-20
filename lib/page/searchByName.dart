@@ -125,7 +125,7 @@ class _FilmsPageState extends State<FilmsPage> {
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: () async {
-        mySettings.changePage(0);
+        mySettings.changePage(1);
         Navigator.of(context).pop();
         return true;
       },

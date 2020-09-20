@@ -43,7 +43,7 @@ class MovieCard extends StatelessWidget {
               height: MediaQuery
                   .of(context)
                   .size
-                  .height * 0.26,
+                  .height * 0.3,
               color: provider.currentSecondaryColor,
               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
               child: Row(

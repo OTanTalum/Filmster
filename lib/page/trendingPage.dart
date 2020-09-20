@@ -209,7 +209,6 @@ class _TrendingPageState extends State<TrendingPage> {
         userProvider.currentType != "movie"
             ? Provider.of<SettingsProvider>(context).tvArrayGenres
             : Provider.of<SettingsProvider>(context).movieArrayGenres));
-    if (caramba.length < 10) getNextPage();
     return SafeArea(
       child: SingleChildScrollView(
         controller: _scrollController,
@@ -232,7 +231,7 @@ class _TrendingPageState extends State<TrendingPage> {
 
   _scrollListener() async {
     if (Provider.of<TrendingProvider>(context, listen: false).isLast) return;
-    if (Provider.of<TrendingProvider>(context, listen: false).isLoading) return;
+    if (Provider.of<TrendingProvider>(context).isLoading) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       await getNextPage();
