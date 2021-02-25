@@ -35,27 +35,42 @@ class FilmDetailPage extends StatefulWidget {
 }
 
 class FilmDetailPageState extends State<FilmDetailPage> {
+  ScrollController scrollController = ScrollController();
+  ThemeProvider themeProvider;
+  UserProvider userProvider;
   Film film;
   bool isLoading = true;
-  ScrollController scrollController = ScrollController();
+  bool isFavorite;
+  bool isMarked;
+  bool isWatched;
 
   @override
   void initState() {
-    scrollController.addListener(() {
-      setState(() {});
+    super.initState();
+    Future.microtask(() async{
+      await Api().getFilmDetail(widget.id, widget.type).then((response){
+        setState(() {
+          film = response;
+        });
+       init();
+      });
+      setState(() {
+        isLoading = false;
+      });
     });
-    loadFilm();
   }
 
-  loadFilm() async {
-    setState(() {
-      isLoading = true;
-    });
-    film = await Api().getFilmDetail(widget.id, widget.type);
-    setState(() {
-      isLoading = false;
-    });
+  init(){
+    isFavorite = userProvider.favoriteMovieIds.contains(int.parse(film.id));
+    isMarked = userProvider.markedMovieListIds.contains(int.parse(film.id));
+    isWatched = userProvider.watchedMovieListIds.contains(int.parse(film.id));
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
 
   _buildHeader(String title, double size) {
     var provider = Provider.of<ThemeProvider>(context);
@@ -75,41 +90,28 @@ class FilmDetailPageState extends State<FilmDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<ThemeProvider>(context);
-    var userProfile = Provider.of<UserProvider>(context);
-    List favoriteId =
-    // userProfile.currentType == "tv"
-    //     ? userProfile.favoriteTVIds
-    //    :
-    userProfile.favoriteMovieIds;
-    List markedId =
-    // userProfile.currentType == "tv"
-    //     ? userProfile.markedTVListIds
-    //     :
-    userProfile.markedMovieListIds;
-    List watchedId = userProfile.watchedMovieListIds;
+    userProvider = Provider.of<UserProvider>(context);
+    themeProvider = Provider.of<ThemeProvider>(context);
     return film == null
         ? Container(
-            color: provider.currentBackgroundColor,
+            color: themeProvider.currentBackgroundColor,
             child: Center(
               child: CircularProgressIndicator(
-                  valueColor:AlwaysStoppedAnimation(
-                      Provider.of<ThemeProvider>(context).currentMainColor
-                  )
-              ),
+                  valueColor: AlwaysStoppedAnimation(
+                      Provider.of<ThemeProvider>(context).currentMainColor)),
             ),
           )
         : Scaffold(
-            backgroundColor: provider.currentBackgroundColor,
+            backgroundColor: themeProvider.currentBackgroundColor,
             appBar: AppBar(
               title: Text(
-                film.title==null&&film.originalTitle!=null
+                film.title == null && film.originalTitle != null
                     ? "${film.title} 18+"
-                  : "${film.title} ",
+                    : "${film.title} ",
                 style: TextStyle(
                   fontFamily: "AmaticSC",
                   fontSize: 33,
-                  color: provider.currentFontColor,
+                  color: themeProvider.currentFontColor,
                 ),
               ),
               bottom: PreferredSize(
@@ -124,7 +126,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                             allSize: scrollController.position?.maxScrollExtent
                                     ?.toDouble() ??
                                 200,
-                            colors: provider.currentMainColor,
+                            colors: themeProvider.currentMainColor,
                             height: 4,
                             width: MediaQuery.of(context).size.width,
                             radius: 7.0)),
@@ -134,43 +136,45 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               actions: <Widget>[
                 IconButton(
                   onPressed: () async {
-                    await userProfile.mark(
-                        film.id, !markedId.contains(film.id));
+                    await userProvider.mark(
+                        film.movieToSearchResults(), !isMarked);
+                    init();
                   },
                   icon: Icon(
-                    markedId.contains(film.id)
+                    isMarked
                         ? Icons.turned_in
                         : Icons.turned_in_not,
-                    color: !markedId.contains(film.id)
+                    color: !isMarked
                         ? Colors.white
-                        : Provider.of<ThemeProvider>(context).currentMainColor,
+                        : themeProvider.currentMainColor,
                   ),
                 ),
                 IconButton(
                   onPressed: () async {
-                    await userProfile.markAsFavorite(
-                        film.id, !favoriteId.contains(film.id));
+                    await userProvider.markAsFavorite(film.movieToSearchResults(), isFavorite);
+                    init();
                   },
                   icon: Icon(
-                    favoriteId.contains(film.id)
+                    isFavorite
                         ? Icons.favorite
                         : Icons.favorite_border,
-                    color: favoriteId.contains(film.id)
+                    color: isFavorite
                         ? Colors.red
                         : Colors.white,
                   ),
                 ),
                 IconButton(
                   onPressed: () async {
-                    await userProfile.markAsWatched(
-                        film.id, !watchedId.contains(film.id));
+                    await userProvider.markAsWatched(
+                        film.movieToSearchResults(), isWatched);
+                    init();
                   },
                   icon: Icon(
-                    watchedId.contains(film.id)
+                    isWatched
                         ? Icons.visibility
                         : Icons.visibility_off,
-                    color: watchedId.contains(film.id)
-                        ? Provider.of<ThemeProvider>(context).currentMainColor
+                    color: isWatched
+                        ? themeProvider.currentMainColor
                         : Colors.white,
                   ),
                 ),
@@ -183,24 +187,23 @@ class FilmDetailPageState extends State<FilmDetailPage> {
 
   buildGenres(id) {
     return Text(
-      widget.type=="movie"
+      widget.type == "movie"
           ? Provider.of<SettingsProvider>(context).movieMapOfGanres[id]
           : Provider.of<SettingsProvider>(context).tvMapOfGanres[id],
       style: TextStyle(
         fontFamily: "MPLUSRounded1c",
         fontSize: 20,
-          fontWeight: FontWeight.w300,
-        color: Provider.of<ThemeProvider>(context).currentFontColor,
+        fontWeight: FontWeight.w300,
+        color: themeProvider.currentFontColor,
       ),
     );
   }
 
   _buildVoteBlock(icon, text) {
-    var provider = Provider.of<ThemeProvider>(context);
     return Row(children: [
       Icon(
         icon,
-        color: provider.currentFontColor,
+        color: themeProvider.currentFontColor,
       ),
       Container(
           padding: EdgeInsets.only(left: 5),
@@ -210,7 +213,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 fontFamily: "AmaticSC",
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: provider.currentFontColor,
+                color: themeProvider.currentFontColor,
               )))
     ]);
   }
@@ -308,8 +311,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             borderRadius: BorderRadius.all(Radius.circular(25)),
             color: provider.currentSecondaryColor,
           ),
-          child: Column(
-              children: <Widget>[
+          child: Column(children: <Widget>[
             Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0),
                 child: _buildHeader('${film.title} in Web', 25)),
@@ -346,7 +348,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     List<Widget> list = [];
     if (film.ganres != null && film.ganres.isNotEmpty) {
       film.ganres.forEach((element) {
-          list.add(buildGenres(element["id"]));
+        list.add(buildGenres(element["id"]));
       });
     }
     return Container(
@@ -443,7 +445,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             _buildHeader("Production", 26),
             Row(
               children: <Widget>[
-                film.companies.isNotEmpty&& film.companies[0].logo != null
+                film.companies.isNotEmpty && film.companies[0].logo != null
                     ? Padding(
                         padding: EdgeInsets.all(12),
                         child: Image.network(
@@ -453,36 +455,36 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                       )
                     : Container(),
                 Expanded(
-                    child: Column(
-                  children: <Widget>[
+                  child: Column(
+                    children: <Widget>[
                       _buildDevider(),
-                    buildOneField(film.status, "Status:"),
-                    film.status != null && film.status != 0
-                        ? _buildDevider()
-                        : Container(),
-                    buildOneField(film.budget, "Budget:"),
+                      buildOneField(film.status, "Status:"),
+                      film.status != null && film.status != 0
+                          ? _buildDevider()
+                          : Container(),
+                      buildOneField(film.budget, "Budget:"),
                       film.budget != null && film.budget != 0
                           ? _buildDevider()
                           : Container(),
-                    buildOneField(film.revenue, "Revenue:"),
-                    film.revenue != null && film.revenue != 0
-                        ? _buildDevider()
-                        : Container(),
-                  ],
-                ),
+                      buildOneField(film.revenue, "Revenue:"),
+                      film.revenue != null && film.revenue != 0
+                          ? _buildDevider()
+                          : Container(),
+                    ],
+                  ),
                 ),
               ],
             ),
-            film.companies.isNotEmpty&&film.companies[0]!= null
+            film.companies.isNotEmpty && film.companies[0] != null
                 ? buildOneField(film.companies[0].name, "Company:")
                 : Container(),
-            film.companies.isNotEmpty&& film.companies[0] != null
+            film.companies.isNotEmpty && film.companies[0] != null
                 ? _buildDevider()
                 : Container(),
-           film.countrys.isNotEmpty
+            film.countrys.isNotEmpty
                 ? buildOneField(film?.countrys[0].name, "Country:")
                 : Container(),
-           film.countrys.isNotEmpty && film?.countrys[0] != null
+            film.countrys.isNotEmpty && film?.countrys[0] != null
                 ? _buildDevider()
                 : Container(),
             SizedBox(
@@ -532,10 +534,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 alignment: Alignment.topCenter,
                 width: MediaQuery.of(context).size.width,
                 //child: Image.network("${Api().imageBannerAPI}${film.poster}",),
-                child: film.backdrop!=null
+                child: film.backdrop != null
                     ? MovieBanner("${Api().imageBannerAPI}${film.backdrop}")
-                    : MovieBanner("${Api().imageBannerAPI}${film.poster}")
-            ),
+                    : MovieBanner("${Api().imageBannerAPI}${film.poster}")),
             _buildInfo(),
             _buildCreatorBlock(),
             SizedBox(
@@ -559,18 +560,17 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         ]));
   }
 
-  _buildBannerField(){
+  _buildBannerField() {
     return AdmobBanner(
       adUnitId: AddMobClass().getMovieDetailBannerAdUnitId(),
       adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
       listener: (AdmobAdEvent event, Map<String, dynamic> args) {
-        if(event==AdmobAdEvent.opened) {
+        if (event == AdmobAdEvent.opened) {
           print('Admob banner opened!');
           FirebaseAnalytics().logEvent(name: 'adMobMovieDetailClick');
         }
       },
-      onBannerCreated: (AdmobBannerController controller) {
-      },
+      onBannerCreated: (AdmobBannerController controller) {},
     );
   }
 

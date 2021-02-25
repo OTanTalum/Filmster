@@ -1,28 +1,16 @@
-//Widgets
 
-import 'dart:io';
-
-import 'package:filmster/localization/localization.dart';
-import 'package:filmster/model/search.dart';
 import 'package:filmster/page/HomePage.dart';
-import 'package:filmster/page/discoverPage.dart';
-import 'package:filmster/page/library.dart';
-import 'package:filmster/page/settings_page.dart';
-import 'package:filmster/page/trendingPage.dart';
 import 'package:filmster/providers/discoverProvider.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/trendingProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
-import 'package:filmster/setting/adMob.dart';
-import 'package:filmster/setting/api.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
-import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
-import 'package:filmster/widgets/drawer.dart';
-import 'package:filmster/widgets/movieCard.dart';
+import 'package:filmster/widgets/LogoScreen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 
 //Flutter
 import 'package:flutter/material.dart';
@@ -73,29 +61,37 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderStateMixin{
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
+  final Trace mainTraceInit = FirebasePerformance.instance.newTrace("mainTraceInit");
   TabController _tabController;
-  int currentPage = 1;
   List<Widget> movieTrend = [];
-  bool isLoading =false;
+  int currentPage = 1;
+  bool isDone = false;
+  SettingsProvider _settingsProvider;
+
 
   @override
   void initState() {
-    super.initState();
     _tabController =  new TabController(length: 3, vsync: this);
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    init();
+    super.didChangeDependencies();
+  }
+
+  init() async {
     setState(() {
-      isLoading = true;
+      mainTraceInit.start();
     });
-    Future.microtask(() async {
       await initUser();
       await initLanguage();
       await initTheme();
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .getGanresSettings("movie");
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .getGanresSettings("tv");
-    });
+      await _settingsProvider.getListGenres();
     setState(() {
-      isLoading = false;
+      isDone = true;
+      mainTraceInit.stop();
     });
   }
 
@@ -107,14 +103,14 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
 
   Future initUser()async {
     var userProvider = Provider.of<UserProvider>(context, listen: false);
-    print(await Prefs().hasString("username"));
     if (await Prefs().hasString("username")) {
-    String username =  await Prefs().getStringPrefs("username");
-    String password =   await Prefs().getStringPrefs("password");
-    await userProvider.auth(username,password);
-    await userProvider.getFavorite();
-    await userProvider.getMarkList();
-    await userProvider.getChristian();
+      await userProvider.auth(
+          await Prefs().getStringPrefs("username"),
+          await Prefs().getStringPrefs("password")
+      );
+      await userProvider.getFavorite();
+      await userProvider.getMarkList();
+      await userProvider.getChristian();
     }
     Provider.of<TrendingProvider>(context,listen: false).currentPage=1;
   }
@@ -125,32 +121,31 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
           (await Prefs().getStringPrefs("languageCode"));
     else
       SettingsProvider.language = ("us");
+    mainTraceInit.putAttribute("language", SettingsProvider.language.toString());
   }
 
   Future initTheme() async {
+    var _provider = Provider.of<ThemeProvider>(context, listen: false);
     if (await Prefs().hasString("themeCode")) {
       String themeCode = await Prefs().getStringPrefs("themeCode");
       switch (themeCode) {
         case "Light":
-          Provider.of<ThemeProvider>(context, listen: false)
-              .changeTheme(context, MyThemeKeys.LIGHT);
+          _provider.changeTheme(context, MyThemeKeys.LIGHT);
           break;
         case "Dark":
-          Provider.of<ThemeProvider>(context, listen: false)
-              .changeTheme(context, MyThemeKeys.DARK);
+          _provider.changeTheme(context, MyThemeKeys.DARK);
           break;
         case "Darker":
-          Provider.of<ThemeProvider>(context, listen: false)
-              .changeTheme(context, MyThemeKeys.DARKER);
+          _provider.changeTheme(context, MyThemeKeys.DARKER);
           break;
         case "Loft":
-          Provider.of<ThemeProvider>(context, listen: false)
-              .changeTheme(context, MyThemeKeys.Loft);
+          _provider.changeTheme(context, MyThemeKeys.Loft);
           break;
       }
-    } else
-      Provider.of<ThemeProvider>(context, listen: false)
-          .changeTheme(context, MyThemeKeys.DARK);
+    } else {
+      _provider.changeTheme(context, MyThemeKeys.DARK);
+    }
+    mainTraceInit.putAttribute("theme", _provider.currentTheme.toString());
   }
 
   ///TODO 3. Attribution
@@ -160,13 +155,15 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
+    _settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     return Scaffold(
         key: scaffoldState,
         backgroundColor: Provider.of<ThemeProvider>(context, listen: false).currentBackgroundColor,
-     body: isLoading
-      ?CircularProgressIndicator()
-      :HomePage(),
+     body: !isDone
+      ? LogoScreen()
+      : HomePage(),
         //drawer: DrawerMenu().build(context),
     );
   }
 }
+

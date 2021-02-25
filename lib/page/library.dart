@@ -58,9 +58,9 @@ class _LibraryPageState extends State<LibraryPage>
     }
   }
 
-  initList(tvList, movieList, provider){
+  initList(tvList, movieList,UserProvider provider){
     List<Widget> list = [];
-    provider.currentType == "tv"
+    !provider.isMovie
         ? tvList.forEach((element) {
             list.add(MovieCard(element));
           })
@@ -126,14 +126,10 @@ class _LibraryPageState extends State<LibraryPage>
                     ),
                   ),
                   Switch(
-                    value: userProfile.currentType!="movie",
+                    value: !userProfile.isMovie,
                     onChanged: (value) {
                       setState(() {
-                        userProfile.changeCurrentType(
-                            userProfile.currentType=="movie"
-                                ? "tv"
-                                :"movie"
-                        );
+                        userProfile.changeCurrentType();
                       });
                     },
                     activeTrackColor:

@@ -6,9 +6,12 @@ import 'package:filmster/model/film.dart';
 import 'package:filmster/model/responses.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/settingsProvider.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:http/http.dart' as http;
 
-class Api{
+
+
+class Api extends http.BaseClient {
 
   final String apiKey = "22e195d94c2274b3dcf6484e58a1715f";
   final String imageBannerAPI = "https://image.tmdb.org/t/p/w500";
@@ -128,6 +131,7 @@ class Api{
     else {
       print("ERROR Favorite");
     }
+    print("minidone");
   }
 
 
@@ -147,15 +151,15 @@ class Api{
         body: jsonEncode({
           "favorite": isRemove,
           "media_type": type,
-          "media_id": mediaId.toString(),
+          "media_id": mediaId,
         })
     );
-    print(json.decode(response.body));
     if (json.decode(response.body)["success"]) {
-      return json.decode(response.body);
+      return true;
     }
     else {
       print("ERROR Favorite");
+      return false;
     }
   }
 
@@ -170,10 +174,11 @@ class Api{
     );
     print(json.decode(response.body));
     if (json.decode(response.body)["success"]) {
-      return json.decode(response.body);
+      return true;
     }
     else {
       print("ERROR WatchList");
+      return false;
     }
   }
 
@@ -277,10 +282,11 @@ class Api{
     );
     print(json.decode(response.body));
     if (json.decode(response.body)["success"]) {
-      return json.decode(response.body);
+      return true;
     }
     else {
       print("ERROR Mark WatchList");
+      return false;
     }
   }
 
@@ -294,12 +300,36 @@ class Api{
         })
     );
     if (json.decode(response.body)["success"]) {
-      return json.decode(response.body);
+      return true;
     }
     else {
       print("ERROR Remove From WatchList");
+      return false;
     }
   }
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async{
+    final HttpMetric metric = FirebasePerformance.instance
+        .newHttpMetric(request.url.toString(), HttpMethod.Get);
+
+    await metric.start();
+
+    http.StreamedResponse response;
+    try {
+    //  response = await http.(request);
+      metric
+        ..responsePayloadSize = response.contentLength
+        ..responseContentType = response.headers['Content-Type']
+        ..requestPayloadSize = request.contentLength
+        ..httpResponseCode = response.statusCode;
+    } finally {
+      await metric.stop();
+    }
+
+    return response;
+  }
+
 
 
 

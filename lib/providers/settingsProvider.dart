@@ -15,15 +15,17 @@ class SettingsProvider extends ChangeNotifier {
   List <int> movieArrayGenres =[];
   int currentPage = 0;
   String currentYear;
+  bool isMovie;
 
-  getGanresSettings(type) async{
-   List list = await Api().getGenres(type);
-    type=="movie"
-    ? list.forEach((value) {
+
+  getListGenres()async {
+    List list = await Api().getGenres("movie");
+    list.forEach((value) {
       movieMapOfGanres[value["id"]] = value["name"];
       movieFilter[value["id"].toString()]=false;
-      })
-    : list.forEach((value) {
+    });
+    list = await Api().getGenres("tv");
+    list.forEach((value) {
       tvMapOfGanres[value["id"]] = value["name"];
       tvFilter[value["id"].toString()]=false;
     });

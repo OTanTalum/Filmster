@@ -23,8 +23,12 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+
+
   @override
-  void initState() {}
+  void initState() {
+
+  }
 
   @override
   void dispose() {
@@ -123,10 +127,7 @@ class _SettingsPageState extends State<SettingsPage> {
               .changeLanguage(languageCode);
           Prefs().setStringPrefs('languageCode', languageCode);
         });
-        await Provider.of<SettingsProvider>(context, listen: false)
-            .getGanresSettings("movie");
-        await Provider.of<SettingsProvider>(context, listen: false)
-            .getGanresSettings("tv");
+        await Provider.of<SettingsProvider>(context, listen: false).getListGenres();
       },
       child: Text(
         languageName,

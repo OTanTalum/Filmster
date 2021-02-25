@@ -3,17 +3,13 @@ import 'dart:ui';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
-import 'package:filmster/model/search.dart';
-import 'package:filmster/page/film_detail_page.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
-import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
 
-import 'package:filmster/widgets/drawer.dart';
 import 'package:filmster/widgets/movieCard.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
@@ -24,12 +20,6 @@ import 'package:provider/provider.dart';
 import 'library.dart';
 
 class FilmsPage extends StatefulWidget {
-  final String type;
-
-  FilmsPage({
-    this.type,
-  });
-
   @override
   _FilmsPageState createState() => _FilmsPageState();
 }
@@ -37,6 +27,10 @@ class FilmsPage extends StatefulWidget {
 class _FilmsPageState extends State<FilmsPage> {
   final textController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+  UserProvider userProvider;
+  ThemeProvider themeProvider;
+  SearchProvider searchProvider;
+  SettingsProvider settingsProvider;
   int currentPage = 1;
   bool isLast = false;
 
@@ -49,18 +43,17 @@ class _FilmsPageState extends State<FilmsPage> {
 
   buildGenres(id) {
     return Text(
-      widget.type == "movie"
-          ? Provider.of<SettingsProvider>(context).movieMapOfGanres[id]
-          : Provider.of<SettingsProvider>(context).tvMapOfGanres[id],
+      userProvider.isMovie
+          ? settingsProvider.movieMapOfGanres[id]
+          : settingsProvider.tvMapOfGanres[id],
       style: TextStyle(
         fontFamily: "AmaticSC",
         fontSize: 25,
         //  fontWeight: FontWeight.bold,
-        color: Provider.of<ThemeProvider>(context).currentFontColor,
+        color: themeProvider.currentFontColor,
       ),
     );
   }
-
 
   noData() {
     return Center(
@@ -70,7 +63,7 @@ class _FilmsPageState extends State<FilmsPage> {
           style: TextStyle(
             fontFamily: "AmaticSC",
             fontSize: 28.0,
-            color: Provider.of<ThemeProvider>(context).currentMainColor,
+            color: themeProvider.currentMainColor,
           ),
         ),
       ),
@@ -79,30 +72,29 @@ class _FilmsPageState extends State<FilmsPage> {
 
   _buildResults(context) {
     List<Widget> list = [];
-    int i=0;
-    var films = Provider.of<SearchProvider>(context).listOfFilms;
-    films.forEach((element){
+    int i = 0;
+    searchProvider.listOfFilms.forEach((element) {
       list.add(MovieCard(element));
-          if (i == 5){
-              list.add(
-                Container(
-                  height: 120,
-                  child: AdmobBanner(
-                    adUnitId: AddMobClass().getDrawerBannerAdUnitId(),
-                    adSize: AdmobBannerSize.LARGE_BANNER,
-                    listener: (AdmobAdEvent event, Map<String, dynamic> args) {
-                      if (event == AdmobAdEvent.opened) {
-                        FirebaseAnalytics().logEvent(name: 'adMobDrawerClick');
-                      }
-                    },
-                    onBannerCreated: (AdmobBannerController controller) {},
-                  ),
-                ),
-              );
-              i=0;
-            }
-          i++;
-        });
+      if (i == 5) {
+        list.add(
+          Container(
+            height: 120,
+            child: AdmobBanner(
+              adUnitId: AddMobClass().getDrawerBannerAdUnitId(),
+              adSize: AdmobBannerSize.LARGE_BANNER,
+              listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+                if (event == AdmobAdEvent.opened) {
+                  FirebaseAnalytics().logEvent(name: 'adMobDrawerClick');
+                }
+              },
+              onBannerCreated: (AdmobBannerController controller) {},
+            ),
+          ),
+        );
+        i = 0;
+      }
+      i++;
+    });
     return ListView(
       children: list,
       controller: _scrollController,
@@ -113,29 +105,32 @@ class _FilmsPageState extends State<FilmsPage> {
     if (textController.text.length >= 3) {
       setState(() {
         currentPage = 1;
-        Provider.of<SearchProvider>(context, listen: false)
-            .fetchData(textController.text, currentPage, widget.type);
+        searchProvider.fetchData(textController.text, currentPage, userProvider.isMovie?"movie":"tv");
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var myColors = Provider.of<ThemeProvider>(context, listen: false);
-    var mySettings = Provider.of<SettingsProvider>(context, listen: false);
+    themeProvider = Provider.of<ThemeProvider>(context);
+    settingsProvider = Provider.of<SettingsProvider>(context);
+    userProvider = Provider.of<UserProvider>(context);
+    searchProvider = Provider.of<SearchProvider>(context);
     return WillPopScope(
       onWillPop: () async {
-        mySettings.changePage(1);
+        settingsProvider.changePage(1);
         Navigator.of(context).pop();
         return true;
       },
       child: Scaffold(
-        backgroundColor: myColors.currentBackgroundColor,
+        backgroundColor: themeProvider.currentBackgroundColor,
         appBar: AppBar(
           title: Text(
-            widget.type == "movie"
-                ? AppLocalizations().translate(context, WordKeys.findYourMovie)
-                : AppLocalizations().translate(context, WordKeys.findYourTV),
+            AppLocalizations().translate(
+                context,
+                userProvider.isMovie
+                    ? WordKeys.findYourMovie
+                    : WordKeys.findYourTV),
             style: TextStyle(
               fontFamily: "AmaticSC",
               fontSize: 30,
@@ -145,23 +140,21 @@ class _FilmsPageState extends State<FilmsPage> {
         bottomNavigationBar: CustomeBottomNavigationBar(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            mySettings.changePage(4);
-            if(Provider.of<UserProvider>(context, listen: false).currentUser!=null){
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => LibraryPage()));
+            settingsProvider.changePage(4);
+            if (userProvider.currentUser !=
+                null) {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => LibraryPage()));
             }
           },
           elevation: 12,
-          backgroundColor: myColors.currentSecondaryColor,
-          child: Icon(
-              Icons.favorite,
-              color: mySettings.currentPage==4
-                  ? myColors.currentMainColor
-                  : myColors.currentFontColor
-          ),
+          backgroundColor: themeProvider.currentSecondaryColor,
+          child: Icon(Icons.favorite,
+              color: settingsProvider.currentPage == 4
+                  ? themeProvider.currentMainColor
+                  : themeProvider.currentFontColor),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        //drawer: DrawerMenu().build(context),
         body: _buildBody(context),
       ),
     );
@@ -169,8 +162,6 @@ class _FilmsPageState extends State<FilmsPage> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
     _scrollController.dispose();
     textController.dispose();
     super.dispose();
@@ -182,11 +173,11 @@ class _FilmsPageState extends State<FilmsPage> {
         child: TextField(
           controller: textController,
           cursorRadius: Radius.circular(15),
-          cursorColor: Provider.of<ThemeProvider>(context).currentMainColor,
+          cursorColor: themeProvider.currentMainColor,
           decoration: new InputDecoration(
             prefixIcon: Icon(
               Icons.search,
-              color: Provider.of<ThemeProvider>(context).currentSecondaryColor,
+              color: themeProvider.currentSecondaryColor,
             ),
             prefix: SizedBox(
               width: 16,
@@ -194,28 +185,28 @@ class _FilmsPageState extends State<FilmsPage> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(25)),
               borderSide: BorderSide(
-                  color: Provider.of<ThemeProvider>(context).currentMainColor,
+                  color: themeProvider.currentMainColor,
                   width: 3.0),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(25)),
               borderSide: BorderSide(
-                  color: Provider.of<ThemeProvider>(context).currentMainColor,
-                  width: 1.0),
+                  color: themeProvider.currentMainColor, width: 1.0),
             ),
             hintStyle: TextStyle(
-                color:
-                    Provider.of<ThemeProvider>(context).currentSecondaryColor,
+                color: themeProvider.currentSecondaryColor,
                 fontFamily: "AmaticSC"),
-            hintText: widget.type == "movie"
-                ? AppLocalizations().translate(context, WordKeys.enterMovieName)
-                : AppLocalizations().translate(context, WordKeys.enterTVName),
+            hintText: AppLocalizations().translate(
+                context,
+                userProvider.isMovie
+                    ? WordKeys.enterMovieName
+                    : WordKeys.enterTVName),
           ),
           style: TextStyle(
             fontFamily: "AmaticSC",
             fontWeight: FontWeight.w700,
             textBaseline: null,
-            color: Provider.of<ThemeProvider>(context).currentFontColor,
+            color: themeProvider.currentFontColor,
             fontSize: 20.0,
           ),
         ));
@@ -223,10 +214,6 @@ class _FilmsPageState extends State<FilmsPage> {
 
   _buildBody(BuildContext context) {
     return Stack(children: <Widget>[
-      // Padding(
-      //   padding: EdgeInsets.symmetric(horizontal: 24),
-      //   child: buildInput(),
-      // ),
       buildInput(),
       Padding(
           padding:
@@ -236,16 +223,14 @@ class _FilmsPageState extends State<FilmsPage> {
   }
 
   _scrollListener() async {
-    var provider = Provider.of<SearchProvider>(context, listen: false);
-    if (provider.isLoading) return;
-    if (Provider.of<SearchProvider>(context, listen: false).isLast) return;
+    if (searchProvider.isLoading||searchProvider.isLast) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       ++currentPage;
       await Provider.of<SearchProvider>(context, listen: false)
-          .fetchData(provider.oldValue, currentPage, widget.type);
+          .fetchData(searchProvider.oldValue, currentPage, userProvider.isMovie?"movie":"tv");
       setState(() {
-        provider.isLoading = false;
+        searchProvider.isLoading = false;
       });
     }
   }

@@ -1,21 +1,17 @@
 import 'dart:ui';
 
 import 'package:admob_flutter/admob_flutter.dart';
-import 'package:filmster/localization/languages/workKeys.dart';
-import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
+
 import 'package:filmster/page/film_detail_page.dart';
 import 'package:filmster/providers/discoverProvider.dart';
-import 'package:filmster/providers/searchProvider.dart';
-import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/trendingProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/dialogWindow.dart';
+import 'package:filmster/widgets/movieCard.dart';
 
-import 'package:filmster/widgets/drawer.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -29,6 +25,9 @@ class DiscoverPage extends StatefulWidget {
 
 class _DiscoverPageState extends State<DiscoverPage> {
   ScrollController _scrollController = ScrollController();
+  UserProvider userProvider;
+  DiscoverProvider discoverProvider;
+
 
   @override
   void initState() {
@@ -38,10 +37,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   initDiscover() async {
-    await Provider.of<DiscoverProvider>(context, listen: false).fetchData(
-        Provider.of<UserProvider>(context, listen: false).currentType != "movie"
-            ? "tv"
-            : "movie",
+    await discoverProvider.fetchData(
+        userProvider.isMovie
+            ? "movie"
+            : "tv",
     context
     );
   }
@@ -50,7 +49,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     List<Widget> pageList = [];
     int i = 0;
     discoverList.forEach((element) {
-        pageList.add(movieCard(element));
+        pageList.add(MovieCard(element));
         i++;
         if (i == 10) {
           pageList.add(
@@ -73,18 +72,18 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   getNextPage() async {
-    var discoverProvider = Provider.of<DiscoverProvider>(context, listen: false);
     ++discoverProvider.currentPage;
     await discoverProvider.fetchData(
-        Provider.of<UserProvider>(context, listen: false).currentType != "movie"
-            ? "tv"
-            : "movie",
+        userProvider.isMovie
+            ? "movie"
+            : "tv",
     context);
   }
 
   @override
   Widget build(BuildContext context) {
-    var userProfile = Provider.of<UserProvider>(context);
+    userProvider = Provider.of<UserProvider>(context);
+    discoverProvider = Provider.of<DiscoverProvider>(context);
     var themeProfile = Provider.of<ThemeProvider>(context);
     return Scaffold(
       backgroundColor: themeProfile.currentBackgroundColor,
@@ -99,15 +98,15 @@ class _DiscoverPageState extends State<DiscoverPage> {
               onDoneTap: () async {
                 Navigator.pop(context);
               },
-              isTV: userProfile.currentType != "movie",
+              isTV: !userProvider.isMovie,
               title: "Filter",
               imageH: 96,
               imagew: 96,
             ),
           );
           setState(() {
-            Provider.of<DiscoverProvider>(context, listen: false).clear();
-            Provider.of<DiscoverProvider>(context, listen: false).currentPage = 1;
+            discoverProvider.clear();
+            discoverProvider.currentPage = 1;
           });
           await initDiscover();
         },
@@ -119,18 +118,17 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
+
     _scrollController.dispose();
     super.dispose();
   }
 
-  Widget movieCard(SearchResults movie) {
+/*  Widget movieCard(SearchResults movie) {
     var userProfile = Provider.of<UserProvider>(context, listen: false);
-    List favoriteId = userProfile.currentType == "tv"
+    List favoriteId = !userProfile.isMovie
         ? userProfile.favoriteTVIds
         : userProfile.favoriteMovieIds;
-    List markedId = userProfile.currentType == "tv"
+    List markedId = !userProfile.isMovie
         ? userProfile.markedTVListIds
         : userProfile.markedMovieListIds;
     List watchedId = userProfile.watchedMovieListIds;
@@ -140,8 +138,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => FilmDetailPage(
                 id: movie.id.toString(),
-                type: userProfile.currentType
-              )));
+                type: userProfile.isMovie
+                    ? "movie"
+                    : "tv",
+              ))).then((value) => setState((){
+
+          }));
         },
         child: movie.poster != null
             ? Image.network(
@@ -181,7 +183,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   IconButton(
                     onPressed: () async {
                       await userProfile.markAsFavorite(
-                          movie.id, !favoriteId.contains(movie.id));
+                          movie, favoriteId.contains(movie.id));
                     },
                     icon: Icon(
                       favoriteId.contains(movie.id)
@@ -212,13 +214,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
         ),
       )
     ]);
-  }
+  }*/
 
   _buildBody(BuildContext context) {
-    var discoverProvider = Provider.of<DiscoverProvider>(context);
-    var userProvider = Provider.of<UserProvider>(context);
     List<Widget> caramba = [];
-    List movieList = userProvider.currentType != "movie"
+    List movieList = !userProvider.isMovie
         ? discoverProvider.discoverTv
         : discoverProvider.discoverMovie;
     caramba.addAll(loadPage(movieList));
@@ -244,8 +244,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   _scrollListener() async {
-    if (Provider.of<DiscoverProvider>(context, listen: false).isLast) return;
-    if (Provider.of<DiscoverProvider>(context, listen: false).isLoading) return;
+    if (discoverProvider.isLast||discoverProvider.isLoading) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       await getNextPage();

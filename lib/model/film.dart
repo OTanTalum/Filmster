@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:filmster/model/search.dart';
+
 class Film {
   bool isAdult;
   String title;
@@ -108,6 +110,23 @@ class Film {
     video = json['video'];
     voteAverage = json['vote_average'].toString();
     voteCount = json['vote_count'].toString();
+  }
+
+
+  SearchResults movieToSearchResults(){
+    return SearchResults()
+      ..id = int.parse(this.id)
+      ..popularity = double.parse(this.popularity)
+      ..voteCount = int.parse(this.voteCount)
+      ..poster = this.poster
+      ..backdrop = this.backdrop
+      ..language = this.originalLanguage
+      ..ganres = this.ganres
+      ..title = this.title
+      ..originalTitle = this.originalTitle
+      ..voteAverage = this.voteAverage
+      ..overview = this.voteAverage
+      ..release = this.release;
   }
 }
 

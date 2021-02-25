@@ -68,7 +68,7 @@ class DrawerMenu {
                   ListTile(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => FilmsPage(type: "movie")));
+                          builder: (_) => FilmsPage()));
                     },
                     title: Text(
                       AppLocalizations().translate(context, WordKeys.films),
@@ -83,7 +83,7 @@ class DrawerMenu {
                   ListTile(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => FilmsPage(type: "tv")));
+                          builder: (_) => FilmsPage()));
 
                     },
                     title: Text(

@@ -23,10 +23,10 @@ class MovieCard extends StatelessWidget {
         list.add(buildGenres(element, context));
       });
     }
-    List favoriteId = userProfile.currentType == "tv"
+    List favoriteId = !userProfile.isMovie
         ? userProfile.favoriteTVIds
         : userProfile.favoriteMovieIds;
-    List markedId = userProfile.currentType == "tv"
+    List markedId = !userProfile.isMovie
         ? userProfile.markedTVListIds
         : userProfile.markedMovieListIds;
     List watchedId = userProfile.watchedMovieListIds;
@@ -35,7 +35,7 @@ class MovieCard extends StatelessWidget {
         onTap: () async {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) =>
-                  FilmDetailPage(id: film.id.toString(), type: userProfile.currentType)));
+                  FilmDetailPage(id: film.id.toString(), type: userProfile.isMovie ? "movie" : "tv")));
         },
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -131,7 +131,7 @@ class MovieCard extends StatelessWidget {
                         IconButton(
                           onPressed: () async {
                             await userProfile.mark(
-                                film.id, !markedId.contains(film.id));
+                                film, !markedId.contains(film.id));
                           },
                           icon: Icon(
                             markedId.contains(film.id)
@@ -145,7 +145,7 @@ class MovieCard extends StatelessWidget {
                         IconButton(
                           onPressed: () async {
                             await userProfile.markAsFavorite(
-                                film.id, !favoriteId.contains(film.id));
+                                film, favoriteId.contains(film.id));
                           },
                           icon: Icon(
                             favoriteId.contains(film.id)
@@ -159,7 +159,7 @@ class MovieCard extends StatelessWidget {
                         IconButton(
                           onPressed: () async {
                             await userProfile.markAsWatched(
-                                film.id, !watchedId.contains(film.id));
+                                film, watchedId.contains(film.id));
                           },
                           icon: Icon(
                             watchedId.contains(film.id)
@@ -180,7 +180,7 @@ class MovieCard extends StatelessWidget {
 
   buildGenres(id, context) {
     var userProfile = Provider.of<UserProvider>(context);
-    var text = userProfile.currentType!="tv"
+    var text = userProfile.isMovie
         ? Provider.of<SettingsProvider>(context).movieMapOfGanres[id]
         : Provider.of<SettingsProvider>(context).tvMapOfGanres[id];
     if(text!=null)

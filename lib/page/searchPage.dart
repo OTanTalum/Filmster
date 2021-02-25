@@ -1,10 +1,9 @@
-
-
 import 'dart:ui';
 
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
+import 'package:filmster/model/authentication.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/film_detail_page.dart';
 import 'package:filmster/page/searchByName.dart';
@@ -33,13 +32,14 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-
   ScrollController _scrollController = ScrollController();
+  UserProvider userProvider;
+  SettingsProvider settingsProvider;
+  ThemeProvider themeProvider;
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_scrollListener);
   }
 
   @override
@@ -50,34 +50,36 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    var myColors = Provider.of<ThemeProvider>(context, listen: false);
-    var mySettings = Provider.of<SettingsProvider>(context, listen: false);
+    themeProvider = Provider.of<ThemeProvider>(context);
+    settingsProvider = Provider.of<SettingsProvider>(context);
+    userProvider = Provider.of<UserProvider>(context);
     return WillPopScope(
-      onWillPop: () {
-        mySettings.changePage(0);
+      onWillPop: () async {
+        settingsProvider.changePage(0);
         Navigator.of(context).pop();
+        return true;
       },
       child: Scaffold(
-        backgroundColor: myColors.currentBackgroundColor,
+        backgroundColor: themeProvider.currentBackgroundColor,
         appBar: AppBar(
           title: Text("Search",),
         ),
         bottomNavigationBar: CustomeBottomNavigationBar(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            mySettings.changePage(4);
-            if(Provider.of<UserProvider>(context, listen: false).currentUser!=null){
+            settingsProvider.changePage(4);
+            if(userProvider.currentUser!=null){
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => LibraryPage()));
             }
           },
           elevation: 12,
-          backgroundColor: myColors.currentSecondaryColor,
+          backgroundColor: themeProvider.currentSecondaryColor,
           child: Icon(
               Icons.favorite,
-              color: mySettings.currentPage==4
-                  ? myColors.currentMainColor
-                  : myColors.currentFontColor
+              color: settingsProvider.currentPage==4
+                  ? themeProvider.currentMainColor
+                  : themeProvider.currentFontColor
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -100,9 +102,13 @@ class _SearchPageState extends State<SearchPage> {
   _buildCard(String title, String imageURL, String type){
     return GestureDetector(
       onTap: (){
-        Provider.of<UserProvider>(context, listen: false).changeCurrentType(type);
+        if(userProvider.isMovie&&type!="movie"||
+        !userProvider.isMovie&&type=="movie"
+        ) {
+          Provider.of<UserProvider>(context, listen: false).changeCurrentType();
+        }
         Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => FilmsPage(type:type)));
+            MaterialPageRoute(builder: (_) => FilmsPage()));
       },
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 24),
@@ -150,9 +156,4 @@ class _SearchPageState extends State<SearchPage> {
       ),
     );
   }
-
-  _scrollListener(){
-
-  }
-
 }

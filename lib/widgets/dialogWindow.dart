@@ -264,13 +264,10 @@ class _DialogWindowState extends State<DialogWindow> {
                                     ),
                                   ),
                                   Switch(
-                                    value: userProvider.currentType != "movie",
+                                    value: !userProvider.isMovie,
                                     onChanged: (value) {
                                       setState(() {
-                                        userProvider.changeCurrentType(
-                                            userProvider.currentType == "movie"
-                                                ? "tv"
-                                                : "movie");
+                                        userProvider.changeCurrentType();
                                       });
                                     },
                                     activeTrackColor:

@@ -38,9 +38,9 @@ class _TrendingPageState extends State<TrendingPage> {
 
   initTrending() async {
     await Provider.of<TrendingProvider>(context, listen: false).fetchData(
-        Provider.of<UserProvider>(context, listen: false).currentType != "movie"
-            ? "tv"
-            : "movie",
+        Provider.of<UserProvider>(context, listen: false).isMovie
+            ? "movie"
+            : "tv",
         Provider.of<UserProvider>(context, listen: false).currentPeriod != "day"
             ? "week"
             : "day");
@@ -76,7 +76,7 @@ class _TrendingPageState extends State<TrendingPage> {
     var trendProvider = Provider.of<TrendingProvider>(context, listen: false);
     trendProvider.currentPage++;
     await trendProvider.fetchData(
-        Provider.of<UserProvider>(context, listen: false).currentType != "movie"
+        !Provider.of<UserProvider>(context, listen: false).isMovie
             ? "tv"
             : "movie",
         Provider.of<UserProvider>(context, listen: false).currentPeriod != "day"
@@ -102,22 +102,24 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
   Widget movieCard(SearchResults movie) {
-    var userProfile = Provider.of<UserProvider>(context, listen: false);
-    List favoriteId = userProfile.currentType == "tv"
+    var userProfile = Provider.of<UserProvider>(context);
+    List favoriteId = !userProfile.isMovie
         ? userProfile.favoriteTVIds
         : userProfile.favoriteMovieIds;
-    List markedId = userProfile.currentType == "tv"
+    List markedId = !userProfile.isMovie
         ? userProfile.markedTVListIds
         : userProfile.markedMovieListIds;
     List watchedId = userProfile.watchedMovieListIds;
+    bool marked = markedId.contains(movie.id);
+    bool isFavorite = favoriteId.contains(movie.id);
+    bool watched = watchedId.contains(movie.id);
     return Stack(children: [
       GestureDetector(
         onTap: () async {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => FilmDetailPage(
                     id: movie.id.toString(),
-                    type: Provider.of<UserProvider>(context).currentType !=
-                            "movie"
+                    type: !Provider.of<UserProvider>(context).isMovie
                         ? "tv"
                         : "movie",
                   )));
@@ -145,14 +147,18 @@ class _TrendingPageState extends State<TrendingPage> {
                 children: <Widget>[
                   IconButton(
                     onPressed: () async {
+                      setState(() {
+                      marked=!marked;
+                    });
                       await userProfile.mark(
-                          movie.id, !markedId.contains(movie.id));
+                          movie, !markedId.contains(movie.id));
+
                     },
                     icon: Icon(
-                      markedId.contains(movie.id)
+                     marked
                           ? Icons.turned_in
                           : Icons.turned_in_not,
-                      color: !markedId.contains(movie.id)
+                      color: !marked
                           ? Colors.white
                           : Colors.lightGreen,
                     ),
@@ -160,27 +166,33 @@ class _TrendingPageState extends State<TrendingPage> {
                   IconButton(
                     onPressed: () async {
                       await userProfile.markAsFavorite(
-                          movie.id, !favoriteId.contains(movie.id));
+                          movie, favoriteId.contains(movie.id));
+                      setState(() {
+                        isFavorite=!isFavorite;
+                      });
                     },
                     icon: Icon(
-                      favoriteId.contains(movie.id)
+                      isFavorite
                           ? Icons.favorite
                           : Icons.favorite_border,
-                      color: favoriteId.contains(movie.id)
+                      color: isFavorite
                           ? Colors.red
                           : Colors.white,
                     ),
                   ),
                   IconButton(
                     onPressed: () async {
+                      setState(() {
+                        watched=!watched;
+                      });
                       await userProfile.markAsWatched(
-                          movie.id, !watchedId.contains(movie.id));
+                          movie, watchedId.contains(movie.id));
                     },
                     icon: Icon(
-                      watchedId.contains(movie.id)
+                      watched
                           ? Icons.visibility
                           : Icons.visibility_off,
-                      color: watchedId.contains(movie.id)
+                      color: watched
                           ? Provider.of<ThemeProvider>(context).currentMainColor
                           : Colors.white,
                     ),
@@ -197,7 +209,7 @@ class _TrendingPageState extends State<TrendingPage> {
     var trendingProvider = Provider.of<TrendingProvider>(context);
     var userProvider = Provider.of<UserProvider>(context);
     List<Widget> caramba = [];
-    List movieList = userProvider.currentType != "movie"
+    List movieList = !userProvider.isMovie
         ? userProvider.currentPeriod != "day"
             ? trendingProvider.trendingTVWeek
             : trendingProvider.trendingTVDay
@@ -206,7 +218,7 @@ class _TrendingPageState extends State<TrendingPage> {
             : trendingProvider.trendingMoviesDay;
     caramba.addAll(loadPage(
         movieList,
-        userProvider.currentType != "movie"
+        !userProvider.isMovie
             ? Provider.of<SettingsProvider>(context).tvArrayGenres
             : Provider.of<SettingsProvider>(context).movieArrayGenres));
     return SafeArea(
