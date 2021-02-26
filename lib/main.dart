@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:filmster/page/HomePage.dart';
 import 'package:filmster/providers/discoverProvider.dart';
 import 'package:filmster/providers/searchProvider.dart';
@@ -25,7 +27,7 @@ void main() {
   Admob.initialize();
   Crashlytics.instance.enableInDevMode = true;
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
-
+  HttpOverrides.global = new MyHttpOverrides();
   runApp(
     MultiProvider(
       providers: [
@@ -168,3 +170,11 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
   }
 }
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host,
+          int port) => true;
+  }
+}
