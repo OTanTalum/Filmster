@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 
-import 'localization/languages/workKeys.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -88,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
       await initUser();
       await initLanguage();
       await initTheme();
-      await _settingsProvider.getListGenres();
+      await _settingsProvider.loadListGenres();
     setState(() {
       isDone = true;
       mainTraceInit.stop();
@@ -108,9 +107,11 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
           await Prefs().getStringPrefs("username"),
           await Prefs().getStringPrefs("password")
       );
-      await userProvider.getFavorite();
+      await userProvider.getFavoriteTv();
+      await userProvider.getFavoriteMovies();
       await userProvider.getMarkList();
       await userProvider.getChristian();
+      await userProvider.getLists();
     }
     Provider.of<TrendingProvider>(context,listen: false).currentPage=1;
   }

@@ -127,7 +127,7 @@ class _SettingsPageState extends State<SettingsPage> {
               .changeLanguage(languageCode);
           Prefs().setStringPrefs('languageCode', languageCode);
         });
-        await Provider.of<SettingsProvider>(context, listen: false).getListGenres();
+        await Provider.of<SettingsProvider>(context, listen: false).loadListGenres();
       },
       child: Text(
         languageName,

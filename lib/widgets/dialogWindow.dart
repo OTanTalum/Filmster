@@ -111,7 +111,7 @@ class _DialogWindowState extends State<DialogWindow> {
     List<Widget> list = [];
     widget.isTV
         ? Provider.of<SettingsProvider>(context, listen: false)
-            .tvMapOfGanres
+            .tvMapOfGenres
             .forEach((key, value) {
             list.add(Container(
                 width: MediaQuery.of(context).size.width * 0.45,
@@ -137,7 +137,7 @@ class _DialogWindowState extends State<DialogWindow> {
                 )));
           })
         : Provider.of<SettingsProvider>(context, listen: false)
-            .movieMapOfGanres
+            .movieMapOfGenres
             .forEach((key, value) {
             list.add(
               Container(

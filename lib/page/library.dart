@@ -1,24 +1,18 @@
 import 'dart:ui';
 
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
-import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
-import 'package:filmster/setting/adMob.dart';
-import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
 import 'package:filmster/widgets/movieCard.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'film_detail_page.dart';
 
 class LibraryPage extends StatefulWidget {
   @override
@@ -71,7 +65,8 @@ class _LibraryPageState extends State<LibraryPage>
   }
 
   init() async{
-    await Provider.of<UserProvider>(context, listen: false).getFavorite();
+    await Provider.of<UserProvider>(context, listen: false).getFavoriteTv();
+    await Provider.of<UserProvider>(context, listen: false).getFavoriteMovies();
     await Provider.of<UserProvider>(context, listen: false).getMarkList();
     await Provider.of<UserProvider>(context, listen: false).getLists();
   }

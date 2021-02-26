@@ -22,12 +22,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class FilmDetailPage extends StatefulWidget {
   final String id;
-  final String type;
 
   FilmDetailPage({
     Key key,
     this.id,
-    this.type,
   }) : super(key: key);
 
   @override
@@ -47,13 +45,14 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() async{
-      await Api().getFilmDetail(widget.id, widget.type).then((response){
-        setState(() {
-          film = response;
-        });
-       init();
+    Future.microtask(() async {
+      Film response = userProvider.isMovie
+          ? await Api().getFilmDetail(widget.id)
+          : await Api().getTvDetail(widget.id);
+      setState(() {
+        film = response;
       });
+      init();
       setState(() {
         isLoading = false;
       });
@@ -136,8 +135,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               actions: <Widget>[
                 IconButton(
                   onPressed: () async {
-                    await userProvider.mark(
-                        film.movieToSearchResults(), !isMarked);
+                    isMarked
+                        ? await userProvider.removeFromMarkedList(film.movieToSearchResults())
+                        : await userProvider.mark(film.movieToSearchResults());
                     init();
                   },
                   icon: Icon(
@@ -165,8 +165,11 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    await userProvider.markAsWatched(
-                        film.movieToSearchResults(), isWatched);
+                    isWatched
+                        ? await userProvider
+                            .removeFromWatched(film.movieToSearchResults())
+                        : await userProvider
+                            .markAsWatched(film.movieToSearchResults());
                     init();
                   },
                   icon: Icon(
@@ -185,11 +188,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           );
   }
 
-  buildGenres(id) {
+  buildGenres(BuildContext context,  id) {
     return Text(
-      widget.type == "movie"
-          ? Provider.of<SettingsProvider>(context).movieMapOfGanres[id]
-          : Provider.of<SettingsProvider>(context).tvMapOfGanres[id],
+      Provider.of<SettingsProvider>(context).getOneGenre(context, id),
       style: TextStyle(
         fontFamily: "MPLUSRounded1c",
         fontSize: 20,
@@ -348,7 +349,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     List<Widget> list = [];
     if (film.ganres != null && film.ganres.isNotEmpty) {
       film.ganres.forEach((element) {
-        list.add(buildGenres(element["id"]));
+        list.add(buildGenres(context, element["id"]));
       });
     }
     return Container(

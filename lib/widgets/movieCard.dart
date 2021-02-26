@@ -8,34 +8,46 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MovieCard extends StatelessWidget {
+  MovieCard(this.film);
 
   final SearchResults film;
+  UserProvider userProvider;
+  ThemeProvider themeProvider;
+  bool isFavorite;
+  bool isMarked;
+  bool isWatched;
 
-  MovieCard(this.film);
+
+  init() {
+    if (userProvider.isMovie) {
+      isFavorite = userProvider.favoriteMovieIds.contains(film.id);
+      isMarked = userProvider.markedMovieListIds.contains(film.id);
+      isWatched = userProvider.watchedMovieListIds.contains(film.id);
+    } else {
+      isFavorite = userProvider.favoriteTVIds.contains(film.id);
+      isMarked = userProvider.markedTVListIds.contains(film.id);
+      isWatched = false;
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    var userProfile = Provider.of<UserProvider>(context);
-    var provider = Provider.of<ThemeProvider>(context);
-    List<Widget> list = [];
+    userProvider = Provider.of<UserProvider>(context);
+    themeProvider = Provider.of<ThemeProvider>(context);
+    init();
+    List<Widget> widgetListOfGenres = [];
     if (film.ganres != null && film.ganres.isNotEmpty) {
       film.ganres.forEach((element) {
-        list.add(buildGenres(element, context));
+        widgetListOfGenres.add(buildGenres(element, context));
       });
     }
-    List favoriteId = !userProfile.isMovie
-        ? userProfile.favoriteTVIds
-        : userProfile.favoriteMovieIds;
-    List markedId = !userProfile.isMovie
-        ? userProfile.markedTVListIds
-        : userProfile.markedMovieListIds;
-    List watchedId = userProfile.watchedMovieListIds;
     return Container(
       child: GestureDetector(
         onTap: () async {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) =>
-                  FilmDetailPage(id: film.id.toString(), type: userProfile.isMovie ? "movie" : "tv")));
+                  FilmDetailPage(id: film.id.toString())));
         },
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -44,7 +56,7 @@ class MovieCard extends StatelessWidget {
                   .of(context)
                   .size
                   .height * 0.3,
-              color: provider.currentSecondaryColor,
+              color: themeProvider.currentSecondaryColor,
               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
               child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,7 +74,7 @@ class MovieCard extends StatelessWidget {
                         child: Icon(
                           Icons.do_not_disturb_on,
                           size: 100.0,
-                          color: provider.currentAcidColor,
+                          color: themeProvider.currentAcidColor,
                         )),
                     Container(
                       padding: EdgeInsets.only(left: 10),
@@ -88,7 +100,7 @@ class MovieCard extends StatelessWidget {
                                   style: TextStyle(
                                     fontFamily: "AmaticSC",
                                     fontSize: 27,
-                                    color: provider.currentMainColor,
+                                    color: themeProvider.currentMainColor,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -100,7 +112,7 @@ class MovieCard extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontFamily: "AmaticSC",
-                                    color: provider.currentFontColor,
+                                    color: themeProvider.currentFontColor,
                                   ),
                                 )),
                             Container(
@@ -111,7 +123,7 @@ class MovieCard extends StatelessWidget {
                               child: Wrap(
                                 direction: Axis.horizontal,
                                 spacing: 6,
-                                children: list,
+                                children: widgetListOfGenres,
                               ),
                             ),
                             Row(mainAxisAlignment: MainAxisAlignment
@@ -130,43 +142,45 @@ class MovieCard extends StatelessWidget {
                       children: <Widget>[
                         IconButton(
                           onPressed: () async {
-                            await userProfile.mark(
-                                film, !markedId.contains(film.id));
+                            isMarked
+                                ? await userProvider.removeFromMarkedList(film)
+                                : await userProvider.mark(film);
                           },
                           icon: Icon(
-                            markedId.contains(film.id)
+                           isMarked
                                 ? Icons.turned_in
                                 : Icons.turned_in_not,
-                            color: !markedId.contains(film.id)
+                            color: !isMarked
                                 ? Colors.white
-                                : Provider.of<ThemeProvider>(context).currentMainColor,
+                                : themeProvider.currentMainColor,
                           ),
                         ),
                         IconButton(
                           onPressed: () async {
-                            await userProfile.markAsFavorite(
-                                film, favoriteId.contains(film.id));
+                            await userProvider.markAsFavorite(
+                                film, isFavorite);
                           },
                           icon: Icon(
-                            favoriteId.contains(film.id)
+                            isFavorite
                                 ? Icons.favorite
                                 : Icons.favorite_border,
-                            color: favoriteId.contains(film.id)
+                            color: isFavorite
                                 ? Colors.red
                                 : Colors.white,
                           ),
                         ),
                         IconButton(
                           onPressed: () async {
-                            await userProfile.markAsWatched(
-                                film, watchedId.contains(film.id));
+                            isWatched
+                            ? await userProvider.removeFromWatched(film)
+                            : await userProvider.markAsWatched(film);
                           },
                           icon: Icon(
-                            watchedId.contains(film.id)
+                           isWatched
                                 ? Icons.visibility
                                 : Icons.visibility_off,
-                            color: watchedId.contains(film.id)
-                                ? Provider.of<ThemeProvider>(context).currentMainColor
+                            color:isWatched
+                                ? themeProvider.currentMainColor
                                 : Colors.white,
                           ),
                         ),
@@ -179,29 +193,23 @@ class MovieCard extends StatelessWidget {
   }
 
   buildGenres(id, context) {
-    var userProfile = Provider.of<UserProvider>(context);
-    var text = userProfile.isMovie
-        ? Provider.of<SettingsProvider>(context).movieMapOfGanres[id]
-        : Provider.of<SettingsProvider>(context).tvMapOfGanres[id];
-    if(text!=null)
+    if(Provider.of<SettingsProvider>(context).getOneGenre(context, id)!=null)
     return Text(
-      text,
+      Provider.of<SettingsProvider>(context).getOneGenre(context, id),
       style: TextStyle(
         fontFamily: "AmaticSC",
         fontSize: 25,
-        //  fontWeight: FontWeight.bold,
-        color: Provider.of<ThemeProvider>(context).currentFontColor,
+        color: themeProvider.currentFontColor,
       ),
     );
     else return Container();
   }
 
   _buildVoteBlock(icon, text, context) {
-    var provider = Provider.of<ThemeProvider>(context);
     return Row(children: [
       Icon(
         icon,
-        color: provider.currentFontColor,
+        color: themeProvider.currentFontColor,
       ),
       Container(
           padding: EdgeInsets.only(left: 5),
@@ -211,7 +219,7 @@ class MovieCard extends StatelessWidget {
                 fontFamily: "AmaticSC",
                 fontSize: 25,
                 //  fontWeight: FontWeight.bold,
-                color: provider.currentFontColor,
+                color: themeProvider.currentFontColor,
               )))
     ]);
   }

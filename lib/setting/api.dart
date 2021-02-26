@@ -49,13 +49,25 @@ class Api extends http.BaseClient {
     }
   }
 
-  getFilmDetail(String id, String type) async{
-    final response = await http.get('$tMDBApi/$type/$id?api_key=$apiKey&language=${SettingsProvider.language}');
+  getTvDetail(String id) async{
+    final response = await http.get('$tMDBApi/"tv"/$id?api_key=$apiKey&language=${SettingsProvider.language}');
     if (response.statusCode == 200) {
       return Film.fromJson(json.decode(response.body));
     }
     else {
-      print("ERROR Details");
+      print("ERROR TV Details");
+      return null;
+    }
+  }
+
+  getFilmDetail(String id) async{
+    final response = await http.get('$tMDBApi/movie/$id?api_key=$apiKey&language=${SettingsProvider.language}');
+    if (response.statusCode == 200) {
+      return Film.fromJson(json.decode(response.body));
+    }
+    else {
+      print("ERROR FilmDetail Details");
+      return null;
     }
   }
 
@@ -163,11 +175,11 @@ class Api extends http.BaseClient {
     }
   }
 
-  mark(mediaId, bool isRemove, String  sessionId,  userId, type) async {
+  removeFromMarkedList(mediaId, String sessionId, userId, type)async{
     final response = await http.post('$tMDBApi/account/$userId/watchlist?api_key=$apiKey&session_id=$sessionId',
         headers: {"Content-Type":"application/json;charset=utf-8"},
         body: jsonEncode({
-          "watchlist": isRemove,
+          "watchlist": false,
           "media_type": type,
           "media_id": mediaId.toString(),
         })
@@ -182,9 +194,28 @@ class Api extends http.BaseClient {
     }
   }
 
-  getDiscover(String type, int page, String genres, year) async{
+  mark(mediaId, String  sessionId,  userId, type) async {
+    final response = await http.post('$tMDBApi/account/$userId/watchlist?api_key=$apiKey&session_id=$sessionId',
+        headers: {"Content-Type":"application/json;charset=utf-8"},
+        body: jsonEncode({
+          "watchlist": true,
+          "media_type": type,
+          "media_id": mediaId.toString(),
+        })
+    );
+    print(json.decode(response.body));
+    if (json.decode(response.body)["success"]) {
+      return true;
+    }
+    else {
+      print("ERROR WatchList");
+      return false;
+    }
+  }
+
+  getDiscover(bool isMovie, int page, String genres, year) async{
     final response = await http.get(''
-        '$tMDBApi/discover/''$type?'
+        '$tMDBApi/discover/''${isMovie?"movie":"tv"}?'
         'api_key=$apiKey'
         '&page=$page'
         '&language=${SettingsProvider.language}'
@@ -299,6 +330,7 @@ class Api extends http.BaseClient {
           "media_id": mediaId.toString(),
         })
     );
+    print(json.decode(response.body));
     if (json.decode(response.body)["success"]) {
       return true;
     }

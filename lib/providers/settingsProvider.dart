@@ -1,71 +1,76 @@
 import 'dart:convert';
 
+import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SettingsProvider extends ChangeNotifier {
-
   static String language = "ru";
-  Map movieMapOfGanres={};
-  Map tvMapOfGanres={};
-  Map<String, bool> tvFilter ={};
-  Map<String, bool> movieFilter ={};
-  List <int> tvArrayGenres =[];
-  List <int> movieArrayGenres =[];
+  Map movieMapOfGenres = {};
+  Map tvMapOfGenres = {};
+  Map<String, bool> tvFilter = {};
+  Map<String, bool> movieFilter = {};
+  List<int> tvArrayGenres = [];
+  List<int> movieArrayGenres = [];
   int currentPage = 0;
   String currentYear;
-  bool isMovie;
 
-
-  getListGenres()async {
+  loadListGenres() async {
     List list = await Api().getGenres("movie");
     list.forEach((value) {
-      movieMapOfGanres[value["id"]] = value["name"];
-      movieFilter[value["id"].toString()]=false;
+      movieMapOfGenres[value["id"]] = value["name"];
+      movieFilter[value["id"].toString()] = false;
     });
     list = await Api().getGenres("tv");
     list.forEach((value) {
-      tvMapOfGanres[value["id"]] = value["name"];
-      tvFilter[value["id"].toString()]=false;
+      tvMapOfGenres[value["id"]] = value["name"];
+      tvFilter[value["id"].toString()] = false;
     });
     notifyListeners();
   }
 
-  saveFilter(bool isTV){
-    movieArrayGenres=[];
-    tvArrayGenres=[];
+  String getOneGenre(BuildContext context, int id) {
+    return Provider.of<UserProvider>(context).isMovie
+        ? movieMapOfGenres[id].toString()
+        : tvMapOfGenres[id].toString();
+  }
+
+  saveFilter(bool isTV) {
+    movieArrayGenres = [];
+    tvArrayGenres = [];
     isTV
-    ? tvFilter.forEach((key, value) {
-      if(value){
-        tvArrayGenres.add(int.parse(key));
-      }
-    })
+        ? tvFilter.forEach((key, value) {
+            if (value) {
+              tvArrayGenres.add(int.parse(key));
+            }
+          })
         : movieFilter.forEach((key, value) {
-          if(value){
-            movieArrayGenres.add(int.parse(key));
-          }
-    });
+            if (value) {
+              movieArrayGenres.add(int.parse(key));
+            }
+          });
     notifyListeners();
   }
 
-  changeLanguage(String newLanguage){
+  changeLanguage(String newLanguage) {
     language = newLanguage;
     notifyListeners();
     return language;
   }
 
-  saveYearFilter(year){
+  saveYearFilter(year) {
     currentYear = year;
     notifyListeners();
   }
 
-  changePage(int pageIndex){
+  changePage(int pageIndex) {
     currentPage = pageIndex;
     notifyListeners();
   }
-  getLanguage(){
+
+  getLanguage() {
     return language;
   }
 }
-

@@ -15,6 +15,7 @@ import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/dialogWindow.dart';
 
 import 'package:filmster/widgets/drawer.dart';
+import 'package:filmster/widgets/moviePosterCard.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -51,7 +52,7 @@ class _TrendingPageState extends State<TrendingPage> {
     int i = 0;
     trendingList.forEach((element) {
       i++;
-      pageList.add(movieCard(element));
+      pageList.add(MoviePosterCard(movie:element));
       if (i == 10) {
         pageList.add(
           AdmobBanner(
@@ -99,110 +100,6 @@ class _TrendingPageState extends State<TrendingPage> {
     // widget tree.
     _scrollController.dispose();
     super.dispose();
-  }
-
-  Widget movieCard(SearchResults movie) {
-    var userProfile = Provider.of<UserProvider>(context);
-    List favoriteId = !userProfile.isMovie
-        ? userProfile.favoriteTVIds
-        : userProfile.favoriteMovieIds;
-    List markedId = !userProfile.isMovie
-        ? userProfile.markedTVListIds
-        : userProfile.markedMovieListIds;
-    List watchedId = userProfile.watchedMovieListIds;
-    bool marked = markedId.contains(movie.id);
-    bool isFavorite = favoriteId.contains(movie.id);
-    bool watched = watchedId.contains(movie.id);
-    return Stack(children: [
-      GestureDetector(
-        onTap: () async {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => FilmDetailPage(
-                    id: movie.id.toString(),
-                    type: !Provider.of<UserProvider>(context).isMovie
-                        ? "tv"
-                        : "movie",
-                  )));
-        },
-        child: movie.poster != null
-            ? Image.network(
-                "${Api().imageBannerAPI}${movie.poster}",
-                fit: BoxFit.fill,
-                width: MediaQuery.of(context).size.width * 0.5,
-                height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),
-              )
-            : Container(),
-      ),
-      Positioned(
-        bottom: 0,
-        child: Opacity(
-          opacity: 0.7,
-          child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              color: Colors.blueGrey[900],
-              height: 50,
-              width: MediaQuery.of(context).size.width * 0.5,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  IconButton(
-                    onPressed: () async {
-                      setState(() {
-                      marked=!marked;
-                    });
-                      await userProfile.mark(
-                          movie, !markedId.contains(movie.id));
-
-                    },
-                    icon: Icon(
-                     marked
-                          ? Icons.turned_in
-                          : Icons.turned_in_not,
-                      color: !marked
-                          ? Colors.white
-                          : Colors.lightGreen,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await userProfile.markAsFavorite(
-                          movie, favoriteId.contains(movie.id));
-                      setState(() {
-                        isFavorite=!isFavorite;
-                      });
-                    },
-                    icon: Icon(
-                      isFavorite
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                      color: isFavorite
-                          ? Colors.red
-                          : Colors.white,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      setState(() {
-                        watched=!watched;
-                      });
-                      await userProfile.markAsWatched(
-                          movie, watchedId.contains(movie.id));
-                    },
-                    icon: Icon(
-                      watched
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: watched
-                          ? Provider.of<ThemeProvider>(context).currentMainColor
-                          : Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-          ),
-        ),
-      )
-    ]);
   }
 
   _buildBody(BuildContext context) {

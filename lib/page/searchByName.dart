@@ -41,19 +41,6 @@ class _FilmsPageState extends State<FilmsPage> {
     textController.addListener(onTextChange);
   }
 
-  buildGenres(id) {
-    return Text(
-      userProvider.isMovie
-          ? settingsProvider.movieMapOfGanres[id]
-          : settingsProvider.tvMapOfGanres[id],
-      style: TextStyle(
-        fontFamily: "AmaticSC",
-        fontSize: 25,
-        //  fontWeight: FontWeight.bold,
-        color: themeProvider.currentFontColor,
-      ),
-    );
-  }
 
   noData() {
     return Center(
