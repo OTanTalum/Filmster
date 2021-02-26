@@ -103,7 +103,7 @@ class UserProvider extends ChangeNotifier {
     favoriteMovieIds = [];
     favoriteMovieList = [];
     int totalPages;
-    for (int page = 1; page <= totalPages ?? 2; page++) {
+    for (int page = 1; page <= (totalPages ?? 2); page++) {
       ListResponse response = await Api()
           .getFavoriteMovies(currentUser.id, sesion_id, page, "movies");
       totalPages = response.totalPage;
@@ -120,8 +120,8 @@ class UserProvider extends ChangeNotifier {
   getFavoriteTv() async {
     favoriteTVIds = [];
     favoriteTVList = [];
-    int totalPages = 2;
-    for (int page = 1; page <= totalPages; page++) {
+    int totalPages ;
+    for (int page = 1; page <= (totalPages??2); page++) {
       ListResponse response =
           await Api().getFavoriteMovies(currentUser.id, sesion_id, page, "tv");
       totalPages = response.totalPage;
