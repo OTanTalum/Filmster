@@ -1,6 +1,6 @@
 import 'dart:ui';
-
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:filmster/Enums/PagesEnum.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/providers/searchProvider.dart';
@@ -8,11 +8,10 @@ import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
-import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
-
-import 'package:filmster/widgets/movieCard.dart';
+import 'package:filmster/widgets/UI/CustomeBottomNavigationBar.dart';
+import 'package:filmster/widgets/UI/LIbraryActionButton.dart';
+import 'package:filmster/widgets/UI/movieCard.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -106,7 +105,7 @@ class _FilmsPageState extends State<FilmsPage> {
     searchProvider = Provider.of<SearchProvider>(context);
     return WillPopScope(
       onWillPop: () async {
-        settingsProvider.changePage(1);
+        settingsProvider.changePage(Pages.SEARCH_PAGE);
         Navigator.of(context).pop();
         return true;
       },
@@ -126,23 +125,8 @@ class _FilmsPageState extends State<FilmsPage> {
             ),
           ),
         ),
-        bottomNavigationBar: CustomeBottomNavigationBar(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            settingsProvider.changePage(4);
-            if (userProvider.currentUser !=
-                null) {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => LibraryPage()));
-            }
-          },
-          elevation: 12,
-          backgroundColor: themeProvider.currentSecondaryColor,
-          child: Icon(Icons.favorite,
-              color: settingsProvider.currentPage == 4
-                  ? themeProvider.currentMainColor
-                  : themeProvider.currentFontColor),
-        ),
+        bottomNavigationBar: CustomBottomNavigationBar(),
+        floatingActionButton: LibraryActionButton.build(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         body: _buildBody(context),
       ),

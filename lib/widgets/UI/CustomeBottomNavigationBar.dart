@@ -1,8 +1,9 @@
 
+import 'package:filmster/Enums/PagesEnum.dart';
 import 'package:filmster/page/HomePage.dart';
 import 'package:filmster/page/loginPage.dart';
 import 'package:filmster/page/profilePage.dart';
-import 'package:filmster/page/searchByName.dart';
+
 import 'package:filmster/page/searchPage.dart';
 import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/providers/settingsProvider.dart';
@@ -12,16 +13,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart';
-
-class CustomeBottomNavigationBar extends StatefulWidget {
+class CustomBottomNavigationBar extends StatefulWidget {
 
   @override
-  _CustomeBottomNavigationBarState createState() => _CustomeBottomNavigationBarState();
+  _CustomBottomNavigationBarState createState() => _CustomBottomNavigationBarState();
 
 }
- class _CustomeBottomNavigationBarState extends State<CustomeBottomNavigationBar>{
-
+ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>{
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +32,11 @@ class CustomeBottomNavigationBar extends StatefulWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              _buildIcon(0, HomePage(), Icons.home),
-              _buildIcon(1, SearchPage(), Icons.search),
+              _buildIcon(Pages.HOME_PAGE, HomePage(), Icons.home),
+              _buildIcon(Pages.SEARCH_PAGE, SearchPage(), Icons.search),
               SizedBox(width: 24),
-              _buildIcon(2, SettingsPage(), Icons.settings),
-              _buildIcon(3, Provider.of<UserProvider>(context, listen: false).currentUser==null
+              _buildIcon(Pages.SETTINGS_PAGE, SettingsPage(), Icons.settings),
+              _buildIcon(Pages.PROFILE_PAGE, Provider.of<UserProvider>(context, listen: false).currentUser==null
                   ? LoginPage()
                   : ProfilePage(),
               Icons.person),
@@ -48,7 +46,7 @@ class CustomeBottomNavigationBar extends StatefulWidget {
       );
   }
 
-  _buildIcon(int index, page, icon) {
+  _buildIcon(Pages index, page, icon) {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
     return IconButton(
       onPressed: () {

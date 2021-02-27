@@ -6,12 +6,9 @@ import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
-import 'package:filmster/widgets/movieBanner.dart';
+import 'package:filmster/widgets/UI/movieBanner.dart';
 import 'package:filmster/widgets/progressBarWidget.dart';
 import 'dart:async';
-
-import 'package:filmster/widgets/drawer.dart';
-
 import 'package:filmster/model/film.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';

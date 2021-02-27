@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:filmster/Enums/PagesEnum.dart';
 import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +15,7 @@ class SettingsProvider extends ChangeNotifier {
   Map<String, bool> movieFilter = {};
   List<int> tvArrayGenres = [];
   List<int> movieArrayGenres = [];
-  int currentPage = 0;
+  Pages currentPage = Pages.HOME_PAGE;
   String currentYear;
 
   loadListGenres() async {
@@ -65,7 +66,7 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  changePage(int pageIndex) {
+  changePage(Pages pageIndex) {
     currentPage = pageIndex;
     notifyListeners();
   }

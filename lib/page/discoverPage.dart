@@ -1,20 +1,13 @@
-import 'dart:ui';
 
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/model/search.dart';
-import 'package:filmster/page/film_detail_page.dart';
-
 import 'package:filmster/providers/discoverProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
-import 'package:filmster/setting/api.dart';
-import 'package:filmster/widgets/dialogWindow.dart';
-import 'package:filmster/widgets/movieCard.dart';
-import 'package:filmster/widgets/moviePosterCard.dart';
-
+import 'package:filmster/widgets/Dialogs/dialogWindow.dart';
+import 'package:filmster/widgets/UI/moviePosterCard.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

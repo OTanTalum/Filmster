@@ -1,17 +1,14 @@
 import 'dart:ui';
-
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
-import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
-import 'package:filmster/widgets/movieCard.dart';
-
+import 'package:filmster/widgets/UI/CustomeBottomNavigationBar.dart';
+import 'package:filmster/widgets/UI/movieCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 
 class LibraryPage extends StatefulWidget {
@@ -142,7 +139,7 @@ class _LibraryPageState extends State<LibraryPage>
               ),
             ),
           ),
-          bottomNavigationBar: CustomeBottomNavigationBar(),
+          bottomNavigationBar: CustomBottomNavigationBar(),
           floatingActionButton: FloatingActionButton(
             onPressed: () {},
             elevation: 0,

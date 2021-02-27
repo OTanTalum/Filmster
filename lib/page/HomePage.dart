@@ -4,12 +4,10 @@ import 'package:filmster/page/discoverPage.dart';
 import 'package:filmster/page/trendingPage.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/trendingProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
-import 'package:filmster/setting/sharedPreferenced.dart';
-import 'package:filmster/setting/theme.dart';
-import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
-import 'package:filmster/widgets/movieCard.dart';
+import 'package:filmster/widgets/UI/CustomeBottomNavigationBar.dart';
+import 'package:filmster/widgets/UI/LIbraryActionButton.dart';
+import 'package:filmster/widgets/UI/movieCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -95,25 +93,8 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
               ),
             ]),
       ),
-      bottomNavigationBar: CustomeBottomNavigationBar(),
-      floatingActionButton: FloatingActionButton(
-        heroTag: "btn1",
-        onPressed: () {
-          mySettings.changePage(4);
-          if(Provider.of<UserProvider>(context, listen: false).currentUser!=null){
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => LibraryPage()));
-          }
-        },
-        elevation: 10,
-        backgroundColor: myColors.currentSecondaryColor,
-        child: Icon(
-            Icons.favorite,
-            color: mySettings.currentPage==4
-                ? myColors.currentMainColor
-                : myColors.currentFontColor
-        ),
-      ),
+      bottomNavigationBar: CustomBottomNavigationBar(),
+      floatingActionButton: LibraryActionButton.build(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       //drawer: DrawerMenu().build(context),
       body: TabBarView(

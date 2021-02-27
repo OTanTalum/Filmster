@@ -1,19 +1,16 @@
 import 'dart:ui';
 
+import 'package:filmster/Enums/PagesEnum.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
-import 'package:filmster/page/library.dart';
 import 'package:filmster/page/profilePage.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
-import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
-
-import 'package:filmster/widgets/drawer.dart';
+import 'package:filmster/widgets/UI/CustomeBottomNavigationBar.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: () async {
-        Provider.of<SettingsProvider>(context, listen: false).changePage(0);
+        Provider.of<SettingsProvider>(context, listen: false).changePage(Pages.HOME_PAGE);
         Navigator.of(context).pop();
         return true;
       },
@@ -58,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-        bottomNavigationBar: CustomeBottomNavigationBar(),
+        bottomNavigationBar: CustomBottomNavigationBar(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
           },

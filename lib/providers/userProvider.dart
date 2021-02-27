@@ -1,11 +1,10 @@
 import 'package:filmster/model/BasicResponse.dart';
 import 'package:filmster/model/authentication.dart';
-import 'package:filmster/model/film.dart';
 import 'package:filmster/model/responses.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
-import 'package:filmster/widgets/CustomSnackBar.dart';
+import 'package:filmster/widgets/UI/CustomSnackBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -201,7 +200,7 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
- void removeFromMarkedList(SearchResults film) async {
+ Future<void> removeFromMarkedList(SearchResults film) async {
     await Api()
         .removeFromMarkedList(
             film.id, sesion_id, currentUser.id, isMovie ? "movie" : "tv")
@@ -221,7 +220,7 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void mark(SearchResults film) async {
+  Future<void> mark(SearchResults film) async {
     BasicResponse response = await Api()
         .mark(film.id, sesion_id, currentUser.id, isMovie ? "movie" : "tv");
     if (response.isSuccess??response.code == RESPONSE_MARK_SUCCESS) {
@@ -236,12 +235,12 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  markAsFavorite(SearchResults film, isFavorite) async {
+  Future<void> markAsFavorite(SearchResults film, isFavorite) async {
     BasicResponse response = await Api().markAsFavorite(film.id, !isFavorite,
         sesion_id, currentUser.id, isMovie ? "movie" : "tv");
-    if (response.isSuccess ?? isFavorite
+    if (response.isSuccess ?? (isFavorite
         ? response.code == RESPONSE_MARK_SUCCESS
-        : response.code == RESPONSE_REMOVE_FROM_LIST_SUCCESS) {
+        : response.code == RESPONSE_REMOVE_FROM_LIST_SUCCESS)) {
       if (isMovie) {
         isFavorite
             ? favoriteMovieList
@@ -263,7 +262,7 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeFromWatched(SearchResults film, keyState) async {
+  Future<void> removeFromWatched(SearchResults film, keyState) async {
     await Api()
         .deleteFromWatched(watchedmovieId, sesion_id, film.id)
         .then((BasicResponse response) {
@@ -285,7 +284,7 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void markAsWatched(SearchResults film, keyState) async {
+  Future<void> markAsWatched(SearchResults film, keyState) async {
     await Api()
         .markAsWatched(watchedmovieId, sesion_id, film.id)
         .then((BasicResponse response) {

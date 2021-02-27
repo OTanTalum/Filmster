@@ -1,0 +1,7 @@
+enum Pages {
+  HOME_PAGE,
+  SEARCH_PAGE,
+  SETTINGS_PAGE,
+  PROFILE_PAGE,
+  LIBRARY_PAGE
+}
