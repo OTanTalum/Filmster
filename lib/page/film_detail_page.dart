@@ -34,6 +34,7 @@ class FilmDetailPage extends StatefulWidget {
 
 class FilmDetailPageState extends State<FilmDetailPage> {
   ScrollController scrollController = ScrollController();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   ThemeProvider themeProvider;
   UserProvider userProvider;
   Film film;
@@ -101,6 +102,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             ),
           )
         : Scaffold(
+            key: _scaffoldKey,
             backgroundColor: themeProvider.currentBackgroundColor,
             appBar: AppBar(
               title: Text(
@@ -167,9 +169,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   onPressed: () async {
                     isWatched
                         ? await userProvider
-                            .removeFromWatched(film.movieToSearchResults())
+                            .removeFromWatched(film.movieToSearchResults(), _scaffoldKey)
                         : await userProvider
-                            .markAsWatched(film.movieToSearchResults());
+                            .markAsWatched(film.movieToSearchResults(), _scaffoldKey);
                     init();
                   },
                   icon: Icon(

@@ -9,8 +9,6 @@ import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
 import 'package:filmster/widgets/CustomeBottomNavigationBar.dart';
 
-import 'package:filmster/widgets/drawer.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

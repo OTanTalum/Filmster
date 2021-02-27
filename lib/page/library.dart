@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
+import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
@@ -13,7 +14,6 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-
 class LibraryPage extends StatefulWidget {
   @override
   _LibraryPageState createState() => _LibraryPageState();
@@ -22,6 +22,7 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  UserProvider userProvider;
   ScrollController _scroll = ScrollController();
   TabController _tabController;
   List<Widget> list=[];
@@ -30,7 +31,7 @@ class _LibraryPageState extends State<LibraryPage>
   @override
   void initState() {
     super.initState();
-    init();
+    initLists();
     _tabController =  new TabController(length: 3, vsync: this);
     _scroll.addListener(addMore);
   }
@@ -42,50 +43,43 @@ class _LibraryPageState extends State<LibraryPage>
     _tabController.dispose();
   }
 
+  initLists() async{
+    await Provider.of<UserProvider>(context, listen: false).getFavoriteTv();
+    await Provider.of<UserProvider>(context, listen: false).getFavoriteMovies();
+    await Provider.of<UserProvider>(context, listen: false).getMarkedTVList();
+    await Provider.of<UserProvider>(context, listen: false).getMarkedMovieList();
+    await Provider.of<UserProvider>(context, listen: false).getLists();
+  }
+
   addMore() async {
-  var provider =  Provider.of<UserProvider>(context, listen: false);
     if (_scroll.position.pixels ==
         _scroll.position.maxScrollExtent&&
-        provider.totalPage>=provider.currentPage) {
-      provider.currentPage++;
-      await provider.getLists();
+        userProvider.totalPage>=userProvider.currentPage) {
+      userProvider.currentPage++;
+      await userProvider.getLists();
     }
   }
 
-  initList(tvList, movieList,UserProvider provider){
-    List<Widget> list = [];
-    !provider.isMovie
-        ? tvList.forEach((element) {
-            list.add(MovieCard(element));
-          })
-        : movieList.forEach((element) {
-            list.add(MovieCard(element));
-          });
-    return list;
-  }
-
-  init() async{
-    await Provider.of<UserProvider>(context, listen: false).getFavoriteTv();
-    await Provider.of<UserProvider>(context, listen: false).getFavoriteMovies();
-    await Provider.of<UserProvider>(context, listen: false).getMarkList();
-    await Provider.of<UserProvider>(context, listen: false).getLists();
+  List<Widget> renderLists(List<SearchResults> list){
+    List<Widget> actionList=[];
+    list.forEach((SearchResults element) {
+      actionList.add(MovieCard(element, _scaffoldKey));
+    });
+    return actionList;
   }
 
   @override
   Widget build(BuildContext context) {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
-    var userProfile = Provider.of<UserProvider>(context);
+    userProvider = Provider.of<UserProvider>(context);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
 
-    List<Widget> favoritList = initList(
-        userProfile.favoriteTVList, userProfile.favoriteMovieList, userProfile);
-    List<Widget> markedList = initList(
-        userProfile.markedTVList, userProfile.markedMovieList, userProfile);
-    List<Widget> watchedList = initList(
-        userProfile.watchedTvList, userProfile.watchedMovieList, userProfile);
+    List<Widget> favoriteList = renderLists(userProvider.getFavoriteList());
+    List<Widget> markedList = renderLists(userProvider.getMarkedList());
+    List<Widget> watchedList = renderLists(userProvider.getWatchedList());
+
     return WillPopScope(
       onWillPop: () async {
-     //   mySettings.changePage(0);
         Navigator.of(context).pop();
         return true;
       },
@@ -99,7 +93,6 @@ class _LibraryPageState extends State<LibraryPage>
               tabs: [
               Tab(
                 text: AppLocalizations().translate(context, WordKeys.favorite),
-
               ),
               Tab(
                 text: AppLocalizations().translate(context, WordKeys.watchlist),
@@ -121,10 +114,10 @@ class _LibraryPageState extends State<LibraryPage>
                     ),
                   ),
                   Switch(
-                    value: !userProfile.isMovie,
+                    value: !userProvider.isMovie,
                     onChanged: (value) {
                       setState(() {
-                        userProfile.changeCurrentType();
+                        userProvider.changeCurrentType();
                       });
                     },
                     activeTrackColor:
@@ -167,7 +160,7 @@ class _LibraryPageState extends State<LibraryPage>
           children: [
           SingleChildScrollView(
                 child: Column(
-              children: favoritList,
+              children: favoriteList,
             )),
             SingleChildScrollView(
                 child: Column(

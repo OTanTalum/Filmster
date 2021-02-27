@@ -9,9 +9,10 @@ import 'package:provider/provider.dart';
 
 class MoviePosterCard extends StatelessWidget {
   MoviePosterCard({
-    this.movie,
+    this.movie, this.scaffoldKey
   });
 
+  final GlobalKey<ScaffoldState> scaffoldKey;
   final SearchResults movie;
   UserProvider userProvider;
   bool isFavorite;
@@ -88,8 +89,8 @@ class MoviePosterCard extends StatelessWidget {
                 IconButton(
                   onPressed: () async {
                     isWatched
-                        ? await userProvider.removeFromWatched(movie)
-                        : await userProvider.markAsWatched(movie);
+                        ? await userProvider.removeFromWatched(movie, scaffoldKey)
+                        : await userProvider.markAsWatched(movie,scaffoldKey);
                     userProvider.notify();
                   },
                   icon: Icon(

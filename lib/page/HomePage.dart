@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
     var userProvider = Provider.of<UserProvider>(context, listen: false);
     List<Widget> christianList = [];
     userProvider.christianMovie.forEach((element) {
-      christianList.add(MovieCard(element));
+      christianList.add(MovieCard(element, scaffoldState));
     });
     return Scaffold(
       key: scaffoldState,

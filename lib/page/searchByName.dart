@@ -27,6 +27,7 @@ class FilmsPage extends StatefulWidget {
 class _FilmsPageState extends State<FilmsPage> {
   final textController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   UserProvider userProvider;
   ThemeProvider themeProvider;
   SearchProvider searchProvider;
@@ -61,7 +62,7 @@ class _FilmsPageState extends State<FilmsPage> {
     List<Widget> list = [];
     int i = 0;
     searchProvider.listOfFilms.forEach((element) {
-      list.add(MovieCard(element));
+      list.add(MovieCard(element, scaffoldState));
       if (i == 5) {
         list.add(
           Container(
@@ -110,6 +111,7 @@ class _FilmsPageState extends State<FilmsPage> {
         return true;
       },
       child: Scaffold(
+        key: scaffoldState,
         backgroundColor: themeProvider.currentBackgroundColor,
         appBar: AppBar(
           title: Text(

@@ -13,7 +13,6 @@ class Film {
   String homepage;
   String id;
   String imdbId;
-
   String originalLanguage;
   String originalTitle;
   String overview;
@@ -111,7 +110,6 @@ class Film {
     voteAverage = json['vote_average'].toString();
     voteCount = json['vote_count'].toString();
   }
-
 
   SearchResults movieToSearchResults(){
     return SearchResults()

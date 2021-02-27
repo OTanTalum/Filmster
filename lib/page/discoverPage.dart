@@ -26,6 +26,7 @@ class DiscoverPage extends StatefulWidget {
 
 class _DiscoverPageState extends State<DiscoverPage> {
   ScrollController _scrollController = ScrollController();
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   UserProvider userProvider;
   DiscoverProvider discoverProvider;
   bool _isLoading = false;
@@ -51,7 +52,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     List<Widget> pageList = [];
     int i = 0;
     discoverList.forEach((element) {
-      pageList.add(MoviePosterCard(movie: element));
+      pageList.add(MoviePosterCard(movie: element, scaffoldKey:scaffoldState));
       i++;
       if (i == 10) {
         pageList.add(
@@ -90,6 +91,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     discoverProvider = Provider.of<DiscoverProvider>(context);
     var themeProfile = Provider.of<ThemeProvider>(context);
     return Scaffold(
+      key: scaffoldState,
       backgroundColor: themeProfile.currentBackgroundColor,
       floatingActionButton: FloatingActionButton(
         heroTag: "btn3",

@@ -111,7 +111,8 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
       );
       await userProvider.getFavoriteTv();
       await userProvider.getFavoriteMovies();
-      await userProvider.getMarkList();
+      await userProvider.getMarkedTVList();
+      await userProvider.getMarkedMovieList();
       await userProvider.getChristian();
       await userProvider.getLists();
     }

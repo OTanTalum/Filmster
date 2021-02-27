@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 
+import 'package:filmster/model/BasicResponse.dart';
 import 'package:filmster/model/authentication.dart';
 import 'package:filmster/model/film.dart';
 import 'package:filmster/model/responses.dart';
@@ -9,8 +10,6 @@ import 'package:filmster/providers/settingsProvider.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:http/http.dart' as http;
 
-
-
 class Api extends http.BaseClient {
 
   final String apiKey = "22e195d94c2274b3dcf6484e58a1715f";
@@ -18,8 +17,10 @@ class Api extends http.BaseClient {
   String tMDBApi = 'https://api.themoviedb.org/3';
   bool includeAdult = false;
 
-  searchMovie(String type, String query, int page) async{
-    final response = await http.get('$tMDBApi/search/$type?api_key=$apiKey&query=$query&page=$page&language=${SettingsProvider.language}&include_adult=$includeAdult');
+  searchMovie(String type, String query, int page) async {
+    final response = await http.get(
+        '$tMDBApi/search/$type?api_key=$apiKey&query=$query&page=$page&language=${SettingsProvider
+            .language}&include_adult=$includeAdult');
     if (response.statusCode == 200) {
       return Search.fromJson(json.decode(response.body));
     }
@@ -28,8 +29,10 @@ class Api extends http.BaseClient {
     }
   }
 
-  getTrending(String type, String period, int page) async{
-    final response = await http.get('$tMDBApi/trending/$type/$period?api_key=$apiKey&page=$page&language=${SettingsProvider.language}&include_adult=$includeAdult');
+  getTrending(String type, String period, int page) async {
+    final response = await http.get(
+        '$tMDBApi/trending/$type/$period?api_key=$apiKey&page=$page&language=${SettingsProvider
+            .language}&include_adult=$includeAdult');
     if (response.statusCode == 200) {
       return Search.fromJson(json.decode(response.body));
     }
@@ -38,8 +41,10 @@ class Api extends http.BaseClient {
     }
   }
 
-  getGenres(String type) async{
-    final response = await http.get('$tMDBApi/genre/$type/list?api_key=$apiKey&language=${SettingsProvider.language}');
+  getGenres(String type) async {
+    final response = await http.get(
+        '$tMDBApi/genre/$type/list?api_key=$apiKey&language=${SettingsProvider
+            .language}');
     if (response.statusCode == 200) {
       Map genres = json.decode(response.body);
       return genres["genres"];
@@ -49,8 +54,10 @@ class Api extends http.BaseClient {
     }
   }
 
-  getTvDetail(String id) async{
-    final response = await http.get('$tMDBApi/"tv"/$id?api_key=$apiKey&language=${SettingsProvider.language}');
+  getTvDetail(String id) async {
+    final response = await http.get(
+        '$tMDBApi/"tv"/$id?api_key=$apiKey&language=${SettingsProvider
+            .language}');
     if (response.statusCode == 200) {
       return Film.fromJson(json.decode(response.body));
     }
@@ -60,8 +67,10 @@ class Api extends http.BaseClient {
     }
   }
 
-  getFilmDetail(String id) async{
-    final response = await http.get('$tMDBApi/movie/$id?api_key=$apiKey&language=${SettingsProvider.language}');
+  getFilmDetail(String id) async {
+    final response = await http.get(
+        '$tMDBApi/movie/$id?api_key=$apiKey&language=${SettingsProvider
+            .language}');
     if (response.statusCode == 200) {
       return Film.fromJson(json.decode(response.body));
     }
@@ -73,14 +82,14 @@ class Api extends http.BaseClient {
 
   getRequestToken() async {
     final response =
-        await http.get('$tMDBApi/authentication/token/new?api_key=$apiKey');
+    await http.get('$tMDBApi/authentication/token/new?api_key=$apiKey');
     if (json.decode(response.body)['success']) {
       return TokenRequestResponse.fromJson(json.decode(response.body));
     } else
       print("ERROR REquEST");
   }
 
-  login(String username, String password, String requestToken)async{
+  login(String username, String password, String requestToken) async {
     final response = await http.post(
         '$tMDBApi/authentication/token/validate_with_login?api_key=$apiKey',
         body: {
@@ -98,7 +107,7 @@ class Api extends http.BaseClient {
     }
   }
 
-  createSession(String token)async {
+  createSession(String token) async {
     final response = await http.post(
         '$tMDBApi/authentication/session/new?api_key=$apiKey',
         body: {
@@ -114,8 +123,9 @@ class Api extends http.BaseClient {
     }
   }
 
-  getUser(String sesionId)async {
-    final response = await http.get('$tMDBApi/account?api_key=$apiKey&session_id=$sesionId');
+  getUser(String sesionId) async {
+    final response = await http.get(
+        '$tMDBApi/account?api_key=$apiKey&session_id=$sesionId');
     if (response.statusCode == 200) {
       return User.fromJson(json.decode(response.body));
     }
@@ -125,8 +135,10 @@ class Api extends http.BaseClient {
   }
 
 
-  getChristianMovies(page)async {
-    final response = await http.get('$tMDBApi/keyword/253695/movies?api_key=$apiKey&language=${SettingsProvider.language}&page=$page');
+  getChristianMovies(page) async {
+    final response = await http.get(
+        '$tMDBApi/keyword/253695/movies?api_key=$apiKey&language=${SettingsProvider
+            .language}&page=$page');
     if (response.statusCode == 200) {
       return ListResponse.fromJson(json.decode(response.body));
     }
@@ -135,8 +147,10 @@ class Api extends http.BaseClient {
     }
   }
 
-  getFavoriteMovies(int id, String sessionId, page, type)async {
-    final response = await http.get('$tMDBApi/account/$id/favorite/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.desc&language=${SettingsProvider.language}');
+  getFavoriteMovies(int id, String sessionId, page, type) async {
+    final response = await http.get(
+        '$tMDBApi/account/$id/favorite/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.desc&language=${SettingsProvider
+            .language}');
     if (response.statusCode == 200) {
       return ListResponse.fromJson(json.decode(response.body));
     }
@@ -147,8 +161,10 @@ class Api extends http.BaseClient {
   }
 
 
-  getMarkedListMovies(int id, String sessionId, page, type)async {
-    final response = await http.get('$tMDBApi/account/$id/watchlist/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.desc&language=${SettingsProvider.language}');
+  getMarkedListMovies(int id, String sessionId, page, type) async {
+    final response = await http.get(
+        '$tMDBApi/account/$id/watchlist/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.desc&language=${SettingsProvider
+            .language}');
     if (response.statusCode == 200) {
       return ListResponse.fromJson(json.decode(response.body));
     }
@@ -157,65 +173,48 @@ class Api extends http.BaseClient {
     }
   }
 
-  markAsFavorite(mediaId, bool isRemove, String  sessionId,  userId, type) async {
-    final response = await http.post('$tMDBApi/account/$userId/favorite?api_key=$apiKey&session_id=$sessionId',
-        headers: {"Content-Type":"application/json;charset=utf-8"},
-        body: jsonEncode({
-          "favorite": isRemove,
-          "media_type": type,
-          "media_id": mediaId,
-        })
-    );
-    if (json.decode(response.body)["success"]) {
-      return true;
-    }
-    else {
-      print("ERROR Favorite");
-      return false;
-    }
-  }
-
-  removeFromMarkedList(mediaId, String sessionId, userId, type)async{
-    final response = await http.post('$tMDBApi/account/$userId/watchlist?api_key=$apiKey&session_id=$sessionId',
-        headers: {"Content-Type":"application/json;charset=utf-8"},
+  Future<BasicResponse> removeFromMarkedList(mediaId, String sessionId, userId, type) async {
+    final response = await http.post(
+        '$tMDBApi/account/$userId/watchlist?api_key=$apiKey&session_id=$sessionId',
+        headers: {"Content-Type": "application/json;charset=utf-8"},
         body: jsonEncode({
           "watchlist": false,
           "media_type": type,
           "media_id": mediaId.toString(),
         })
     );
-    print(json.decode(response.body));
-    if (json.decode(response.body)["success"]) {
-      return true;
-    }
-    else {
-      print("ERROR WatchList");
-      return false;
-    }
+    return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  mark(mediaId, String  sessionId,  userId, type) async {
-    final response = await http.post('$tMDBApi/account/$userId/watchlist?api_key=$apiKey&session_id=$sessionId',
-        headers: {"Content-Type":"application/json;charset=utf-8"},
+  Future<BasicResponse> mark(mediaId, String sessionId, userId, type) async {
+    final response = await http.post(
+        '$tMDBApi/account/$userId/watchlist?api_key=$apiKey&session_id=$sessionId',
+        headers: {"Content-Type": "application/json;charset=utf-8"},
         body: jsonEncode({
           "watchlist": true,
           "media_type": type,
           "media_id": mediaId.toString(),
         })
     );
-    print(json.decode(response.body));
-    if (json.decode(response.body)["success"]) {
-      return true;
-    }
-    else {
-      print("ERROR WatchList");
-      return false;
-    }
+    return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  getDiscover(bool isMovie, int page, String genres, year) async{
+  Future<BasicResponse> markAsFavorite(mediaId, bool isRemove, String sessionId, userId, type) async {
+    final response = await http.post(
+        '$tMDBApi/account/$userId/favorite?api_key=$apiKey&session_id=$sessionId',
+        headers: {"Content-Type": "application/json;charset=utf-8"},
+        body: jsonEncode({
+          "favorite": isRemove,
+          "media_type": type,
+          "media_id": mediaId,
+        })
+    );
+    return BasicResponse.fromJson(json.decode(response.body));
+  }
+
+  getDiscover(bool isMovie, int page, String genres, year) async {
     final response = await http.get(''
-        '$tMDBApi/discover/''${isMovie?"movie":"tv"}?'
+        '$tMDBApi/discover/''${isMovie ? "movie" : "tv"}?'
         'api_key=$apiKey'
         '&page=$page'
         '&language=${SettingsProvider.language}'
@@ -250,7 +249,7 @@ class Api extends http.BaseClient {
   }
 
 
-  createWatchedList(String sessionId)async {
+  createWatchedList(String sessionId) async {
     final response = await http.post(
         '$tMDBApi/list?api_key=$apiKey&session_id=$sessionId',
         body: {
@@ -259,7 +258,7 @@ class Api extends http.BaseClient {
           "language": "${SettingsProvider.language}"
         });
     print("response");
-    if (response.statusCode==200) {
+    if (response.statusCode == 200) {
       return json.decode(response.body);
     }
     else {
@@ -267,7 +266,7 @@ class Api extends http.BaseClient {
     }
   }
 
-  createWatchedTVList(String sessionId)async {
+  createWatchedTVList(String sessionId) async {
     final response = await http.post(
         '$tMDBApi/list?api_key=$apiKey&session_id=$sessionId',
         body: {
@@ -277,7 +276,7 @@ class Api extends http.BaseClient {
           "language": "${SettingsProvider.language}"
         });
     print("response");
-    if (response.statusCode==200) {
+    if (response.statusCode == 200) {
       return json.decode(response.body);
     }
     else {
@@ -285,7 +284,7 @@ class Api extends http.BaseClient {
     }
   }
 
-  getWatchedList(String sessionId, String listId, page)async {
+  getWatchedList(String sessionId, String listId, page) async {
     final response = await http.get(
         '$tMDBApi/list/$listId?'
             'api_key=$apiKey'
@@ -293,7 +292,7 @@ class Api extends http.BaseClient {
             '&page=$page'
     );
     print(json.decode(response.body));
-    if (response.statusCode==200) {
+    if (response.statusCode == 200) {
       return CustomList.fromJson(json.decode(response.body));
     }
     else {
@@ -302,58 +301,43 @@ class Api extends http.BaseClient {
   }
 
 
-  markAsWatched(String listId, String sessionId, mediaId) async {
+ Future<BasicResponse> markAsWatched(String listId, String sessionId, mediaId) async {
     final response = await http.post('$tMDBApi/list/$listId/add_item'
         '?api_key=$apiKey'
         '&session_id=$sessionId',
-        headers: {"Content-Type":"application/json;charset=utf-8"},
+        headers: {"Content-Type": "application/json;charset=utf-8"},
         body: jsonEncode({
           "media_id": mediaId.toString(),
         })
     );
-    print(json.decode(response.body));
-    if (json.decode(response.body)["success"]) {
-      return true;
-    }
-    else {
-      print("ERROR Mark WatchList");
-      return false;
-    }
+    return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  deleteFromWatched(String listId, String sessionId, mediaId) async {
+  Future <BasicResponse> deleteFromWatched(String listId, String sessionId, mediaId) async {
     final response = await http.post('$tMDBApi/list/$listId/remove_item'
         '?api_key=$apiKey'
         '&session_id=$sessionId',
-        headers: {"Content-Type":"application/json;charset=utf-8"},
+        headers: {"Content-Type": "application/json;charset=utf-8"},
         body: jsonEncode({
           "media_id": mediaId.toString(),
         })
     );
-    print(json.decode(response.body));
-    if (json.decode(response.body)["success"]) {
-      return true;
-    }
-    else {
-      print("ERROR Remove From WatchList");
-      return false;
-    }
+    return BasicResponse.fromJson(json.decode(response.body));
   }
 
   @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) async{
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final HttpMetric metric = FirebasePerformance.instance
         .newHttpMetric(request.url.toString(), HttpMethod.Get);
 
     await metric.start();
-
+    print(request);
+    print("_____________________");
     http.StreamedResponse response;
     try {
-    //  response = await http.(request);
       metric
         ..responsePayloadSize = response.contentLength
         ..responseContentType = response.headers['Content-Type']
-        ..requestPayloadSize = request.contentLength
         ..httpResponseCode = response.statusCode;
     } finally {
       await metric.stop();
@@ -361,8 +345,4 @@ class Api extends http.BaseClient {
 
     return response;
   }
-
-
-
-
 }
