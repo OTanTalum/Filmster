@@ -1,7 +1,5 @@
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
-import 'package:filmster/page/discoverPage.dart';
-import 'package:filmster/page/trendingPage.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
@@ -12,7 +10,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'library.dart';
+import '../library.dart';
+import 'Tabs/discoverPage.dart';
+import 'Tabs/trendingPage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
         _scrollController.position.maxScrollExtent&&
         provider.totalPage>=provider.currentPage && !provider.isLoading) {
       provider.currentPage++;
-      await provider.getChristian();
+      await provider.getChristian(scaffoldState);
     }
   }
 

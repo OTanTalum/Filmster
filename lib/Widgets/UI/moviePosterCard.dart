@@ -67,8 +67,8 @@ class MoviePosterCard extends StatelessWidget {
                 IconButton(
                   onPressed: () async {
                     isMarked
-                        ? await userProvider.removeFromMarkedList(movie)
-                        : await userProvider.mark(movie);
+                        ? await userProvider.removeFromMarkedList(movie, scaffoldKey)
+                        : await userProvider.mark(movie, scaffoldKey);
                     userProvider.notify();
                   },
                   icon: Icon(
@@ -78,7 +78,7 @@ class MoviePosterCard extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () async {
-                    await userProvider.markAsFavorite(movie, isFavorite);
+                    await userProvider.markAsFavorite(movie, isFavorite, scaffoldKey);
                     userProvider.notify();
                   },
                   icon: Icon(

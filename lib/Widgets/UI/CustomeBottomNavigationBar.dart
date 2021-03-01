@@ -1,10 +1,9 @@
 
 import 'package:filmster/Enums/PagesEnum.dart';
-import 'package:filmster/page/HomePage.dart';
+import 'package:filmster/page/HomePage/HomePage.dart';
+import 'package:filmster/page/Search/searchPage.dart';
 import 'package:filmster/page/loginPage.dart';
 import 'package:filmster/page/profilePage.dart';
-
-import 'package:filmster/page/searchPage.dart';
 import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';

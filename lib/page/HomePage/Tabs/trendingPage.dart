@@ -19,6 +19,7 @@ class TrendingPage extends StatefulWidget {
 
 class _TrendingPageState extends State<TrendingPage> {
   ScrollController _scrollController = ScrollController();
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
 
   @override
   void initState() {
@@ -34,10 +35,11 @@ class _TrendingPageState extends State<TrendingPage> {
             : "tv",
         Provider.of<UserProvider>(context, listen: false).currentPeriod != "day"
             ? "week"
-            : "day");
+            : "day",
+    scaffoldState);
   }
 
-  loadPage(List<SearchResults> trendingList, List<int> arrayGenres) {
+  loadPage(List<SearchResults> trendingList) {
     List<Widget> pageList = [];
     int i = 0;
     trendingList.forEach((element) {
@@ -72,13 +74,15 @@ class _TrendingPageState extends State<TrendingPage> {
             : "movie",
         Provider.of<UserProvider>(context, listen: false).currentPeriod != "day"
             ? "week"
-            : "day");
+            : "day",
+    scaffoldState);
   }
 
   @override
   Widget build(BuildContext context) {
     var themeProfile = Provider.of<ThemeProvider>(context);
     return Scaffold(
+      key: scaffoldState,
       backgroundColor: themeProfile.currentBackgroundColor,
       body: _buildBody(context),
     );
@@ -103,11 +107,7 @@ class _TrendingPageState extends State<TrendingPage> {
         : userProvider.currentPeriod != "day"
             ? trendingProvider.trendingMoviesWeek
             : trendingProvider.trendingMoviesDay;
-    caramba.addAll(loadPage(
-        movieList,
-        !userProvider.isMovie
-            ? Provider.of<SettingsProvider>(context).tvArrayGenres
-            : Provider.of<SettingsProvider>(context).movieArrayGenres));
+    caramba.addAll(loadPage(movieList));
     return SafeArea(
       child: SingleChildScrollView(
         controller: _scrollController,

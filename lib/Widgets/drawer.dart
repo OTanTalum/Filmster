@@ -1,9 +1,9 @@
+
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
-import 'package:filmster/main.dart';
-import 'package:filmster/page/HomePage.dart';
-import 'package:filmster/page/searchByName.dart';
+import 'package:filmster/page/HomePage/HomePage.dart';
+import 'package:filmster/page/Search/Pages/searchByName.dart';
 import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';

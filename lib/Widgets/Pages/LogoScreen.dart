@@ -10,7 +10,7 @@ class LogoScreen extends StatelessWidget {
       },
       child: Scaffold(
         body: Center(
-          child: SvgPicture.asset("assets/image/s.svg",
+          child: SvgPicture.asset("assets/image/logoScreen.svg",
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.cover)

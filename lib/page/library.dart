@@ -41,11 +41,11 @@ class _LibraryPageState extends State<LibraryPage>
   }
 
   initLists() async{
-    await Provider.of<UserProvider>(context, listen: false).getFavoriteTv();
-    await Provider.of<UserProvider>(context, listen: false).getFavoriteMovies();
-    await Provider.of<UserProvider>(context, listen: false).getMarkedTVList();
-    await Provider.of<UserProvider>(context, listen: false).getMarkedMovieList();
-    await Provider.of<UserProvider>(context, listen: false).getLists();
+    await Provider.of<UserProvider>(context, listen: false).getFavoriteTv(_scaffoldKey);
+    await Provider.of<UserProvider>(context, listen: false).getFavoriteMovies(_scaffoldKey);
+    await Provider.of<UserProvider>(context, listen: false).getMarkedTVList(_scaffoldKey);
+    await Provider.of<UserProvider>(context, listen: false).getMarkedMovieList(_scaffoldKey);
+    await Provider.of<UserProvider>(context, listen: false).getLists(_scaffoldKey);
   }
 
   addMore() async {
@@ -53,7 +53,7 @@ class _LibraryPageState extends State<LibraryPage>
         _scroll.position.maxScrollExtent&&
         userProvider.totalPage>=userProvider.currentPage) {
       userProvider.currentPage++;
-      await userProvider.getLists();
+      await userProvider.getLists(_scaffoldKey);
     }
   }
 

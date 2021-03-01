@@ -21,6 +21,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
 
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   @override
   void initState() {
   }
@@ -40,6 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
           Navigator.of(context).pop();
         },
     child:Scaffold(
+      key: scaffoldState,
       backgroundColor: myColors.currentBackgroundColor,
       appBar: AppBar(
         title: Text(
@@ -106,7 +108,8 @@ class _SettingsPageState extends State<SettingsPage> {
               .changeLanguage(languageCode);
           Prefs().setStringPrefs('languageCode', languageCode);
         });
-        await Provider.of<SettingsProvider>(context, listen: false).loadListGenres();
+        await Provider.of<SettingsProvider>(context, listen: false).loadMovieListGenres(scaffoldState);
+        await Provider.of<SettingsProvider>(context, listen: false).loadTVListGenres(scaffoldState);
       },
       child: Text(
         languageName,

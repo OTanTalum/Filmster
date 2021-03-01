@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () async {
                   if(_password.length>6&&_username.length>3) {
                     try {
-                      await userProvider.auth(_username, _password);
+                      await userProvider.auth(_username, _password,_scaffoldKey);
                       if (userProvider.isloged && userProvider.currentUser!=null){
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(builder: (_) => ProfilePage()),

@@ -16,7 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'library.dart';
+import '../../library.dart';
 
 class FilmsPage extends StatefulWidget {
   @override
@@ -92,7 +92,7 @@ class _FilmsPageState extends State<FilmsPage> {
     if (textController.text.length >= 3) {
       setState(() {
         currentPage = 1;
-        searchProvider.fetchData(textController.text, currentPage, userProvider.isMovie?"movie":"tv");
+        searchProvider.fetchData(textController.text, currentPage, userProvider.isMovie?"movie":"tv", scaffoldState);
       });
     }
   }
@@ -201,7 +201,7 @@ class _FilmsPageState extends State<FilmsPage> {
         _scrollController.position.maxScrollExtent) {
       ++currentPage;
       await Provider.of<SearchProvider>(context, listen: false)
-          .fetchData(searchProvider.oldValue, currentPage, userProvider.isMovie?"movie":"tv");
+          .fetchData(searchProvider.oldValue, currentPage, userProvider.isMovie?"movie":"tv", scaffoldState);
       setState(() {
         searchProvider.isLoading = false;
       });

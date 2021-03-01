@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:filmster/Enums/PagesEnum.dart';
-import 'package:filmster/page/searchByName.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
@@ -10,7 +9,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'library.dart';
+import '../library.dart';
+import 'Pages/searchByName.dart';
 
 class SearchPage extends StatefulWidget {
 

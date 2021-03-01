@@ -1,13 +1,14 @@
-import 'dart:io';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:dartpedia/dartpedia.dart';
+import 'package:filmster/Widgets/UI/CustomSnackBar.dart';
+import 'package:filmster/Widgets/UI/progressBarWidget.dart';
+import 'package:filmster/model/BasicResponse.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/widgets/UI/movieBanner.dart';
-import 'package:filmster/widgets/progressBarWidget.dart';
 import 'dart:async';
 import 'package:filmster/model/film.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -44,12 +45,19 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   void initState() {
     super.initState();
     Future.microtask(() async {
-      Film response = userProvider.isMovie
+      var response = userProvider.isMovie
           ? await Api().getFilmDetail(widget.id)
           : await Api().getTvDetail(widget.id);
-      setState(() {
-        film = response;
-      });
+      if(response.runtimeType == BasicResponse()){
+        CustomSnackBar().showSnackBar(title: response.massage, state: _scaffoldKey);
+        setState(() {
+          isLoading = false;
+        });
+      }else {
+        setState(() {
+          film = response;
+        });
+      }
       init();
       setState(() {
         isLoading = false;
@@ -135,8 +143,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 IconButton(
                   onPressed: () async {
                     isMarked
-                        ? await userProvider.removeFromMarkedList(film.movieToSearchResults())
-                        : await userProvider.mark(film.movieToSearchResults());
+                        ? await userProvider.removeFromMarkedList(film.movieToSearchResults(),_scaffoldKey)
+                        : await userProvider.mark(film.movieToSearchResults(), _scaffoldKey);
                     init();
                   },
                   icon: Icon(
@@ -150,7 +158,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    await userProvider.markAsFavorite(film.movieToSearchResults(), isFavorite);
+                    await userProvider.markAsFavorite(film.movieToSearchResults(), isFavorite, _scaffoldKey);
                     init();
                   },
                   icon: Icon(

@@ -1,28 +1,3 @@
-
-class TokenRequestResponse {
-  bool success;
-  String requestToken;
-
-  TokenRequestResponse({this.success, this.requestToken});
-
-  TokenRequestResponse.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    requestToken = json['request_token'];
-  }
-}
-
-class SesionRequestResponse {
-  bool success;
-  String sesionId;
-
-  SesionRequestResponse({this.success, this.sesionId});
-
-  SesionRequestResponse.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    sesionId = json['session_id'];
-  }
-}
-
 class User {
   String avatar;
   int id;

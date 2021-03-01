@@ -1,7 +1,8 @@
 
 import 'dart:io';
 
-import 'package:filmster/page/HomePage.dart';
+import 'package:admob_flutter/admob_flutter.dart';
+import 'package:filmster/page/HomePage/HomePage.dart';
 import 'package:filmster/providers/discoverProvider.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
@@ -10,17 +11,13 @@ import 'package:filmster/providers/trendingProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
-import 'package:filmster/widgets/LogoScreen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
-
-//Flutter
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//Pages
-
 import 'package:provider/provider.dart';
-import 'package:admob_flutter/admob_flutter.dart';
 
+import 'Widgets/Pages/LogoScreen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,7 +86,8 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
       await initUser();
       await initLanguage();
       await initTheme();
-      await _settingsProvider.loadListGenres();
+      await _settingsProvider.loadMovieListGenres(scaffoldState);
+      await _settingsProvider.loadTVListGenres(scaffoldState);
     setState(() {
       isDone = true;
       mainTraceInit.stop();
@@ -107,14 +105,15 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
     if (await Prefs().hasString("username")) {
       await userProvider.auth(
           await Prefs().getStringPrefs("username"),
-          await Prefs().getStringPrefs("password")
+          await Prefs().getStringPrefs("password"),
+        scaffoldState
       );
-      await userProvider.getFavoriteTv();
-      await userProvider.getFavoriteMovies();
-      await userProvider.getMarkedTVList();
-      await userProvider.getMarkedMovieList();
-      await userProvider.getChristian();
-      await userProvider.getLists();
+      await userProvider.getFavoriteTv(scaffoldState);
+      await userProvider.getFavoriteMovies(scaffoldState);
+      await userProvider.getMarkedTVList(scaffoldState);
+      await userProvider.getMarkedMovieList(scaffoldState);
+      await userProvider.getChristian(scaffoldState);
+      await userProvider.getLists(scaffoldState);
     }
     Provider.of<TrendingProvider>(context,listen: false).currentPage=1;
   }

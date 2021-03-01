@@ -20,11 +20,11 @@ class Progress extends CustomPainter {
   /// Progress Bar
   /// Draw indicator where :
   /// [current] is a offset position of ScrollController
-  /// [colors] is a Custome Color
+  /// [colors] is a Custom Color
   /// [allSize] is a Max scroling height of your scroll area
   /// [width] is a width of you area where Progress Bar will build
   /// [height] is a height of you Progress Bar
-  ///
+
 
   @override
   void paint(Canvas canvas, Size size) {

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 class CustomSnackBar {
  showSnackBar({String title, GlobalKey<ScaffoldState> state}) {
      SnackBar _customSnackBar = SnackBar(

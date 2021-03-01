@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:filmster/Widgets/UI/CustomSnackBar.dart';
+import 'package:filmster/model/BasicResponse.dart';
 import 'package:filmster/model/film.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/setting/api.dart';
@@ -54,22 +56,25 @@ class TrendingProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
-  Future<bool> fetchData(type, period) async {
+  Future<bool> fetchData(type, period, keyState) async {
     if (!isLoading) {
       isLoading = true;
-      Search response = await Api().getTrending(type, period, currentPage);
-      List<SearchResults> list = response.search;
-      addFilms(list, currentPage, type, period);
-      isLoading = false;
-      changeIsLast(
-          (response
-              .total ?? 0) < currentPage * 20
-      );
-      return (response.total ?? 0) < currentPage * 20;
+      var response = await Api().getTrending(type, period, currentPage);
+      if (hasError(response)) {
+        CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+        return true;
+      } else {
+        List<SearchResults> list = response.search;
+        addFilms(list, currentPage, type, period);
+        isLoading = false;
+        changeIsLast((response.total ?? 0) < currentPage);
+        return (response.total ?? 0) < currentPage;
+      }
     }
   }
 
-
+  bool hasError(response) {
+    return response.runtimeType == BasicResponse();
+  }
 }
 
