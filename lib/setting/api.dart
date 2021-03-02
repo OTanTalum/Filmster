@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:filmster/model/BasicResponse.dart';
+import 'package:filmster/model/GalleryResponse.dart';
 import 'package:filmster/model/Genre.dart';
 import 'package:filmster/model/authentication.dart';
 import 'package:filmster/model/film.dart';
@@ -17,6 +18,7 @@ class Api extends http.BaseClient {
 
   final String apiKey = "22e195d94c2274b3dcf6484e58a1715f";
   final String imageBannerAPI = "https://image.tmdb.org/t/p/w500";
+  final String imageGalleryAPI = "https://image.tmdb.org/t/p/original";
   String tMDBApi = 'https://api.themoviedb.org/3';
   bool includeAdult = false;
 
@@ -216,13 +218,13 @@ class Api extends http.BaseClient {
   }
 
   getWatchedList(String sessionId, String listId, page) async {
-    final response = await http.get('$tMDBApi/list/$listId?'
+    var response = await http.get('$tMDBApi/list/$listId?'
         'api_key=$apiKey'
         '&language=${SettingsProvider.language}'
         '&page=$page');
     return response.statusCode == RESPONSE_SUCCESS
         ? CustomList.fromJson(json.decode(response.body))
-        : BasicResponse.fromJson(json.decode(response.body));
+        : false;
   }
 
   Future<BasicResponse> markAsWatched(String listId, String sessionId, mediaId) async {
@@ -248,6 +250,29 @@ class Api extends http.BaseClient {
     );
     return BasicResponse.fromJson(json.decode(response.body));
   }
+
+  getFilmImages(String id) async {
+    var response = await http.get(
+        '$tMDBApi/movie/$id/images?api_key=$apiKey');
+    return response.statusCode == RESPONSE_SUCCESS
+        ? GalleryResponse.fromJson(json.decode(response.body))
+        : BasicResponse.fromJson(json.decode(response.body));
+  }
+
+  getTvImages(String id) async {
+    var response = await http.get(
+        '$tMDBApi/tv/$id/images?api_key=$apiKey');
+    return response.statusCode == RESPONSE_SUCCESS
+        ? GalleryResponse.fromJson(json.decode(response.body))
+        : BasicResponse.fromJson(json.decode(response.body));
+  }
+
+  getPosters(link) async{
+    var response = await http.get(
+        '$imageGalleryAPI$link');
+    return response;
+  }
+
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {

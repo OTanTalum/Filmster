@@ -6,6 +6,7 @@ class BasicResponse{
   String sessionId;
   String requestToken;
 
+
   BasicResponse({this.massage, this.code, this.isSuccess});
 
   BasicResponse.fromJson(Map<String, dynamic> json){

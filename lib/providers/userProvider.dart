@@ -374,8 +374,8 @@ class UserProvider extends ChangeNotifier {
     int totalResults = 21;
     for (int i = 1; (i - 1) * 20 < totalResults; i++) {
       var response = await Api().getWatchedList(sesion_id, watchedTVId, i);
-      if (hasError(response)) {
-        CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+      if (response==false) {
+       // CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
         return;
       } else {
         totalResults = response.itemCount;
@@ -400,8 +400,8 @@ class UserProvider extends ChangeNotifier {
     int totalResults = 21;
     for (int i = 1; (i - 1) * 20 < totalResults; i++) {
       var response = await Api().getWatchedList(sesion_id, watchedmovieId, i);
-      if (hasError(response)) {
-        CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+      if (response==false) {
+       // CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
         return;
       } else {
         totalResults = response.itemCount;

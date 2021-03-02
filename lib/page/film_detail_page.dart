@@ -1,11 +1,14 @@
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dartpedia/dartpedia.dart';
+import 'package:filmster/Widgets/Pages/FullScreenImagePage.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/FavoriteIconButton.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/MarkedIconButton.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/WatchedIconButton.dart';
 import 'package:filmster/Widgets/UI/CustomSnackBar.dart';
 import 'package:filmster/Widgets/UI/progressBarWidget.dart';
 import 'package:filmster/model/BasicResponse.dart';
+import 'package:filmster/model/Poster.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
@@ -36,30 +39,42 @@ class FilmDetailPage extends StatefulWidget {
 class FilmDetailPageState extends State<FilmDetailPage> {
   ScrollController scrollController = ScrollController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<Poster> images=[];
+  List<String> imagesId=[];
+  List<Widget> posterList = [];
   ThemeProvider themeProvider;
   UserProvider userProvider;
   Film film;
   bool isLoading = true;
-  bool isFavorite;
-  bool isMarked;
-  bool isWatched;
+
 
   @override
   void initState() {
+    scrollController.addListener(() {setState(() {});});
     super.initState();
     Future.microtask(() async {
       var response = userProvider.isMovie
           ? await Api().getFilmDetail(widget.id)
           : await Api().getTvDetail(widget.id);
-      if(response.runtimeType == BasicResponse()){
+      if(hasError(response)){
         CustomSnackBar().showSnackBar(title: response.massage, state: _scaffoldKey);
-        setState(() {
           isLoading = false;
-        });
       }else {
-        setState(() {
           film = response;
-        });
+          var imageResponse = userProvider.isMovie
+              ? await Api().getFilmImages(widget.id)
+              : await Api().getTvImages(widget.id);
+          if(hasError(imageResponse)) {
+            CustomSnackBar().showSnackBar(
+                title: response.massage, state: _scaffoldKey);
+          } else{
+          images = imageResponse.backDropsList;
+          imagesId=[];
+          images.forEach((Poster element) {
+            imagesId.add(element.filePath);
+          });
+          await loadGallery(imagesId);
+          }
       }
       setState(() {
         isLoading = false;
@@ -67,10 +82,20 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     });
   }
 
+  hasError(response){
+    return response.runtimeType == BasicResponse();
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+  }
+
+  loadGallery(List list)async{
+    posterList=[];
+    list.forEach((element) async {
+      await posterList.add(imageLoader('${Api().imageGalleryAPI}$element'));
+    });
   }
 
 
@@ -499,6 +524,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     : MovieBanner("${Api().imageBannerAPI}${film.poster}")),
             _buildInfo(),
             _buildCreatorBlock(),
+            if(posterList!=null && posterList.isNotEmpty)_buildGallery(),
             SizedBox(
               height: 20,
             ),
@@ -533,6 +559,44 @@ class FilmDetailPageState extends State<FilmDetailPage> {
       onBannerCreated: (AdmobBannerController controller) {},
     );
   }
+
+  imageLoader(String link) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => FullScreenImagePage(link: link))),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        child: Image.network(link, loadingBuilder: (BuildContext context,
+            Widget child, ImageChunkEvent loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            width: (MediaQuery.of(context).size.width)-20,
+            child: Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes
+                    : null,
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  _buildGallery(){
+    return Container(
+      width: MediaQuery.of(context).size.width - 20,
+      margin: EdgeInsets.symmetric(vertical: 20.0),
+      height: 200.0,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: posterList,
+      ),
+    );
+  }
+
 
   List<Widget> getRaiting(movie) {
     var provider = Provider.of<ThemeProvider>(context);
