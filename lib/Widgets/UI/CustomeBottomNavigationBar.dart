@@ -1,4 +1,3 @@
-
 import 'package:filmster/Enums/PagesEnum.dart';
 import 'package:filmster/page/HomePage/HomePage.dart';
 import 'package:filmster/page/Search/searchPage.dart';

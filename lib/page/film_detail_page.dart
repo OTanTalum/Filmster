@@ -1,5 +1,8 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:dartpedia/dartpedia.dart';
+import 'package:filmster/Widgets/UI/ActionIconButtons/FavoriteIconButton.dart';
+import 'package:filmster/Widgets/UI/ActionIconButtons/MarkedIconButton.dart';
+import 'package:filmster/Widgets/UI/ActionIconButtons/WatchedIconButton.dart';
 import 'package:filmster/Widgets/UI/CustomSnackBar.dart';
 import 'package:filmster/Widgets/UI/progressBarWidget.dart';
 import 'package:filmster/model/BasicResponse.dart';
@@ -58,18 +61,12 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           film = response;
         });
       }
-      init();
       setState(() {
         isLoading = false;
       });
     });
   }
 
-  init(){
-    isFavorite = userProvider.favoriteMovieIds.contains(int.parse(film.id));
-    isMarked = userProvider.markedMovieListIds.contains(int.parse(film.id));
-    isWatched = userProvider.watchedMovieListIds.contains(int.parse(film.id));
-  }
 
   @override
   void didChangeDependencies() {
@@ -140,54 +137,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 ),
               ),
               actions: <Widget>[
-                IconButton(
-                  onPressed: () async {
-                    isMarked
-                        ? await userProvider.removeFromMarkedList(film.movieToSearchResults(),_scaffoldKey)
-                        : await userProvider.mark(film.movieToSearchResults(), _scaffoldKey);
-                    init();
-                  },
-                  icon: Icon(
-                    isMarked
-                        ? Icons.turned_in
-                        : Icons.turned_in_not,
-                    color: !isMarked
-                        ? Colors.white
-                        : themeProvider.currentMainColor,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () async {
-                    await userProvider.markAsFavorite(film.movieToSearchResults(), isFavorite, _scaffoldKey);
-                    init();
-                  },
-                  icon: Icon(
-                    isFavorite
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color: isFavorite
-                        ? Colors.red
-                        : Colors.white,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () async {
-                    isWatched
-                        ? await userProvider
-                            .removeFromWatched(film.movieToSearchResults(), _scaffoldKey)
-                        : await userProvider
-                            .markAsWatched(film.movieToSearchResults(), _scaffoldKey);
-                    init();
-                  },
-                  icon: Icon(
-                    isWatched
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                    color: isWatched
-                        ? themeProvider.currentMainColor
-                        : Colors.white,
-                  ),
-                ),
+                MarkedIconButton(movie: film.toSearchResults(), keyState:_scaffoldKey),
+                FavoriteIconButton(movie: film.toSearchResults(), keyState:_scaffoldKey),
+                WatchedIconButton(movie: film.toSearchResults(), keyState:_scaffoldKey)
               ],
             ),
             //drawer: DrawerMenu().build(context),

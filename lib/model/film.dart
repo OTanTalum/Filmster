@@ -111,7 +111,7 @@ class Film {
     voteCount = json['vote_count'].toString();
   }
 
-  SearchResults movieToSearchResults(){
+  SearchResults toSearchResults(){
     return SearchResults()
       ..id = int.parse(this.id)
       ..popularity = double.parse(this.popularity)

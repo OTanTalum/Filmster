@@ -7,6 +7,10 @@ import 'package:filmster/setting/api.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'ActionIconButtons/FavoriteIconButton.dart';
+import 'ActionIconButtons/MarkedIconButton.dart';
+import 'ActionIconButtons/WatchedIconButton.dart';
+
 class MovieCard extends StatelessWidget {
 
   MovieCard(this.film, this.scaffoldKey);
@@ -14,31 +18,12 @@ class MovieCard extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   final SearchResults film;
 
-  UserProvider userProvider;
   ThemeProvider themeProvider;
-  bool isFavorite;
-  bool isMarked;
-  bool isWatched;
-
-
-  init() {
-    if (userProvider.isMovie) {
-      isFavorite = userProvider.favoriteMovieIds.contains(film.id);
-      isMarked = userProvider.markedMovieListIds.contains(film.id);
-      isWatched = userProvider.watchedMovieListIds.contains(film.id);
-    } else {
-      isFavorite = userProvider.favoriteTVIds.contains(film.id);
-      isMarked = userProvider.markedTVListIds.contains(film.id);
-      isWatched = false;
-    }
-  }
 
 
   @override
   Widget build(BuildContext context) {
-    userProvider = Provider.of<UserProvider>(context);
     themeProvider = Provider.of<ThemeProvider>(context);
-    init();
     List<Widget> widgetListOfGenres = [];
     if (film.ganres != null && film.ganres.isNotEmpty) {
       film.ganres.forEach((element) {
@@ -143,50 +128,9 @@ class MovieCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        IconButton(
-                          onPressed: () async {
-                            isMarked
-                                ? await userProvider.removeFromMarkedList(film, scaffoldKey)
-                                : await userProvider.mark(film, scaffoldKey);
-                          },
-                          icon: Icon(
-                           isMarked
-                                ? Icons.turned_in
-                                : Icons.turned_in_not,
-                            color: !isMarked
-                                ? Colors.white
-                                : themeProvider.currentMainColor,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () async {
-                            await userProvider.markAsFavorite(
-                                film, isFavorite, scaffoldKey);
-                          },
-                          icon: Icon(
-                            isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: isFavorite
-                                ? Colors.red
-                                : Colors.white,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () async {
-                            isWatched
-                            ? await userProvider.removeFromWatched(film, scaffoldKey)
-                            : await userProvider.markAsWatched(film, scaffoldKey);
-                          },
-                          icon: Icon(
-                           isWatched
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color:isWatched
-                                ? themeProvider.currentMainColor
-                                : Colors.white,
-                          ),
-                        ),
+                        MarkedIconButton(movie: film, keyState:scaffoldKey),
+                        FavoriteIconButton(movie: film, keyState:scaffoldKey),
+                        WatchedIconButton(movie: film, keyState:scaffoldKey)
                       ],
                     ),
                   ]),
@@ -215,15 +159,18 @@ class MovieCard extends StatelessWidget {
         color: themeProvider.currentFontColor,
       ),
       Container(
-          padding: EdgeInsets.only(left: 5),
-          child: Text(text,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: "AmaticSC",
-                fontSize: 25,
-                //  fontWeight: FontWeight.bold,
-                color: themeProvider.currentFontColor,
-              )))
+        padding: EdgeInsets.only(left: 5),
+        child: Text(
+          text,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontFamily: "AmaticSC",
+            fontSize: 25,
+            //  fontWeight: FontWeight.bold,
+            color: themeProvider.currentFontColor,
+          ),
+        ),
+      )
     ]);
   }
 }
