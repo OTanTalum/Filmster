@@ -29,9 +29,11 @@ class FavoriteIconButton extends StatelessWidget {
         userProvider.notify();
       },
       icon: Icon(
-        isFavorite ? Icons.visibility : Icons.visibility_off,
+        isFavorite
+            ? Icons.favorite
+            : Icons.favorite_border,
         color: isFavorite
-            ? Provider.of<ThemeProvider>(context).currentMainColor
+            ? Colors.red
             : Colors.white,
       ),
     );

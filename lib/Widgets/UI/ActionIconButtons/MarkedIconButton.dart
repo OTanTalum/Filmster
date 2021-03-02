@@ -31,7 +31,9 @@ class MarkedIconButton extends StatelessWidget {
         userProvider.notify();
       },
       icon: Icon(
-        isMarked ? Icons.visibility : Icons.visibility_off,
+        isMarked
+            ? Icons.turned_in
+            : Icons.turned_in_not,
         color: isMarked
             ? Provider.of<ThemeProvider>(context).currentMainColor
             : Colors.white,
