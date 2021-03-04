@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:dartpedia/dartpedia.dart';
+//import 'package:dartpedia/dartpedia.dart';
 import 'package:filmster/Widgets/UI/CustomSnackBar.dart';
 import 'package:filmster/model/BasicResponse.dart';
 import 'package:filmster/model/Genre.dart';
@@ -15,12 +15,12 @@ import 'package:provider/provider.dart';
 const int FIRST_PAGE = 1;
 
 class DiscoverProvider extends ChangeNotifier {
-  List<SearchResults> discoverMovie = [];
-  List<SearchResults> discoverTv = [];
+  List<SearchResults>? discoverMovie = [];
+  List<SearchResults>? discoverTv = [];
   int currentPage = 1;
-  bool isLast = false;
+  bool? isLast = false;
 
-  Future<bool> loadDiscoveryData(bool isMovie, context, keyState) async {
+  Future<bool?> loadDiscoveryData(bool isMovie, context, keyState) async {
     var settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
 
@@ -37,7 +37,7 @@ class DiscoverProvider extends ChangeNotifier {
       CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
       return true;
     } else {
-      List<SearchResults> list = response.search;
+      List<SearchResults>? list = response.search;
       isMovie ? addToDiscoverMovieList(list) : addToDiscoverTVList(list);
       changeIsLast((response.total ?? 0) < currentPage);
       notifyListeners();
@@ -69,10 +69,10 @@ class DiscoverProvider extends ChangeNotifier {
     return tvGenres;
   }
 
-  addToDiscoverMovieList(List<SearchResults> list) {
+  addToDiscoverMovieList(List<SearchResults>? list) {
     if (currentPage != FIRST_PAGE) {
-      list.forEach((element) {
-        discoverMovie.add(element);
+      list!.forEach((element) {
+        discoverMovie!.add(element);
       });
     } else {
       discoverMovie = list;
@@ -80,10 +80,10 @@ class DiscoverProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  addToDiscoverTVList(List<SearchResults> list) {
+  addToDiscoverTVList(List<SearchResults>? list) {
     if (currentPage != FIRST_PAGE) {
-      list.forEach((element) {
-        discoverTv.add(element);
+      list!.forEach((element) {
+        discoverTv!.add(element);
       });
     } else {
       discoverTv = list;
@@ -92,13 +92,13 @@ class DiscoverProvider extends ChangeNotifier {
   }
 
   clear() {
-    discoverMovie.clear();
+    discoverMovie!.clear();
     currentPage = 1;
-    discoverTv.clear();
+    discoverTv!.clear();
     notifyListeners();
   }
 
-  changeIsLast(bool last) {
+  changeIsLast(bool? last) {
     isLast = last;
     notifyListeners();
   }

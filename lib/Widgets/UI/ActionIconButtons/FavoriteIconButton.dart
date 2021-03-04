@@ -6,26 +6,26 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FavoriteIconButton extends StatelessWidget {
-  final SearchResults movie;
-  final GlobalKey keyState;
+  final SearchResults? movie;
+  final GlobalKey? keyState;
 
   FavoriteIconButton({this.movie, this.keyState});
 
-  UserProvider userProvider;
-  bool isFavorite;
+  late UserProvider userProvider;
+  late bool isFavorite;
 
   @override
   Widget build(BuildContext context) {
     userProvider =  Provider.of<UserProvider>(context);
-    userProvider.favoriteMovieListIds.contains(movie.id);
+    userProvider.favoriteMovieListIds.contains(movie!.id);
 
     isFavorite = userProvider.isMovie
-        ? userProvider.favoriteMovieListIds.contains(movie.id)
-        : userProvider.favoriteTVIds.contains(movie.id);
+        ? userProvider.favoriteMovieListIds.contains(movie!.id)
+        : userProvider.favoriteTVIds.contains(movie!.id);
 
     return IconButton(
       onPressed: () async {
-        await userProvider.markAsFavorite(movie, isFavorite, keyState);
+        await userProvider.markAsFavorite(movie!, isFavorite, keyState);
         userProvider.notify();
       },
       icon: Icon(

@@ -1,6 +1,6 @@
 class Genre{
-  String name;
-  int id;
+  String? name;
+  int? id;
 
   Genre({
     this.name,
@@ -14,9 +14,9 @@ class Genre{
 }
 
 class GenresResponse{
-  List <Genre> genres=[];
-  bool isSuccess;
-  String message;
+  List <Genre>? genres=[];
+  bool? isSuccess;
+  String? message;
 
   GenresResponse({
     this.genres,
@@ -27,7 +27,7 @@ class GenresResponse{
   GenresResponse.fromJson(Map <String, dynamic> json){
     if(json["genres"]!=null){
       genres=[];
-      json["genres"].forEach((element)=>genres.add(Genre.fromJson(element)));
+      json["genres"].forEach((element)=>genres!.add(Genre.fromJson(element)));
       isSuccess = true;
     }else{
       isSuccess = false;

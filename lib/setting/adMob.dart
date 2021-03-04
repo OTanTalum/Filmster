@@ -18,10 +18,10 @@ const String BANNER_ID_IOS_TEST = "ca-app-pub-3940256099942544/2934735716";
 const String BANNER_ID_ANDROID_TEST = "ca-app-pub-3940256099942544/6300978111";
 
 class AddMobClass{
-  AdmobInterstitial interstitialAd;
-  AdmobReward rewardAd;
+ // AdmobInterstitial interstitialAd;
+  //AdmobReward rewardAd;
 
-  String getBannerAdUnitId() {
+  String? getBannerAdUnitId() {
     if(kDebugMode){
       if (Platform.isIOS) {
         return BANNER_ID_IOS_TEST;
@@ -36,10 +36,9 @@ class AddMobClass{
         return BANNER_ID_ANDROID;
       }
     }
-    return null;
   }
 
-  String getDrawerBannerAdUnitId() {
+  String? getDrawerBannerAdUnitId() {
     if(kDebugMode){
       if (Platform.isIOS) {
         return BANNER_ID_IOS_TEST;
@@ -52,10 +51,9 @@ class AddMobClass{
     } else if (Platform.isAndroid) {
       return DRAWER_ID_ANDROID;
     }
-    return null;
   }
 
-  String getMovieDetailBannerAdUnitId() {
+  String? getMovieDetailBannerAdUnitId() {
     if(kDebugMode){
       if (Platform.isIOS) {
         return BANNER_ID_IOS_TEST;
@@ -68,7 +66,6 @@ class AddMobClass{
     } else if (Platform.isAndroid) {
       return MOVIE_DETAIL_BANNER_ID_ANDROID;
     }
-    return null;
   }
 
   getAdMobId(){
@@ -84,6 +81,5 @@ class AddMobClass{
     } else if (Platform.isAndroid) {
       return APP_ID_ANDROID;
     }
-    return null;
   }
 }

@@ -19,9 +19,9 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  UserProvider userProvider;
+  late UserProvider userProvider;
   ScrollController _scroll = ScrollController();
-  TabController _tabController;
+  TabController? _tabController;
   List<Widget> list=[];
 
 
@@ -37,7 +37,7 @@ class _LibraryPageState extends State<LibraryPage>
   void dispose() {
     super.dispose();
     _scroll.dispose();
-    _tabController.dispose();
+    _tabController!.dispose();
   }
 
   initLists() async{
@@ -51,7 +51,7 @@ class _LibraryPageState extends State<LibraryPage>
   addMore() async {
     if (_scroll.position.pixels ==
         _scroll.position.maxScrollExtent&&
-        userProvider.totalPage>=userProvider.currentPage) {
+        userProvider.totalPage!>=userProvider.currentPage) {
       userProvider.currentPage++;
       await userProvider.getLists(_scaffoldKey);
     }
@@ -104,7 +104,7 @@ class _LibraryPageState extends State<LibraryPage>
                 padding: EdgeInsets.only(right: 12),
                 child: Row(children: [
                   Text(
-                    AppLocalizations().translate(context, WordKeys.films),
+                    AppLocalizations().translate(context, WordKeys.films)!,
                     style: TextStyle(
                       fontFamily: "AmaticSC",
                       fontSize: 22,
@@ -122,7 +122,7 @@ class _LibraryPageState extends State<LibraryPage>
                     activeColor: Provider.of<ThemeProvider>(context).currentMainColor,
                   ),
                   Text(
-                    AppLocalizations().translate(context, WordKeys.TV),
+                    AppLocalizations().translate(context, WordKeys.TV)!,
                     style: TextStyle(
                       fontFamily: "AmaticSC",
                       fontSize: 22,
@@ -132,7 +132,7 @@ class _LibraryPageState extends State<LibraryPage>
               ),
             ],
             title: Text(
-              AppLocalizations().translate(context, WordKeys.library),
+              AppLocalizations().translate(context, WordKeys.library)!,
               style: TextStyle(
                 fontFamily: "AmaticSC",
                 fontSize: 30,

@@ -10,15 +10,15 @@ import 'package:flutter/material.dart';
 
 class SearchProvider extends ChangeNotifier {
 
-  List<SearchResults> listOfFilms=[];
-  bool isLast = false;
+  List<SearchResults>? listOfFilms=[];
+  bool? isLast = false;
   bool isLoading = false;
   String oldValue = '';
 
-  addFilms(List<SearchResults> list, int page) {
+  addFilms(List<SearchResults>? list, int page) {
     if(page!=1){
-      list.forEach((element) {
-        listOfFilms.add(element);
+      list!.forEach((element) {
+        listOfFilms!.add(element);
       });
     }
     else{
@@ -27,12 +27,12 @@ class SearchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  changeIsLast(bool last){
+  changeIsLast(bool? last){
     isLast = last;
     notifyListeners();
   }
 
-  Future<bool> fetchData(Oldtext, currentPage, type, keyState) async {
+  Future<bool?> fetchData(Oldtext, currentPage, type, keyState) async {
     if (!isLoading) {
       isLoading = true;
       var response = await Api().searchMovie(type, Oldtext, currentPage);
@@ -42,7 +42,7 @@ class SearchProvider extends ChangeNotifier {
       }else {
         oldValue = Oldtext;
         isLoading = false;
-        List<SearchResults> list = response.search;
+        List<SearchResults>? list = response.search;
         addFilms(list, currentPage);
         changeIsLast(
             (response

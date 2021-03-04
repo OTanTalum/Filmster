@@ -1,4 +1,5 @@
 import 'dart:ui';
+//import 'package:admob_flutter/admob_flutter.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/Enums/PagesEnum.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
@@ -27,10 +28,10 @@ class _FilmsPageState extends State<FilmsPage> {
   final textController = TextEditingController();
   ScrollController _scrollController = ScrollController();
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
-  UserProvider userProvider;
-  ThemeProvider themeProvider;
-  SearchProvider searchProvider;
-  SettingsProvider settingsProvider;
+  late UserProvider userProvider;
+  late ThemeProvider themeProvider;
+  late SearchProvider searchProvider;
+  late SettingsProvider settingsProvider;
   int currentPage = 1;
   bool isLast = false;
 
@@ -60,7 +61,7 @@ class _FilmsPageState extends State<FilmsPage> {
   _buildResults(context) {
     List<Widget> list = [];
     int i = 0;
-    searchProvider.listOfFilms.forEach((element) {
+    searchProvider.listOfFilms!.forEach((element) {
       list.add(MovieCard(element, scaffoldState));
       if (i == 5) {
         list.add(
@@ -118,7 +119,7 @@ class _FilmsPageState extends State<FilmsPage> {
                 context,
                 userProvider.isMovie
                     ? WordKeys.findYourMovie
-                    : WordKeys.findYourTV),
+                    : WordKeys.findYourTV)!,
             style: TextStyle(
               fontFamily: "AmaticSC",
               fontSize: 30,
@@ -158,13 +159,13 @@ class _FilmsPageState extends State<FilmsPage> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(25)),
               borderSide: BorderSide(
-                  color: themeProvider.currentMainColor,
+                  color: themeProvider.currentMainColor!,
                   width: 3.0),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(25)),
               borderSide: BorderSide(
-                  color: themeProvider.currentMainColor, width: 1.0),
+                  color: themeProvider.currentMainColor!, width: 1.0),
             ),
             hintStyle: TextStyle(
                 color: themeProvider.currentSecondaryColor,
@@ -196,7 +197,7 @@ class _FilmsPageState extends State<FilmsPage> {
   }
 
   _scrollListener() async {
-    if (searchProvider.isLoading||searchProvider.isLast) return;
+    if (searchProvider.isLoading||searchProvider.isLast!) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       ++currentPage;

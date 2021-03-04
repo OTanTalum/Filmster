@@ -10,8 +10,8 @@ import 'package:provider/provider.dart';
 
 class FilterDialogWindow extends StatefulWidget {
   final onDoneTap;
-  double imageH;
-  double imagew;
+  double? imageH;
+  double? imagew;
 
   FilterDialogWindow(
       {this.onDoneTap,
@@ -23,10 +23,10 @@ class FilterDialogWindow extends StatefulWidget {
 }
 
 class _FilterDialogWindowState extends State<FilterDialogWindow> {
-  ThemeProvider themeProvider;
-  UserProvider userProvider;
-  SettingsProvider settingsProvider;
-  String selectedValue;
+  late ThemeProvider themeProvider;
+  late UserProvider userProvider;
+  late SettingsProvider settingsProvider;
+  String? selectedValue;
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +36,10 @@ class _FilterDialogWindowState extends State<FilterDialogWindow> {
     List<Widget> list = [];
 
     userProvider.isMovie
-        ? settingsProvider.movieListOfGenres.forEach((Genre genre) {
+        ? settingsProvider.movieListOfGenres!.forEach((Genre genre) {
       list.add(_buildOneMovieGenre(genre));
     })
-        : settingsProvider.tvListOfGenres.forEach((Genre genre) {
+        : settingsProvider.tvListOfGenres!.forEach((Genre genre) {
       list.add(_buildOneTVGenre(genre));
     });
 
@@ -96,7 +96,7 @@ class _FilterDialogWindowState extends State<FilterDialogWindow> {
                               Row(children: [
                                 Text(
                                   AppLocalizations()
-                                      .translate(context, WordKeys.day),
+                                      .translate(context, WordKeys.day)!,
                                   style: TextStyle(
                                     fontFamily: "AmaticSC",
                                     color: themeProvider.currentFontColor,
@@ -119,7 +119,7 @@ class _FilterDialogWindowState extends State<FilterDialogWindow> {
                                 ),
                                 Text(
                                   AppLocalizations()
-                                      .translate(context, WordKeys.week),
+                                      .translate(context, WordKeys.week)!,
                                   style: TextStyle(
                                     fontFamily: "AmaticSC",
                                     color: themeProvider.currentFontColor,
@@ -132,7 +132,7 @@ class _FilterDialogWindowState extends State<FilterDialogWindow> {
                                 child: Row(children: [
                                   Text(
                                     AppLocalizations()
-                                        .translate(context, WordKeys.films),
+                                        .translate(context, WordKeys.films)!,
                                     style: TextStyle(
                                       fontFamily: "AmaticSC",
                                       color: themeProvider.currentFontColor,
@@ -152,7 +152,7 @@ class _FilterDialogWindowState extends State<FilterDialogWindow> {
                                   ),
                                   Text(
                                     AppLocalizations()
-                                        .translate(context, WordKeys.TV),
+                                        .translate(context, WordKeys.TV)!,
                                     style: TextStyle(
                                       fontFamily: "AmaticSC",
                                       color: themeProvider.currentFontColor,
@@ -348,14 +348,14 @@ class _FilterDialogWindowState extends State<FilterDialogWindow> {
       width: MediaQuery.of(context).size.width * 0.45,
       height: 48,
       child: CheckboxListTile(
-        title: Text(genre.name,
+        title: Text(genre.name!,
           style: TextStyle(
               color: themeProvider.currentFontColor,
               fontFamily: "AmaticSC",
               fontSize: 20),
         ),
         value: settingsProvider.tvFilter[genre],
-        onChanged: (bool value) {
+        onChanged: (bool? value) {
           setState(() {
             settingsProvider.changeTVGenreStatus(genre);
           });
@@ -369,7 +369,7 @@ class _FilterDialogWindowState extends State<FilterDialogWindow> {
       width: MediaQuery.of(context).size.width * 0.45,
       height: 48,
       child: CheckboxListTile(
-        title: Text(genre.name,
+        title: Text(genre.name!,
           style: TextStyle(
               color: themeProvider.currentFontColor,
               fontFamily: "AmaticSC",
@@ -377,7 +377,7 @@ class _FilterDialogWindowState extends State<FilterDialogWindow> {
         ),
         activeColor: themeProvider.currentMainColor,
         value: settingsProvider.movieFilter[genre],
-        onChanged: (bool value) {
+        onChanged: (bool? value) {
           setState(() {
             settingsProvider.changeMovieGenreStatus(genre);
           });

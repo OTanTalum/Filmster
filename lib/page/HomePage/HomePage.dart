@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../library.dart';
 import 'Tabs/discoverPage.dart';
 import 'Tabs/trendingPage.dart';
 
@@ -22,7 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixin{
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   ScrollController _scrollController = ScrollController();
-  TabController _tabController;
+  TabController? _tabController;
   int currentPage = 1;
   List<Widget> movieTrend = [];
 
@@ -36,7 +35,7 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
   @override
   void dispose() {
     _scrollController.dispose();
-    _tabController.dispose();
+    _tabController!.dispose();
     super.dispose();
   }
 
@@ -44,7 +43,7 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
     var provider =  Provider.of<UserProvider>(context, listen: false);
     if ( _scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent&&
-        provider.totalPage>=provider.currentPage && !provider.isLoading) {
+        provider.totalPage!>=provider.currentPage && !provider.isLoading) {
       provider.currentPage++;
       await provider.getChristian(scaffoldState);
     }

@@ -44,13 +44,13 @@ class _ProfilePageState extends State<ProfilePage> {
         mySettings.changePage(Pages.HOME_PAGE);
         Navigator.of(context).pop();
 
-      },
+      } as Future<bool> Function()?,
       child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: myColors.currentBackgroundColor,
         appBar: AppBar(
           title: Text(
-            AppLocalizations().translate(context, WordKeys.profile),
+            AppLocalizations().translate(context, WordKeys.profile)!,
             style: TextStyle(
               fontFamily: "AmaticSC",
               fontSize: 30,
@@ -86,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 )),
             Center(
               child: Text(
-                userProfile.currentUser.userName,
+                userProfile.currentUser!.userName!,
                 style: TextStyle(
                     fontFamily: "MPLUSRounded1c",
                     fontWeight: FontWeight.w300,

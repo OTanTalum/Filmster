@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'film.dart';
 
 class ListResponse{
-  List<SearchResults> results=[];
-  int totalPage;
-  int totalResults;
+  List<SearchResults>? results=[];
+  int? totalPage;
+  int? totalResults;
 
   ListResponse({
     this.results,
@@ -18,7 +18,7 @@ class ListResponse{
   ListResponse.fromJson(Map<String, dynamic> json) {
     if(json['results']!=[]){
       json['results'].forEach((movie)=>{
-        results.add(SearchResults.fromJson(movie))
+        results!.add(SearchResults.fromJson(movie))
       });
     }
     totalPage = json['total_pages'];
@@ -27,9 +27,9 @@ class ListResponse{
 }
 
 class CustomListResponse{
-  List<CustomList> results=[];
-  int totalPages;
-  int totalResults;
+  List<CustomList>? results=[];
+  int? totalPages;
+  int? totalResults;
 
   CustomListResponse({
     this.results,
@@ -40,7 +40,7 @@ class CustomListResponse{
   CustomListResponse.fromJson(Map<String, dynamic> json) {
     if(json['results']!=[]){
       json['results'].forEach((movie)=>{
-        results.add(CustomList.fromJson(movie))
+        results!.add(CustomList.fromJson(movie))
       });
     }
     totalPages = json['total_pages'];
@@ -48,14 +48,14 @@ class CustomListResponse{
   }
 }
 class CustomList{
-  String description;
-  int favoriteCount;
-  String id;
-  int itemCount;
-  String listType;
-  String name;
-  String poster;
-  List <SearchResults> items=[];
+  String? description;
+  int? favoriteCount;
+  String? id;
+  int? itemCount;
+  String? listType;
+  String? name;
+  String? poster;
+  List <SearchResults>? items=[];
 
   CustomList({
     this.description,
@@ -78,7 +78,7 @@ class CustomList{
     poster = json['poster_path'];
     if(json['items']!=null)
       json['items'].forEach((element){
-        items.add(SearchResults.fromJson(element));
+        items!.add(SearchResults.fromJson(element));
       });
     poster = json['poster_path'];
   }

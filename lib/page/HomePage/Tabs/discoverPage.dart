@@ -1,3 +1,4 @@
+//import 'package:admob_flutter/admob_flutter.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/Widgets/Dialogs/FIlterDialogWindow.dart';
 import 'package:filmster/model/search.dart';
@@ -19,8 +20,8 @@ class DiscoverPage extends StatefulWidget {
 class _DiscoverPageState extends State<DiscoverPage> {
   ScrollController _scrollController = ScrollController();
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
-  UserProvider userProvider;
-  DiscoverProvider discoverProvider;
+  late UserProvider userProvider;
+  late DiscoverProvider discoverProvider;
   bool _isLoading = false;
 
   @override
@@ -121,9 +122,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
   _buildBody(BuildContext context) {
     List<Widget> listOfMovieCards = [];
     List movieList = !userProvider.isMovie
-        ? discoverProvider.discoverTv
-        : discoverProvider.discoverMovie;
-    listOfMovieCards.addAll(loadPage(movieList));
+        ? discoverProvider.discoverTv!
+        : discoverProvider.discoverMovie!;
+    listOfMovieCards.addAll(loadPage(movieList as List<SearchResults>));
     if (listOfMovieCards.length < 10 && _isLoading) getNextPage();
     return SafeArea(
       child: SingleChildScrollView(
@@ -146,7 +147,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   _scrollListener() async {
-    if (discoverProvider.isLast || _isLoading) return;
+    if (discoverProvider.isLast! || _isLoading) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       await getNextPage();

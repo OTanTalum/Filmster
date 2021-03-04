@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'film.dart';
 
 class Search{
-  List<SearchResults> search=[];
-  int total;
-  String response;
+  List<SearchResults>? search=[];
+  int? total;
+  String? response;
 
   Search({
     this.search,
@@ -17,7 +17,7 @@ class Search{
 
   Search.fromJson(Map<String, dynamic> json) {
     if(json['results']!=null)
-      json['results'].forEach((element)=>search.add(SearchResults.fromJson(element)));
+      json['results'].forEach((element)=>search!.add(SearchResults.fromJson(element)));
     if(json['total_results']!=null)
       total = json['total_results'];
     response = json['Response'];
@@ -25,21 +25,21 @@ class Search{
 }
 
 class SearchResults{
-  int id;
-  String mediaType;
-  double popularity;
-  int voteCount;
-  bool isVideo;
-  String poster;
-  bool isAdult;
-  String backdrop;
-  String language;
-  List ganres=[];
-  String title;
-  String originalTitle;
-  String  voteAverage;
-  String overview;
-  String release;
+  int? id;
+  String? mediaType;
+  double? popularity;
+  int? voteCount;
+  bool? isVideo;
+  String? poster;
+  bool? isAdult;
+  String? backdrop;
+  String? language;
+  List? ganres=[];
+  String? title;
+  String? originalTitle;
+  String?  voteAverage;
+  String? overview;
+  String? release;
 
   SearchResults({
     this.id,
@@ -72,7 +72,7 @@ class SearchResults{
    language=json['original_language'];
    originalTitle=json['original_title'];
    if(json['genre_ids']!=null)
-      json['genre_ids'].forEach((element)=>ganres.add(element));
+      json['genre_ids'].forEach((element)=>ganres!.add(element));
    if(json['title']!=null)
     title=json['title'];
    else if(json['name']!=null)

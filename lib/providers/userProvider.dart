@@ -14,29 +14,29 @@ const int RESPONSE_REMOVE_FROM_LIST_SUCCESS = 13;
 const int RESPONSE_MARK_SUCCESS = 1;
 
 class UserProvider extends ChangeNotifier {
-  String requestToken;
-  String logedToken;
-  String sesion_id;
-  bool isloged;
-  User currentUser;
+  String? requestToken;
+  String? logedToken;
+  String? sesion_id;
+  bool? isloged;
+  User? currentUser;
 
-  String watchedmovieId;
-  String watchedTVId;
+  String? watchedmovieId;
+  String? watchedTVId;
 
   List<SearchResults> favoriteMovieList = [];
-  List<int> favoriteMovieIds = [];
+  List<int?> favoriteMovieIds = [];
   List<SearchResults> favoriteTVList = [];
-  List<int> favoriteTVIds = [];
+  List<int?> favoriteTVIds = [];
 
   List<SearchResults> markedMovieList = [];
-  List<int> markedMovieListIds = [];
+  List<int?> markedMovieListIds = [];
   List<SearchResults> markedTVList = [];
-  List<int> markedTVListIds = [];
+  List<int?> markedTVListIds = [];
 
   List<SearchResults> watchedMovieList = [];
-  List<int> favoriteMovieListIds = [];
+  List<int?> favoriteMovieListIds = [];
   List<SearchResults> watchedTvList = [];
-  List<int> watchedTvListIds = [];
+  List<int?> watchedTvListIds = [];
 
   List<CustomList> listOfMovieLists = [];
   List<CustomList> listOfTVLists = [];
@@ -47,7 +47,7 @@ class UserProvider extends ChangeNotifier {
   String currentPeriod = 'day';
 
   int currentPage = 1;
-  int totalPage;
+  int? totalPage;
 
   bool isLoading = false;
 
@@ -63,34 +63,34 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> createRequest(keyState) async {
     BasicResponse response = await Api().getRequestToken();
-    if (response.isSuccess) {
+    if (response.isSuccess!) {
       requestToken = response.requestToken;
       notifyListeners();
     } else {
-      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+      CustomSnackBar().showSnackBar(title: response.massage!, state: keyState);
     }
   }
 
   Future<void> validate(String username, String password, keyState) async {
     BasicResponse response =
         await Api().login(username, password, requestToken);
-    if(response.isSuccess){
+    if(response.isSuccess!){
       logedToken = response.requestToken;
       isloged = response.isSuccess;
       notifyListeners();
     }else{
-      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+      CustomSnackBar().showSnackBar(title: response.massage!, state: keyState);
     }
   }
 
   Future<void> createSession(keyState) async {
     BasicResponse response = await Api().createSession(logedToken);
-    if(response.isSuccess){
+    if(response.isSuccess!){
       sesion_id = response.sessionId;
       isloged = response.isSuccess;
       notifyListeners();
     }else{
-      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+      CustomSnackBar().showSnackBar(title: response.massage!, state: keyState);
     }
   }
 
@@ -108,8 +108,8 @@ class UserProvider extends ChangeNotifier {
   }
 
   saveUser(String password) async {
-    await Prefs().setIntPrefs('userID', currentUser.id);
-    await Prefs().setStringPrefs('username', currentUser.userName);
+    await Prefs().setIntPrefs('userID', currentUser!.id!);
+    await Prefs().setStringPrefs('username', currentUser!.userName!);
     await Prefs().setStringPrefs('password', password);
     if (await Prefs().hasString("username")) {
       String username = await Prefs().getStringPrefs("username");
@@ -135,10 +135,10 @@ class UserProvider extends ChangeNotifier {
   getFavoriteMovies(keyState) async {
     favoriteMovieIds = [];
     favoriteMovieList = [];
-    int totalPages;
+    int? totalPages;
     for (int page = 1; page <= (totalPages ?? 2); page++) {
       var response = await Api()
-          .getFavoriteMovies(currentUser.id, sesion_id, page, "movies");
+          .getFavoriteMovies(currentUser!.id, sesion_id, page, "movies");
       if (hasError(response)) {
         CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
         return;
@@ -158,10 +158,10 @@ class UserProvider extends ChangeNotifier {
   getFavoriteTv(keyState) async {
     favoriteTVIds = [];
     favoriteTVList = [];
-    int totalPages;
+    int? totalPages;
     for (int page = 1; page <= (totalPages ?? 2); page++) {
       var response =
-      await Api().getFavoriteMovies(currentUser.id, sesion_id, page, "tv");
+      await Api().getFavoriteMovies(currentUser!.id, sesion_id, page, "tv");
       if (hasError(response)) {
         CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
         return;
@@ -185,10 +185,10 @@ class UserProvider extends ChangeNotifier {
   getMarkedMovieList(keyState) async {
     markedMovieListIds = [];
     markedMovieList = [];
-    int totalPages;
+    int? totalPages;
     for (int page = 1; page < (totalPages ?? 2); page++) {
       var response = await Api()
-          .getMarkedListMovies(currentUser.id, sesion_id, page, "movies");
+          .getMarkedListMovies(currentUser!.id, sesion_id, page, "movies");
       if (hasError(response)) {
         CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
         return;
@@ -212,10 +212,10 @@ class UserProvider extends ChangeNotifier {
   getMarkedTVList(keyState) async {
     markedTVListIds = [];
     markedTVList = [];
-    int totalPages;
+    int? totalPages;
     for (int page = 1; page < (totalPages ?? 2); page++) {
       var response = await Api()
-          .getMarkedListMovies(currentUser.id, sesion_id, page, "tv");
+          .getMarkedListMovies(currentUser!.id, sesion_id, page, "tv");
       if (hasError(response)) {
         CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
         return;
@@ -239,22 +239,22 @@ class UserProvider extends ChangeNotifier {
   Future<void> removeFromMarkedList(SearchResults film, keyState) async {
     await Api()
         .removeFromMarkedList(
-            film.id, sesion_id, currentUser.id, isMovie ? "movie" : "tv")
+            film.id, sesion_id, currentUser!.id, isMovie ? "movie" : "tv")
         .then((BasicResponse response) {
       if (response.isSuccess ??
           response.code == RESPONSE_REMOVE_FROM_LIST_SUCCESS) {
         if (isMovie) {
           markedMovieList
               .removeWhere((SearchResults element) => element.id == film.id);
-          markedMovieListIds.removeWhere((int element) => element == film.id);
+          markedMovieListIds.removeWhere((int? element) => element == film.id);
         } else {
           markedTVList
               .removeWhere((SearchResults element) => element.id == film.id);
-          markedTVListIds.removeWhere((int element) => element == film.id);
+          markedTVListIds.removeWhere((int? element) => element == film.id);
         }
       }
       else{
-        CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+        CustomSnackBar().showSnackBar(title: response.massage!, state: keyState);
       }
     });
     notifyListeners();
@@ -262,7 +262,7 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> mark(SearchResults film, keyState) async {
     BasicResponse response = await Api()
-        .mark(film.id, sesion_id, currentUser.id, isMovie ? "movie" : "tv");
+        .mark(film.id, sesion_id, currentUser!.id, isMovie ? "movie" : "tv");
     if (response.isSuccess ?? response.code == RESPONSE_MARK_SUCCESS) {
       if (isMovie) {
         markedMovieList.add(film);
@@ -272,14 +272,14 @@ class UserProvider extends ChangeNotifier {
         markedTVListIds.add(film.id);
       }
     }else{
-      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+      CustomSnackBar().showSnackBar(title: response.massage!, state: keyState);
     }
     notifyListeners();
   }
 
   Future<void> markAsFavorite(SearchResults film, isFavorite, keyState) async {
     BasicResponse response = await Api().markAsFavorite(film.id, !isFavorite,
-        sesion_id, currentUser.id, isMovie ? "movie" : "tv");
+        sesion_id, currentUser!.id, isMovie ? "movie" : "tv");
     if (response.isSuccess ??
         (isFavorite
             ? response.code == RESPONSE_MARK_SUCCESS
@@ -290,7 +290,7 @@ class UserProvider extends ChangeNotifier {
                 .removeWhere((SearchResults element) => element.id == film.id)
             : favoriteMovieList.add(film);
         isFavorite
-            ? favoriteMovieIds.removeWhere((int element) => element == film.id)
+            ? favoriteMovieIds.removeWhere((int? element) => element == film.id)
             : favoriteMovieIds.add(film.id);
       } else {
         isFavorite
@@ -298,12 +298,12 @@ class UserProvider extends ChangeNotifier {
                 .removeWhere((SearchResults element) => element.id == film.id)
             : favoriteTVList.add(film);
         isFavorite
-            ? favoriteTVIds.removeWhere((int element) => element == film.id)
+            ? favoriteTVIds.removeWhere((int? element) => element == film.id)
             : favoriteTVIds.add(film.id);
       }
     }
     else{
-      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+      CustomSnackBar().showSnackBar(title: response.massage!, state: keyState);
     }
     notifyListeners();
   }
@@ -317,14 +317,14 @@ class UserProvider extends ChangeNotifier {
         if (isMovie) {
           watchedMovieList
               .removeWhere((SearchResults element) => element.id == film.id);
-          favoriteMovieListIds.removeWhere((int element) => element == film.id);
+          favoriteMovieListIds.removeWhere((int? element) => element == film.id);
         } else {
           watchedTvList
               .removeWhere((SearchResults element) => element.id == film.id);
-          watchedTvListIds.removeWhere((int element) => element == film.id);
+          watchedTvListIds.removeWhere((int? element) => element == film.id);
         }
       } else {
-        CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+        CustomSnackBar().showSnackBar(title: response.massage!, state: keyState);
       }
     });
     notifyListeners();
@@ -343,7 +343,7 @@ class UserProvider extends ChangeNotifier {
           watchedTvListIds.add(film.id);
         }
       } else {
-        CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+        CustomSnackBar().showSnackBar(title: response.massage!, state: keyState);
       }
     });
     notifyListeners();
@@ -424,7 +424,7 @@ class UserProvider extends ChangeNotifier {
     listOfMovieLists = [];
     listOfTVLists = [];
 
-    var response = await Api().getLists(currentUser.id, sesion_id);
+    var response = await Api().getLists(currentUser!.id, sesion_id);
     if (hasError(response)) {
       CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
     } else {
@@ -441,18 +441,18 @@ class UserProvider extends ChangeNotifier {
 
       if (listOfMovieLists.isEmpty) {
         BasicResponse res = await Api().createWatchedMovieList(sesion_id);
-        if (res.isSuccess) {
+        if (res.isSuccess!) {
           watchedmovieId = res.listId;
         } else {
-          CustomSnackBar().showSnackBar(title: res.massage, state: keyState);
+          CustomSnackBar().showSnackBar(title: res.massage!, state: keyState);
         }
       }
       if (listOfTVLists.isEmpty) {
         BasicResponse res = await Api().createWatchedTVList(sesion_id);
-        if (res.isSuccess) {
+        if (res.isSuccess!) {
           watchedTVId = res.listId;
         } else {
-          CustomSnackBar().showSnackBar(title: res.massage, state: keyState);
+          CustomSnackBar().showSnackBar(title: res.massage!, state: keyState);
         }
       }
 

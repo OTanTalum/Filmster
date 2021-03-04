@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
 class Progress extends CustomPainter {
-  double current;
-  Color colors;
-  final double allSize;
-  final double width;
-  final double height;
-  final double radius;
+  double? current;
+  Color? colors;
+  final double? allSize;
+  final double? width;
+  final double? height;
+  final double? radius;
 
   Progress({
     this.current,
@@ -35,13 +35,13 @@ class Progress extends CustomPainter {
           Rect.fromLTRB(
               0.0,
               0.0,
-              ((this.width)/ this.allSize) * (this.current + 1),
-              this.height
+              (this.width!/ this.allSize!) * (this.current! + 1),
+              this.height!
           ),
-          Radius.circular(this.radius)
+          Radius.circular(this.radius!)
       ),
       Paint()
-        ..color = this.colors,
+        ..color = this.colors!,
     );
   }
 

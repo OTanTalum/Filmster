@@ -18,15 +18,15 @@ class MovieCard extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   final SearchResults film;
 
-  ThemeProvider themeProvider;
+  late ThemeProvider themeProvider;
 
 
   @override
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
     List<Widget> widgetListOfGenres = [];
-    if (film.ganres != null && film.ganres.isNotEmpty) {
-      film.ganres.forEach((element) {
+    if (film.ganres != null && film.ganres!.isNotEmpty) {
+      film.ganres!.forEach((element) {
         widgetListOfGenres.add(buildGenres(element, context));
       });
     }
@@ -82,7 +82,7 @@ class MovieCard extends StatelessWidget {
                               film.title!=null?
                               Expanded(
                                 child: Text(
-                                  film.title,
+                                  film.title!,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 2,
                                   style: TextStyle(
@@ -142,7 +142,7 @@ class MovieCard extends StatelessWidget {
   buildGenres(id, context) {
     if(Provider.of<SettingsProvider>(context).getOneGenre(context, id)!=null)
     return Text(
-      Provider.of<SettingsProvider>(context).getOneGenre(context, id),
+      Provider.of<SettingsProvider>(context).getOneGenre(context, id)!,
       style: TextStyle(
         fontFamily: "AmaticSC",
         fontSize: 25,

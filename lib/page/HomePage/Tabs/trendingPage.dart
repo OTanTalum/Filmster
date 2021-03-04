@@ -1,4 +1,5 @@
 import 'dart:ui';
+//import 'package:admob_flutter/admob_flutter.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/settingsProvider.dart';
@@ -102,12 +103,12 @@ class _TrendingPageState extends State<TrendingPage> {
     List<Widget> caramba = [];
     List movieList = !userProvider.isMovie
         ? userProvider.currentPeriod != "day"
-            ? trendingProvider.trendingTVWeek
-            : trendingProvider.trendingTVDay
+            ? trendingProvider.trendingTVWeek!
+            : trendingProvider.trendingTVDay!
         : userProvider.currentPeriod != "day"
-            ? trendingProvider.trendingMoviesWeek
-            : trendingProvider.trendingMoviesDay;
-    caramba.addAll(loadPage(movieList));
+            ? trendingProvider.trendingMoviesWeek!
+            : trendingProvider.trendingMoviesDay!;
+    caramba.addAll(loadPage(movieList as List<SearchResults>));
     return SafeArea(
       child: SingleChildScrollView(
         controller: _scrollController,
@@ -129,7 +130,7 @@ class _TrendingPageState extends State<TrendingPage> {
   }
 
   _scrollListener() async {
-    if (Provider.of<TrendingProvider>(context, listen: false).isLast) return;
+    if (Provider.of<TrendingProvider>(context, listen: false).isLast!) return;
     if (Provider.of<TrendingProvider>(context, listen: false).isLoading) return;
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {

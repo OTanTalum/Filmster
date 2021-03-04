@@ -5,13 +5,13 @@ import 'package:photo_view/photo_view.dart';
 class FullScreenImagePage extends StatelessWidget {
 
   FullScreenImagePage({this.link});
-  final String link;
+  late String? link;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PhotoView(
-        imageProvider: NetworkImage(link),
+        imageProvider: NetworkImage(link!),
         enableRotation: true,
         loadingBuilder: (context, progress) => Center(
           child: Container(
@@ -21,20 +21,11 @@ class FullScreenImagePage extends StatelessWidget {
               value: progress == null
                   ? null
                   : progress.cumulativeBytesLoaded /
-                  progress.expectedTotalBytes,
+                  progress.expectedTotalBytes!,
             ),
           ),
         ),
       )
-
-      // Image.network(link,
-      //   fit: BoxFit.cover,
-      //   height: double.infinity,
-      //   width: double.infinity,
-      //   alignment: Alignment.center,
-      // ),
-
-
     );
   }
 }

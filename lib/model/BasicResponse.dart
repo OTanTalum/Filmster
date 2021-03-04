@@ -1,10 +1,10 @@
 class BasicResponse{
-  String massage;
-  int code;
-  bool isSuccess;
-  String listId;
-  String sessionId;
-  String requestToken;
+  String? massage;
+  int? code;
+  bool? isSuccess;
+  String? listId;
+  String? sessionId;
+  String? requestToken;
 
 
   BasicResponse({this.massage, this.code, this.isSuccess});

@@ -6,28 +6,28 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MarkedIconButton extends StatelessWidget {
-  final SearchResults movie;
-  final GlobalKey keyState;
+  final SearchResults? movie;
+  final GlobalKey? keyState;
 
   MarkedIconButton({this.movie, this.keyState});
 
-  UserProvider userProvider;
-  bool isMarked;
+  late UserProvider userProvider;
+  late bool isMarked;
 
   @override
   Widget build(BuildContext context) {
     userProvider =  Provider.of<UserProvider>(context);
-    userProvider.markedMovieListIds.contains(movie.id);
+    userProvider.markedMovieListIds.contains(movie!.id);
 
     isMarked = userProvider.isMovie
-        ? userProvider.markedMovieListIds.contains(movie.id)
-        : userProvider.markedTVListIds.contains(movie.id);
+        ? userProvider.markedMovieListIds.contains(movie!.id)
+        : userProvider.markedTVListIds.contains(movie!.id);
 
     return IconButton(
       onPressed: () async {
         isMarked
-            ? await userProvider.removeFromMarkedList(movie, keyState)
-            : await userProvider.mark(movie, keyState);
+            ? await userProvider.removeFromMarkedList(movie!, keyState)
+            : await userProvider.mark(movie!, keyState);
         userProvider.notify();
       },
       icon: Icon(

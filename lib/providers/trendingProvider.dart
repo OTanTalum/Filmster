@@ -10,26 +10,26 @@ import 'package:flutter/material.dart';
 
 class TrendingProvider extends ChangeNotifier {
 
-  List<SearchResults> trendingMoviesWeek= [];
-  List<SearchResults> trendingMoviesDay= [];
-  List<SearchResults> trendingTVWeek= [];
-  List<SearchResults> trendingTVDay= [];
+  List<SearchResults>? trendingMoviesWeek= [];
+  List<SearchResults>? trendingMoviesDay= [];
+  List<SearchResults>? trendingTVWeek= [];
+  List<SearchResults>? trendingTVDay= [];
   int currentPage = 1;
   bool isLoading = false;
-  bool isLast = false;
+  bool? isLast = false;
 
-  addFilms(List<SearchResults> list, int page, type, period) {
+  addFilms(List<SearchResults>? list, int page, type, period) {
     if (page != 1) {
       type == "movie"
-          ? list.forEach((element) {
+          ? list!.forEach((element) {
               period == "week"
-                  ? trendingMoviesWeek.add(element)
-                  : trendingMoviesDay.add(element);
+                  ? trendingMoviesWeek!.add(element)
+                  : trendingMoviesDay!.add(element);
             })
-          : list.forEach((element) {
+          : list!.forEach((element) {
               period == "week"
-                  ? trendingTVWeek.add(element)
-                  : trendingTVDay.add(element);
+                  ? trendingTVWeek!.add(element)
+                  : trendingTVDay!.add(element);
             });
     } else{
       type=="movie"
@@ -44,19 +44,19 @@ class TrendingProvider extends ChangeNotifier {
   }
 
   clear(){
-    trendingMoviesWeek.clear();
-    trendingMoviesDay.clear();
-    trendingTVWeek.clear();
-    trendingTVDay.clear();
+    trendingMoviesWeek!.clear();
+    trendingMoviesDay!.clear();
+    trendingTVWeek!.clear();
+    trendingTVDay!.clear();
     notifyListeners();
   }
 
-  changeIsLast(bool last){
+  changeIsLast(bool? last){
     isLast = last;
     notifyListeners();
   }
 
-  Future<bool> fetchData(type, period, keyState) async {
+  Future<bool?> fetchData(type, period, keyState) async {
     if (!isLoading) {
       isLoading = true;
       var response = await Api().getTrending(type, period, currentPage);
@@ -64,7 +64,7 @@ class TrendingProvider extends ChangeNotifier {
         CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
         return true;
       } else {
-        List<SearchResults> list = response.search;
+        List<SearchResults>? list = response.search;
         addFilms(list, currentPage, type, period);
         isLoading = false;
         changeIsLast((response.total ?? 0) < currentPage);

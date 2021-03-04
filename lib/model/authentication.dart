@@ -1,9 +1,9 @@
 class User {
-  String avatar;
-  int id;
-  String name;
-  bool includeAdult;
-  String userName;
+  String? avatar;
+  int? id;
+  String? name;
+  bool? includeAdult;
+  String? userName;
 
   User({
     this.avatar,

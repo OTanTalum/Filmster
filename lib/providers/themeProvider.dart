@@ -8,11 +8,11 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData currentTheme = MyThemes.lightTheme;
 
-  Color currentFontColor = Colors.black;
-  Color currentBackgroundColor = Colors.white;
-  Color currentMainColor = Colors.orange[200];
-  Color currentAcidColor = Colors.deepOrange[200];
-  Color currentSecondaryColor = Colors.black12;
+  Color? currentFontColor = Colors.black;
+  Color? currentBackgroundColor = Colors.white;
+  Color? currentMainColor = Colors.orange[200];
+  Color? currentAcidColor = Colors.deepOrange[200];
+  Color? currentSecondaryColor = Colors.black12;
 
   changeTheme(BuildContext context, MyThemeKeys key) {
     currentThemeKeys = key;
@@ -21,11 +21,11 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   changeColor( {
-    Color fontColor,
-    Color backgroundColor,
-    Color mainColor,
-    Color acidColor,
-    Color secondaryColor,
+    Color? fontColor,
+    Color? backgroundColor,
+    Color? mainColor,
+    Color? acidColor,
+    Color? secondaryColor,
   }) {
     currentFontColor = fontColor;
     currentBackgroundColor = backgroundColor;

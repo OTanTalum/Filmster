@@ -16,16 +16,16 @@ class AppLocalizations {
     "pt" : PT,
   };
 
-  String translate(context, key) {
+  String? translate(context, key) {
     switch(SettingsProvider.language){
       case "us":
-        return localization["us"][key];
+        return localization["us"]![key];
         break;
         case "ru":
-        return localization["ru"][key];
+        return localization["ru"]![key];
         break;
         case "pt":
-        return localization["pt"][key];
+        return localization["pt"]![key];
         break;
     }
   }

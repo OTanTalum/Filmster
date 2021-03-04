@@ -13,8 +13,8 @@ class MoviePosterCard extends StatelessWidget {
     this.movie, this.scaffoldKey
   });
 
-  final GlobalKey<ScaffoldState> scaffoldKey;
-  final SearchResults movie;
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+  final SearchResults? movie;
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +23,12 @@ class MoviePosterCard extends StatelessWidget {
         onTap: () async {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => FilmDetailPage(
-                    id: movie.id.toString(),
+                    id: movie!.id.toString(),
                   )));
         },
-        child: movie.poster != null
+        child: movie!.poster != null
             ? Image.network(
-                "${Api().imageBannerAPI}${movie.poster}",
+                "${Api().imageBannerAPI}${movie!.poster}",
                 fit: BoxFit.fill,
                 width: MediaQuery.of(context).size.width * 0.5,
                 height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),

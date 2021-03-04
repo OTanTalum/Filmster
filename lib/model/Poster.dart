@@ -1,10 +1,10 @@
 class Poster{
-  double aspectRatio;
-  int height;
-  int width;
-  String filePath;
-  double voteAverage;
-  int voteCount;
+  double? aspectRatio;
+  int? height;
+  int? width;
+  String? filePath;
+  double? voteAverage;
+  int? voteCount;
 
   Poster({
     this.aspectRatio,

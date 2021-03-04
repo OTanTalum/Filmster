@@ -1,5 +1,5 @@
 
-import 'package:admob_flutter/admob_flutter.dart';
+//import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/page/HomePage/HomePage.dart';
@@ -15,8 +15,8 @@ import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
 
 class DrawerMenu {
-  String version;
-  String buildNumber;
+  String? version;
+  String? buildNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class DrawerMenu {
                           MaterialPageRoute(builder: (_) => HomePage()));
                     },
                     title: Text(
-                      AppLocalizations().translate(context, WordKeys.home),
+                      AppLocalizations().translate(context, WordKeys.home)!,
                       style: TextStyle(
                         fontFamily: "AmaticSC",
                         fontWeight: FontWeight.bold,
@@ -71,7 +71,7 @@ class DrawerMenu {
                           builder: (_) => FilmsPage()));
                     },
                     title: Text(
-                      AppLocalizations().translate(context, WordKeys.films),
+                      AppLocalizations().translate(context, WordKeys.films)!,
                       style: TextStyle(
                         fontFamily: "AmaticSC",
                         fontWeight: FontWeight.bold,
@@ -87,7 +87,7 @@ class DrawerMenu {
 
                     },
                     title: Text(
-                      AppLocalizations().translate(context, WordKeys.TV),
+                      AppLocalizations().translate(context, WordKeys.TV)!,
                       style: TextStyle(
                         fontFamily: "AmaticSC",
                         fontWeight: FontWeight.bold,
@@ -102,7 +102,7 @@ class DrawerMenu {
                           MaterialPageRoute(builder: (_) => SettingsPage()));
                     },
                     title: Text(
-                      AppLocalizations().translate(context, WordKeys.settings),
+                      AppLocalizations().translate(context, WordKeys.settings)!,
                       style: TextStyle(
                         fontFamily: "AmaticSC",
                         fontWeight: FontWeight.bold,
@@ -132,18 +132,18 @@ class DrawerMenu {
             ),
             Column(
               children: [
-               AdmobBanner(
-                  adUnitId: AddMobClass().getDrawerBannerAdUnitId(),
-                  adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
-                  listener: (AdmobAdEvent event, Map<String, dynamic> args) {
-                    if(event==AdmobAdEvent.opened) {
-                      print('Admob banner opened!');
-                      FirebaseAnalytics().logEvent(name: 'adMobDrawerClick');
-                    }
-                  },
-                  onBannerCreated: (AdmobBannerController controller) {
-                  },
-                ),
+               // AdmobBanner(
+               //    adUnitId: AddMobClass().getDrawerBannerAdUnitId(),
+               //    adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
+               //    listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+               //      if(event==AdmobAdEvent.opened) {
+               //        print('Admob banner opened!');
+               //        FirebaseAnalytics().logEvent(name: 'adMobDrawerClick');
+               //      }
+               //    },
+               //    onBannerCreated: (AdmobBannerController controller) {
+               //    },
+               //  ),
                 Center(
                   child: FutureBuilder<String>(
                     future: getVersion(),

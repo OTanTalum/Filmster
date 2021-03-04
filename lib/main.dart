@@ -1,6 +1,4 @@
-
 import 'dart:io';
-
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/page/HomePage/HomePage.dart';
 import 'package:filmster/providers/discoverProvider.dart';
@@ -15,6 +13,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 import 'Widgets/Pages/LogoScreen.dart';
@@ -60,11 +59,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderStateMixin{
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   final Trace mainTraceInit = FirebasePerformance.instance.newTrace("mainTraceInit");
-  TabController _tabController;
+  late TabController _tabController;
   List<Widget> movieTrend = [];
   int currentPage = 1;
   bool isDone = false;
-  SettingsProvider _settingsProvider;
+  late SettingsProvider _settingsProvider;
 
 
   @override
@@ -172,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
 
 class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext context) {
+  HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
       ..badCertificateCallback = (X509Certificate cert, String host,
           int port) => true;

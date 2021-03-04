@@ -1,6 +1,7 @@
+//import 'package:admob_flutter/admob_flutter.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dartpedia/dartpedia.dart';
+//import 'package:dartpedia/dartpedia.dart';
 import 'package:filmster/Widgets/Pages/FullScreenImagePage.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/FavoriteIconButton.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/MarkedIconButton.dart';
@@ -20,15 +21,15 @@ import 'package:filmster/model/film.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dartpedia/dartpedia.dart' as wiki;
+//import 'package:dartpedia/dartpedia.dart' as wiki;
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FilmDetailPage extends StatefulWidget {
-  final String id;
+  final String? id;
 
   FilmDetailPage({
-    Key key,
+    Key? key,
     this.id,
   }) : super(key: key);
 
@@ -39,12 +40,12 @@ class FilmDetailPage extends StatefulWidget {
 class FilmDetailPageState extends State<FilmDetailPage> {
   ScrollController scrollController = ScrollController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<Poster> images=[];
-  List<String> imagesId=[];
+  List<Poster>? images=[];
+  List<String?> imagesId=[];
   List<Widget> posterList = [];
-  ThemeProvider themeProvider;
-  UserProvider userProvider;
-  Film film;
+  late ThemeProvider themeProvider;
+  late UserProvider userProvider;
+  Film? film;
   bool isLoading = true;
 
 
@@ -70,7 +71,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           } else{
           images = imageResponse.backDropsList;
           imagesId=[];
-          images.forEach((Poster element) {
+          images!.forEach((Poster element) {
             imagesId.add(element.filePath);
           });
           await loadGallery(imagesId);
@@ -94,7 +95,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   loadGallery(List list)async{
     posterList=[];
     list.forEach((element) async {
-      await posterList.add(imageLoader('${Api().imageGalleryAPI}$element'));
+      posterList.add(imageLoader('${Api().imageGalleryAPI}$element'));
     });
   }
 
@@ -133,9 +134,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             backgroundColor: themeProvider.currentBackgroundColor,
             appBar: AppBar(
               title: Text(
-                film.title == null && film.originalTitle != null
-                    ? "${film.title} 18+"
-                    : "${film.title} ",
+                film!.title == null && film!.originalTitle != null
+                    ? "${film!.title} 18+"
+                    : "${film!.title} ",
                 style: TextStyle(
                   fontFamily: "AmaticSC",
                   fontSize: 33,
@@ -150,10 +151,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     width: MediaQuery.of(context).size.width,
                     child: CustomPaint(
                         painter: Progress(
-                            current: scrollController.offset?.toDouble() ?? 1.0,
-                            allSize: scrollController.position?.maxScrollExtent
-                                    ?.toDouble() ??
-                                200,
+                            current: scrollController.offset.toDouble(),
+                            allSize: scrollController.position.maxScrollExtent
+                                    .toDouble(),
                             colors: themeProvider.currentMainColor,
                             height: 4,
                             width: MediaQuery.of(context).size.width,
@@ -162,9 +162,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 ),
               ),
               actions: <Widget>[
-                MarkedIconButton(movie: film.toSearchResults(), keyState:_scaffoldKey),
-                FavoriteIconButton(movie: film.toSearchResults(), keyState:_scaffoldKey),
-                WatchedIconButton(movie: film.toSearchResults(), keyState:_scaffoldKey)
+                MarkedIconButton(movie: film!.toSearchResults(), keyState:_scaffoldKey),
+                FavoriteIconButton(movie: film!.toSearchResults(), keyState:_scaffoldKey),
+                WatchedIconButton(movie: film!.toSearchResults(), keyState:_scaffoldKey)
               ],
             ),
             //drawer: DrawerMenu().build(context),
@@ -174,7 +174,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
 
   buildGenres(BuildContext context,  id) {
     return Text(
-      Provider.of<SettingsProvider>(context).getOneGenre(context, id),
+      Provider.of<SettingsProvider>(context).getOneGenre(context, id)!,
       style: TextStyle(
         fontFamily: "MPLUSRounded1c",
         fontSize: 20,
@@ -213,8 +213,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             borderRadius: BorderRadius.all(Radius.circular(25)),
             gradient: LinearGradient(
               colors: [
-                provider.currentBackgroundColor,
-                provider.currentSecondaryColor
+                provider.currentBackgroundColor!,
+                provider.currentSecondaryColor!
               ],
               stops: [0.4, 1],
             )),
@@ -234,7 +234,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                           color: provider.currentFontColor,
                         ),
                         Text(
-                          " ${film.release}",
+                          " ${film!.release}",
                           style: TextStyle(
                             fontFamily: "AmaticSC",
                             fontSize: 20.0,
@@ -249,7 +249,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                           color: provider.currentFontColor,
                         ),
                         Text(
-                          " ${film.runtime}",
+                          " ${film!.runtime}",
                           style: TextStyle(
                             fontFamily: "AmaticSC",
                             fontSize: 20.0,
@@ -263,11 +263,11 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                       Row(
                         children: <Widget>[
                           _buildVoteBlock(
-                              Icons.trending_up, film.popularity.toString()),
+                              Icons.trending_up, film!.popularity.toString()),
                           SizedBox(
                             width: 15,
                           ),
-                          _buildVoteBlock(Icons.grade, film.voteAverage),
+                          _buildVoteBlock(Icons.grade, film!.voteAverage),
                         ],
                       )
                     ],
@@ -299,20 +299,20 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           child: Column(children: <Widget>[
             Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0),
-                child: _buildHeader('${film.title} in Web', 25)),
+                child: _buildHeader('${film!.title} in Web', 25)),
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  getWikiLinks(film),
+                 // getWikiLinks(film),
                   getIMDB(film),
                 ]),
-            film.homepage != null
+            film!.homepage != null
                 ? Padding(
                     padding: EdgeInsets.symmetric(vertical: 6),
                     child: GestureDetector(
                       onTap: () => {},
                       child: Text(
-                        film.homepage,
+                        film!.homepage!,
                         style: TextStyle(
                           fontFamily: "MPLUSRounded1c",
                           fontSize: 20.0,
@@ -331,8 +331,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   _buildCreatorBlock() {
     var provider = Provider.of<ThemeProvider>(context);
     List<Widget> list = [];
-    if (film.ganres != null && film.ganres.isNotEmpty) {
-      film.ganres.forEach((element) {
+    if (film!.ganres != null && film!.ganres!.isNotEmpty) {
+      film!.ganres!.forEach((element) {
         list.add(buildGenres(context, element["id"]));
       });
     }
@@ -345,16 +345,16 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader("${film.title}", 30),
-            film.title != film.originalTitle
-                ? _buildHeader("${film.originalTitle}", 22)
+            _buildHeader("${film!.title}", 30),
+            film!.title != film!.originalTitle
+                ? _buildHeader("${film!.originalTitle}", 22)
                 : Container(),
-            film.tagline != null && film.tagline.isNotEmpty
+            film!.tagline != null && film!.tagline!.isNotEmpty
                 ? Container(
                     width: MediaQuery.of(context).size.width,
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     child: Text(
-                      "\"${film.tagline}\"",
+                      "\"${film!.tagline}\"",
                       textAlign: TextAlign.end,
                       style: TextStyle(
                         fontFamily: "AmaticSC",
@@ -375,11 +375,11 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               ),
             ),
             _buildDevider(),
-            film.overview != null && film.overview.isNotEmpty
+            film!.overview != null && film!.overview!.isNotEmpty
                 ? Container(
                     padding: EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
-                      "\t${film.overview}",
+                      "\t${film!.overview}",
                       style: TextStyle(
                         fontFamily: "MPLUSRounded1c",
                         fontWeight: FontWeight.w300,
@@ -389,7 +389,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     ),
                   )
                 : Container(),
-            film.overview != null && film.overview.isNotEmpty
+            film!.overview != null && film!.overview!.isNotEmpty
                 ? _buildDevider()
                 : Container(),
             SizedBox(
@@ -430,11 +430,11 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             _buildHeader("Production", 26),
             Row(
               children: <Widget>[
-                film.companies.isNotEmpty && film.companies[0].logo != null
+                film!.companies!.isNotEmpty && film!.companies![0].logo != null
                     ? Padding(
                         padding: EdgeInsets.all(12),
                         child: Image.network(
-                          "${Api().imageBannerAPI}${film.companies[0].logo}",
+                          "${Api().imageBannerAPI}${film!.companies![0].logo}",
                           width: 100,
                         ),
                       )
@@ -443,16 +443,16 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                   child: Column(
                     children: <Widget>[
                       _buildDevider(),
-                      buildOneField(film.status, "Status:"),
-                      film.status != null && film.status != 0
+                      buildOneField(film!.status, "Status:"),
+                      film!.status != null && film!.status != 0
                           ? _buildDevider()
                           : Container(),
-                      buildOneField(film.budget, "Budget:"),
-                      film.budget != null && film.budget != 0
+                      buildOneField(film!.budget, "Budget:"),
+                      film!.budget != null && film!.budget != 0
                           ? _buildDevider()
                           : Container(),
-                      buildOneField(film.revenue, "Revenue:"),
-                      film.revenue != null && film.revenue != 0
+                      buildOneField(film!.revenue, "Revenue:"),
+                      film!.revenue != null && film!.revenue != 0
                           ? _buildDevider()
                           : Container(),
                     ],
@@ -460,16 +460,16 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 ),
               ],
             ),
-            film.companies.isNotEmpty && film.companies[0] != null
-                ? buildOneField(film.companies[0].name, "Company:")
+            film!.companies!.isNotEmpty && film!.companies![0] != null
+                ? buildOneField(film!.companies![0].name, "Company:")
                 : Container(),
-            film.companies.isNotEmpty && film.companies[0] != null
+            film!.companies!.isNotEmpty && film!.companies![0] != null
                 ? _buildDevider()
                 : Container(),
-            film.countrys.isNotEmpty
-                ? buildOneField(film?.countrys[0].name, "Country:")
+            film!.countrys!.isNotEmpty
+                ? buildOneField(film?.countrys![0].name, "Country:")
                 : Container(),
-            film.countrys.isNotEmpty && film?.countrys[0] != null
+            film!.countrys!.isNotEmpty && film?.countrys![0] != null
                 ? _buildDevider()
                 : Container(),
             SizedBox(
@@ -519,9 +519,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 alignment: Alignment.topCenter,
                 width: MediaQuery.of(context).size.width,
                 //child: Image.network("${Api().imageBannerAPI}${film.poster}",),
-                child: film.backdrop != null
-                    ? MovieBanner("${Api().imageBannerAPI}${film.backdrop}")
-                    : MovieBanner("${Api().imageBannerAPI}${film.poster}")),
+                child: film!.backdrop != null
+                    ? MovieBanner("${Api().imageBannerAPI}${film!.backdrop}")
+                    : MovieBanner("${Api().imageBannerAPI}${film!.poster}")),
             _buildInfo(),
             _buildCreatorBlock(),
             if(posterList!=null && posterList.isNotEmpty)_buildGallery(),
@@ -529,7 +529,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               height: 20,
             ),
             _buildProduction(),
-            _buildBannerField(),
+            //_buildBannerField(),
             _buildWebLinkBlock(),
             //  Container( child: getDesc(movie),)
           ]),
@@ -538,7 +538,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             top: 120,
             child: Container(
               child: Image.network(
-                "${Api().imageBannerAPI}${film.poster}",
+                "${Api().imageBannerAPI}${film!.poster}",
                 height: MediaQuery.of(context).size.height * 0.3,
               ),
             ),
@@ -566,21 +566,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           MaterialPageRoute(builder: (_) => FullScreenImagePage(link: link))),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12),
-        child: Image.network(link, loadingBuilder: (BuildContext context,
-            Widget child, ImageChunkEvent loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            width: (MediaQuery.of(context).size.width)-20,
-            child: Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes
-                    : null,
-              ),
-            ),
-          );
-        }),
+        child: Image.network(link),
       ),
     );
   }
@@ -603,7 +589,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     List<Widget> rait = [];
     if (movie.raiting != null) {
       for (var i = 0; i < movie.raiting.length; i++) {
-        String name = movie.raiting[i]['Source'];
+        String? name = movie.raiting[i]['Source'];
         switch (name) {
           case 'Internet Movie Database':
             rait.add(Row(
@@ -688,34 +674,34 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     );
   }
 
-  getWikiLinks(Film movie) {
-    var provider = Provider.of<ThemeProvider>(context);
-    return FutureBuilder<WikipediaPage>(
-        future: getWiki(movie.originalTitle),
-        builder: (BuildContext context, AsyncSnapshot<WikipediaPage> snapshot) {
-          if (snapshot.hasData) {
-            return InkWell(
-              onTap: () {
-                launch(snapshot.data.url);
-              },
-              child: Image.asset(
-                'assets/icons/wiki.png',
-                color: provider.currentFontColor,
-                height: 30,
-              ),
-            );
-          }
-          return Container();
-        });
-  }
+  // getWikiLinks(Film movie) {
+  //   var provider = Provider.of<ThemeProvider>(context);
+  //   return FutureBuilder<WikipediaPage>(
+  //       future: getWiki(movie.originalTitle),
+  //       builder: (BuildContext context, AsyncSnapshot<WikipediaPage> snapshot) {
+  //         if (snapshot.hasData) {
+  //           return InkWell(
+  //             onTap: () {
+  //               launch(snapshot.data.url);
+  //             },
+  //             child: Image.asset(
+  //               'assets/icons/wiki.png',
+  //               color: provider.currentFontColor,
+  //               height: 30,
+  //             ),
+  //           );
+  //         }
+  //         return Container();
+  //       });
+  // }
 
-  Future<WikipediaPage> getWiki(String movie) async {
-    var wikipediaPage = await wiki.page('$movie ');
-    if (wikipediaPage.content.startsWith('Redirect to:')) {
-      var array = wikipediaPage.content.split('This page is a redirect');
-      array = array[0].split('Redirect to:');
-      wikipediaPage = await wiki.page('${array[1]}');
-    }
-    return wikipediaPage;
-  }
+  // Future<WikipediaPage> getWiki(String movie) async {
+  //   var wikipediaPage = await wiki.page('$movie ');
+  //   if (wikipediaPage.content.startsWith('Redirect to:')) {
+  //     var array = wikipediaPage.content.split('This page is a redirect');
+  //     array = array[0].split('Redirect to:');
+  //     wikipediaPage = await wiki.page('${array[1]}');
+  //   }
+  //   return wikipediaPage;
+  // }
 }

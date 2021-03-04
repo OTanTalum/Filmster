@@ -4,31 +4,31 @@ import 'dart:convert';
 import 'package:filmster/model/search.dart';
 
 class Film {
-  bool isAdult;
-  String title;
-  String backdrop;
-  Map toColection;
-  int budget;
-  List ganres = [];
-  String homepage;
-  String id;
-  String imdbId;
-  String originalLanguage;
-  String originalTitle;
-  String overview;
-  String popularity;
-  String poster;
-  List<Company> companies = [];
-  List<Country> countrys = [];
-  String release;
-  int revenue;
-  int runtime;
-  List<Language> spoken = [];
-  String status;
-  String tagline;
-  bool video;
-  String voteAverage;
-  String voteCount;
+  bool? isAdult;
+  String? title;
+  String? backdrop;
+  Map? toColection;
+  int? budget;
+  List? ganres = [];
+  String? homepage;
+  String? id;
+  String? imdbId;
+  String? originalLanguage;
+  String? originalTitle;
+  String? overview;
+  String? popularity;
+  String? poster;
+  List<Company>? companies = [];
+  List<Country>? countrys = [];
+  String? release;
+  int? revenue;
+  int? runtime;
+  List<Language>? spoken = [];
+  String? status;
+  String? tagline;
+  bool? video;
+  String? voteAverage;
+  String? voteCount;
 
   Film({
     this.title,
@@ -69,7 +69,7 @@ class Film {
     toColection = json['belongs_to_collection'];
     budget = json['budget'];
     if (json['genres'] != null)
-      json['genres'].forEach((genre) => ganres.add(genre));
+      json['genres'].forEach((genre) => ganres!.add(genre));
     homepage = json['homepage'];
     id = json['id'].toString();
     imdbId = json['imdb_id'];
@@ -85,10 +85,10 @@ class Film {
     poster = json['poster_path'];
     if (json['production_companies'] != null)
       json['production_companies']
-          .forEach((element) => companies.add(Company.fromJson(element)));
+          .forEach((element) => companies!.add(Company.fromJson(element)));
     if (json['production_countries'] != null)
       json['production_countries']
-          .forEach((element) => countrys.add(Country.fromJson(element)));
+          .forEach((element) => countrys!.add(Country.fromJson(element)));
     if(json['release_date']!=null)
       release = json['release_date'];
     else {
@@ -103,7 +103,7 @@ class Film {
     }
     if (json['spoken_languages'] != null)
       json['spoken_languages']
-          .forEach((element) => spoken.add(Language.fromJson(element)));
+          .forEach((element) => spoken!.add(Language.fromJson(element)));
     status = json['status'];
     tagline = json['tagline'];
     video = json['video'];
@@ -113,9 +113,9 @@ class Film {
 
   SearchResults toSearchResults(){
     return SearchResults()
-      ..id = int.parse(this.id)
-      ..popularity = double.parse(this.popularity)
-      ..voteCount = int.parse(this.voteCount)
+      ..id = int.parse(this.id!)
+      ..popularity = double.parse(this.popularity!)
+      ..voteCount = int.parse(this.voteCount!)
       ..poster = this.poster
       ..backdrop = this.backdrop
       ..language = this.originalLanguage
@@ -129,10 +129,10 @@ class Film {
 }
 
 class Company {
-  String id;
-  String logo;
-  String name;
-  String originalCountry;
+  String? id;
+  String? logo;
+  String? name;
+  String? originalCountry;
 
   Company({
     this.id,
@@ -152,8 +152,8 @@ class Company {
 }
 
 class Country {
-  String code;
-  String name;
+  String? code;
+  String? name;
 
   Country({
     this.name,
@@ -167,8 +167,8 @@ class Country {
 }
 
 class Language {
-  String code;
-  String name;
+  String? code;
+  String? name;
 
   Language({
     this.name,

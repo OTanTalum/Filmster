@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: myColors.currentBackgroundColor,
         appBar: AppBar(
           title: Text(
-            AppLocalizations().translate(context, WordKeys.login),
+            AppLocalizations().translate(context, WordKeys.login)!,
             style: TextStyle(
               fontFamily: "AmaticSC",
               fontSize: 20,
@@ -73,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
           Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Text(
-              AppLocalizations().translate(context, WordKeys.login),
+              AppLocalizations().translate(context, WordKeys.login)!,
               style: TextStyle(
                   fontFamily: "MPLUSRounded1c",
                   fontWeight: FontWeight.w300,
@@ -130,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                   if(_password.length>6&&_username.length>3) {
                     try {
                       await userProvider.auth(_username, _password,_scaffoldKey);
-                      if (userProvider.isloged && userProvider.currentUser!=null){
+                      if (userProvider.isloged! && userProvider.currentUser!=null){
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(builder: (_) => ProfilePage()),
                                 (Route<dynamic> route) => false);
@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                           },
                         ),
                       );
-                      _scaffoldKey.currentState.showSnackBar(snackBar);
+                      _scaffoldKey.currentState!.showSnackBar(snackBar);
                     }
                   }
                 },
@@ -183,13 +183,13 @@ class _LoginPageState extends State<LoginPage> {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(25)),
             borderSide: BorderSide(
-                color: Provider.of<ThemeProvider>(context).currentMainColor,
+                color: Provider.of<ThemeProvider>(context).currentMainColor!,
                 width: 3.0),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(25)),
             borderSide: BorderSide(
-                color: Provider.of<ThemeProvider>(context).currentMainColor,
+                color: Provider.of<ThemeProvider>(context).currentMainColor!,
                 width: 1.0),
           ),
           hintStyle: TextStyle(

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomSnackBar {
- showSnackBar({String title, GlobalKey<ScaffoldState> state}) {
+ showSnackBar({required String title, required GlobalKey<ScaffoldState> state}) {
      SnackBar _customSnackBar = SnackBar(
       content: Text(title,
       style: TextStyle(
@@ -16,6 +16,6 @@ class CustomSnackBar {
         borderRadius: BorderRadius.circular(20),
       ),
     );
-     state.currentState.showSnackBar(_customSnackBar);
+     state.currentState!.showSnackBar(_customSnackBar);
   }
 }

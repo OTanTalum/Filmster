@@ -6,28 +6,28 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class WatchedIconButton extends StatelessWidget {
-  final SearchResults movie;
-  final GlobalKey keyState;
+  final SearchResults? movie;
+  final GlobalKey? keyState;
 
   WatchedIconButton({this.movie, this.keyState});
 
-  UserProvider userProvider;
-  bool isWatched;
+  late UserProvider userProvider;
+  late bool isWatched;
 
   @override
   Widget build(BuildContext context) {
     userProvider =  Provider.of<UserProvider>(context);
-    userProvider.favoriteMovieListIds.contains(movie.id);
+    userProvider.favoriteMovieListIds.contains(movie!.id);
 
     isWatched = userProvider.isMovie
-        ? userProvider.favoriteMovieListIds.contains(movie.id)
-        : userProvider.favoriteTVIds.contains(movie.id);
+        ? userProvider.favoriteMovieListIds.contains(movie!.id)
+        : userProvider.favoriteTVIds.contains(movie!.id);
 
     return IconButton(
       onPressed: () async {
         isWatched
-            ? await userProvider.removeFromWatched(movie, keyState)
-            : await userProvider.markAsWatched(movie, keyState);
+            ? await userProvider.removeFromWatched(movie!, keyState)
+            : await userProvider.markAsWatched(movie!, keyState);
         userProvider.notify();
       },
       icon: Icon(

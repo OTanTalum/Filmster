@@ -54,7 +54,7 @@ class Api extends http.BaseClient {
     return GenresResponse.fromJson(json.decode(response.body));
   }
 
-  getTvDetail(String id) async {
+  getTvDetail(String? id) async {
     final response = await http.get(
         '$tMDBApi/tv/$id?api_key=$apiKey&language=${SettingsProvider
             .language}');
@@ -63,7 +63,7 @@ class Api extends http.BaseClient {
         : BasicResponse.fromJson(json.decode(response.body));
   }
 
-  getFilmDetail(String id) async {
+  getFilmDetail(String? id) async {
     final response = await http.get(
         '$tMDBApi/movie/$id?api_key=$apiKey&language=${SettingsProvider.language}');
     return response.statusCode == RESPONSE_SUCCESS
@@ -76,7 +76,7 @@ class Api extends http.BaseClient {
     return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  Future<BasicResponse> login(String username, String password, String requestToken) async {
+  Future<BasicResponse> login(String username, String password, String? requestToken) async {
     final response = await http.post(
         '$tMDBApi/authentication/token/validate_with_login?api_key=$apiKey',
         body: {
@@ -87,7 +87,7 @@ class Api extends http.BaseClient {
     return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  Future<BasicResponse> createSession(String token) async {
+  Future<BasicResponse> createSession(String? token) async {
     final response = await http.post(
         '$tMDBApi/authentication/session/new?api_key=$apiKey',
         body: {
@@ -96,7 +96,7 @@ class Api extends http.BaseClient {
     return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  getUser(String sessionId) async {
+  getUser(String? sessionId) async {
     final response =
         await http.get('$tMDBApi/account?api_key=$apiKey&session_id=$sessionId');
     return response.statusCode == RESPONSE_SUCCESS
@@ -112,7 +112,7 @@ class Api extends http.BaseClient {
         : BasicResponse.fromJson(json.decode(response.body));
   }
 
-  getFavoriteMovies(int id, String sessionId, page, type) async {
+  getFavoriteMovies(int? id, String? sessionId, page, type) async {
     final response = await http.get(
         '$tMDBApi/account/$id/favorite/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.desc&language=${SettingsProvider.language}');
     return response.statusCode == RESPONSE_SUCCESS
@@ -120,7 +120,7 @@ class Api extends http.BaseClient {
         : BasicResponse.fromJson(json.decode(response.body));
   }
 
-  getMarkedListMovies(int id, String sessionId, page, type) async {
+  getMarkedListMovies(int? id, String? sessionId, page, type) async {
     final response = await http.get(
         '$tMDBApi/account/$id/watchlist/$type?api_key=$apiKey&session_id=$sessionId&page=$page&sort_by=created_at.desc&language=${SettingsProvider.language}');
     return response.statusCode == RESPONSE_SUCCESS
@@ -128,7 +128,7 @@ class Api extends http.BaseClient {
         : BasicResponse.fromJson(json.decode(response.body));
   }
 
-  Future<BasicResponse> removeFromMarkedList(mediaId, String sessionId, userId, type) async {
+  Future<BasicResponse> removeFromMarkedList(mediaId, String? sessionId, userId, type) async {
     final response = await http.post(
         '$tMDBApi/account/$userId/watchlist?api_key=$apiKey&session_id=$sessionId',
         headers: {"Content-Type": "application/json;charset=utf-8"},
@@ -141,7 +141,7 @@ class Api extends http.BaseClient {
     return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  Future<BasicResponse> mark(mediaId, String sessionId, userId, type) async {
+  Future<BasicResponse> mark(mediaId, String? sessionId, userId, type) async {
     final response = await http.post(
         '$tMDBApi/account/$userId/watchlist?api_key=$apiKey&session_id=$sessionId',
         headers: {"Content-Type": "application/json;charset=utf-8"},
@@ -154,7 +154,7 @@ class Api extends http.BaseClient {
     return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  Future<BasicResponse> markAsFavorite(mediaId, bool isRemove, String sessionId, userId, type) async {
+  Future<BasicResponse> markAsFavorite(mediaId, bool isRemove, String? sessionId, userId, type) async {
     final response = await http.post(
         '$tMDBApi/account/$userId/favorite?api_key=$apiKey&session_id=$sessionId',
         headers: {"Content-Type": "application/json;charset=utf-8"},
@@ -183,7 +183,7 @@ class Api extends http.BaseClient {
         : BasicResponse.fromJson(json.decode(response.body));
   }
 
-  getLists(int userId, String sessionId) async {
+  getLists(int? userId, String? sessionId) async {
     var response = await http.get(
         '$tMDBApi/account/$userId/lists?'
             'api_key=$apiKey'
@@ -194,7 +194,7 @@ class Api extends http.BaseClient {
         : BasicResponse.fromJson(json.decode(response.body));
   }
 
-  Future<BasicResponse> createWatchedMovieList(String sessionId) async {
+  Future<BasicResponse> createWatchedMovieList(String? sessionId) async {
     final response = await http.post(
         '$tMDBApi/list?api_key=$apiKey&session_id=$sessionId',
         body: {
@@ -205,7 +205,7 @@ class Api extends http.BaseClient {
     return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  Future<BasicResponse> createWatchedTVList(String sessionId) async {
+  Future<BasicResponse> createWatchedTVList(String? sessionId) async {
     var response = await http.post(
         '$tMDBApi/list?api_key=$apiKey&session_id=$sessionId',
         body: {
@@ -217,7 +217,7 @@ class Api extends http.BaseClient {
     return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  getWatchedList(String sessionId, String listId, page) async {
+  getWatchedList(String? sessionId, String? listId, page) async {
     var response = await http.get('$tMDBApi/list/$listId?'
         'api_key=$apiKey'
         '&language=${SettingsProvider.language}'
@@ -227,7 +227,7 @@ class Api extends http.BaseClient {
         : false;
   }
 
-  Future<BasicResponse> markAsWatched(String listId, String sessionId, mediaId) async {
+  Future<BasicResponse> markAsWatched(String? listId, String? sessionId, mediaId) async {
     final response = await http.post('$tMDBApi/list/$listId/add_item'
         '?api_key=$apiKey'
         '&session_id=$sessionId',
@@ -239,7 +239,7 @@ class Api extends http.BaseClient {
     return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  Future<BasicResponse> deleteFromWatched(String listId, String sessionId, mediaId) async {
+  Future<BasicResponse> deleteFromWatched(String? listId, String? sessionId, mediaId) async {
     final response = await http.post('$tMDBApi/list/$listId/remove_item'
         '?api_key=$apiKey'
         '&session_id=$sessionId',
@@ -251,7 +251,7 @@ class Api extends http.BaseClient {
     return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  getFilmImages(String id) async {
+  getFilmImages(String? id) async {
     var response = await http.get(
         '$tMDBApi/movie/$id/images?api_key=$apiKey');
     return response.statusCode == RESPONSE_SUCCESS
@@ -259,7 +259,7 @@ class Api extends http.BaseClient {
         : BasicResponse.fromJson(json.decode(response.body));
   }
 
-  getTvImages(String id) async {
+  getTvImages(String? id) async {
     var response = await http.get(
         '$tMDBApi/tv/$id/images?api_key=$apiKey');
     return response.statusCode == RESPONSE_SUCCESS
@@ -282,11 +282,11 @@ class Api extends http.BaseClient {
     await metric.start();
     print(request);
     print("_____________________");
-    http.StreamedResponse response;
+    http.StreamedResponse? response;
     try {
       metric
-        ..responsePayloadSize = response.contentLength
-        ..responseContentType = response.headers['Content-Type']
+        ..responsePayloadSize = response!.contentLength
+        ..responseContentType = response.headers['Content-Type']!
         ..httpResponseCode = response.statusCode;
     } finally {
       await metric.stop();

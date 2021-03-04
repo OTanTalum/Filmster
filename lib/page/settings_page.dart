@@ -39,13 +39,13 @@ class _SettingsPageState extends State<SettingsPage> {
         onWillPop: () {
           mySettings.changePage(Pages.HOME_PAGE);
           Navigator.of(context).pop();
-        },
+        } as Future<bool> Function()?,
     child:Scaffold(
       key: scaffoldState,
       backgroundColor: myColors.currentBackgroundColor,
       appBar: AppBar(
         title: Text(
-          AppLocalizations().translate(context, WordKeys.settings),
+          AppLocalizations().translate(context, WordKeys.settings)!,
           style: TextStyle(
             fontFamily: "AmaticSC",
             fontSize: 20,
@@ -68,7 +68,7 @@ class _SettingsPageState extends State<SettingsPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 _buildTitle(AppLocalizations()
-                    .translate(context, WordKeys.changeYourTheme)),
+                    .translate(context, WordKeys.changeYourTheme)!),
                 SizedBox(
                   height: 40,
                   width: MediaQuery.of(context).size.width * 0.5,
@@ -82,7 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               _buildTitle(AppLocalizations()
-                  .translate(context, WordKeys.changeYourLanguage)),
+                  .translate(context, WordKeys.changeYourLanguage)!),
               SizedBox(
                 height: 40,
                 width: MediaQuery.of(context).size.width * 0.5,

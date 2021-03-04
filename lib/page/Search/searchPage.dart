@@ -20,9 +20,9 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   ScrollController _scrollController = ScrollController();
-  UserProvider userProvider;
-  SettingsProvider settingsProvider;
-  ThemeProvider themeProvider;
+  late UserProvider userProvider;
+  late SettingsProvider settingsProvider;
+  late ThemeProvider themeProvider;
 
   @override
   void initState() {
@@ -89,7 +89,7 @@ class _SearchPageState extends State<SearchPage> {
           decoration: BoxDecoration(
             color: Colors.blueGrey[900],
             border: Border.all(
-                color:Colors.blueGrey[900],
+                color:Colors.blueGrey[900]!,
                 width: 1.4,
                 style: BorderStyle.solid),
             image: DecorationImage(
@@ -100,7 +100,7 @@ class _SearchPageState extends State<SearchPage> {
             borderRadius: BorderRadius.all(Radius.circular(20)),
             boxShadow: [
               new BoxShadow(
-                  color: Colors.blueGrey[900],
+                  color: Colors.blueGrey[900]!,
                   offset: new Offset(3.0, 5.0),
                   blurRadius: 5.0,
                   spreadRadius: 0.7

@@ -11,56 +11,56 @@ import 'package:provider/provider.dart';
 
 class SettingsProvider extends ChangeNotifier {
   static String language = "ru";
-  List <Genre> movieListOfGenres = [];
-  List <Genre> tvListOfGenres = [];
+  List <Genre>? movieListOfGenres = [];
+  List <Genre>? tvListOfGenres = [];
 
   Map<Genre, bool> tvFilter = {};
   Map<Genre, bool> movieFilter = {};
 
   Pages currentPage = Pages.HOME_PAGE;
-  String currentYear;
+  String? currentYear;
 
   loadMovieListGenres(keyState) async {
     GenresResponse response = await Api().getMovieGenres();
-    if(response.isSuccess){
+    if(response.isSuccess!){
       movieListOfGenres = response.genres;
       movieFilter.clear();
-      movieListOfGenres.forEach((element) {
+      movieListOfGenres!.forEach((element) {
         movieFilter[element]=false;
       });
     }else{
-      CustomSnackBar().showSnackBar(title: response.message, state: keyState);
+      CustomSnackBar().showSnackBar(title: response.message!, state: keyState);
     }
     notifyListeners();
   }
 
   loadTVListGenres(keyState) async {
     GenresResponse response = await Api().getTVGenres();
-    if(response.isSuccess){
+    if(response.isSuccess!){
       tvListOfGenres = response.genres;
       tvFilter.clear();
-      tvListOfGenres.forEach((element) {
+      tvListOfGenres!.forEach((element) {
         tvFilter[element]=false;
       });
     }else{
-      CustomSnackBar().showSnackBar(title: response.message, state: keyState);
+      CustomSnackBar().showSnackBar(title: response.message!, state: keyState);
     }
     notifyListeners();
   }
 
-  String getOneGenre(BuildContext context, int id) {
+  String? getOneGenre(BuildContext context, int? id) {
     return Provider.of<UserProvider>(context).isMovie
-        ? movieListOfGenres.singleWhere((Genre element) => element.id==id).name
-        : tvListOfGenres.singleWhere((Genre element) => element.id==id).name;
+        ? movieListOfGenres!.singleWhere((Genre element) => element.id==id).name
+        : tvListOfGenres!.singleWhere((Genre element) => element.id==id).name;
   }
 
   changeTVGenreStatus(Genre genre){
-    tvFilter[genre] = !tvFilter[genre];
+    tvFilter[genre] = !tvFilter[genre]!;
     notifyListeners();
   }
 
   changeMovieGenreStatus(Genre genre){
-    movieFilter[genre] = !movieFilter[genre];
+    movieFilter[genre] = !movieFilter[genre]!;
     notifyListeners();
   }
 
