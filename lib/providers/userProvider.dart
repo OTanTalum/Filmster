@@ -24,7 +24,7 @@ class UserProvider extends ChangeNotifier {
   String? watchedTVId;
 
   List<SearchResults> favoriteMovieList = [];
-  List<int?> favoriteMovieIds = [];
+  List<int?> favoriteMovieListIds = [];
   List<SearchResults> favoriteTVList = [];
   List<int?> favoriteTVIds = [];
 
@@ -34,7 +34,7 @@ class UserProvider extends ChangeNotifier {
   List<int?> markedTVListIds = [];
 
   List<SearchResults> watchedMovieList = [];
-  List<int?> favoriteMovieListIds = [];
+  List<int?> watchedMovieListIds = [];
   List<SearchResults> watchedTvList = [];
   List<int?> watchedTvListIds = [];
 
@@ -133,7 +133,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   getFavoriteMovies(keyState) async {
-    favoriteMovieIds = [];
+    favoriteMovieListIds = [];
     favoriteMovieList = [];
     int? totalPages;
     for (int page = 1; page <= (totalPages ?? 2); page++) {
@@ -148,7 +148,7 @@ class UserProvider extends ChangeNotifier {
           favoriteMovieList.add(element);
         });
         favoriteMovieList.forEach((element) {
-          favoriteMovieIds.add(element.id);
+          favoriteMovieListIds.add(element.id);
         });
       }
     }
@@ -290,8 +290,8 @@ class UserProvider extends ChangeNotifier {
                 .removeWhere((SearchResults element) => element.id == film.id)
             : favoriteMovieList.add(film);
         isFavorite
-            ? favoriteMovieIds.removeWhere((int? element) => element == film.id)
-            : favoriteMovieIds.add(film.id);
+            ? favoriteMovieListIds.removeWhere((int? element) => element == film.id)
+            : favoriteMovieListIds.add(film.id);
       } else {
         isFavorite
             ? favoriteTVList
@@ -317,7 +317,7 @@ class UserProvider extends ChangeNotifier {
         if (isMovie) {
           watchedMovieList
               .removeWhere((SearchResults element) => element.id == film.id);
-          favoriteMovieListIds.removeWhere((int? element) => element == film.id);
+          watchedMovieListIds.removeWhere((int? element) => element == film.id);
         } else {
           watchedTvList
               .removeWhere((SearchResults element) => element.id == film.id);
@@ -337,7 +337,7 @@ class UserProvider extends ChangeNotifier {
       if (response.isSuccess ?? response.code == RESPONSE_ADD_TO_LIST_SUCCESS) {
         if (isMovie) {
           watchedMovieList.add(film);
-          favoriteMovieListIds.add(film.id);
+          watchedMovieListIds.add(film.id);
         } else {
           watchedTvList.add(film);
           watchedTvListIds.add(film.id);
@@ -395,7 +395,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> getWatchedMovieList(keyState) async {
-    favoriteMovieListIds = [];
+    watchedMovieListIds = [];
     watchedMovieList = [];
     int totalResults = 21;
     for (int i = 1; (i - 1) * 20 < totalResults; i++) {
@@ -411,8 +411,8 @@ class UserProvider extends ChangeNotifier {
           }
         });
         watchedMovieList.forEach((element) {
-          if (!favoriteMovieListIds.contains(element.id)) {
-            favoriteMovieListIds.add(element.id);
+          if (!watchedMovieListIds.contains(element.id)) {
+            watchedMovieListIds.add(element.id);
           }
         });
       }

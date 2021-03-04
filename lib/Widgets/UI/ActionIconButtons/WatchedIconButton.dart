@@ -17,11 +17,11 @@ class WatchedIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     userProvider =  Provider.of<UserProvider>(context);
-    userProvider.favoriteMovieListIds.contains(movie!.id);
+    userProvider.watchedMovieListIds.contains(movie!.id);
 
     isWatched = userProvider.isMovie
-        ? userProvider.favoriteMovieListIds.contains(movie!.id)
-        : userProvider.favoriteTVIds.contains(movie!.id);
+        ? userProvider.watchedMovieListIds.contains(movie!.id)
+        : userProvider.watchedTvListIds.contains(movie!.id);
 
     return IconButton(
       onPressed: () async {

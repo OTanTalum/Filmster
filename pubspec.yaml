@@ -1,7 +1,7 @@
 name: filmster
 description: A new Flutter application.
 
-version: 0.0.13+1
+version: 0.0.14+1
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
