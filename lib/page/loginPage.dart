@@ -1,14 +1,13 @@
 import 'dart:ui';
 
 import 'package:filmster/Enums/PagesEnum.dart';
+import 'package:filmster/Widgets/UI/CustomeBottomNavigationBar.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/page/profilePage.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
-import 'package:filmster/widgets/UI/CustomeBottomNavigationBar.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -127,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               RaisedButton(
                 onPressed: () async {
-                  if(_password.length>6&&_username.length>3) {
+                  if(_password.length>=4&&_username.length>3) {
                     try {
                       await userProvider.auth(_username, _password,_scaffoldKey);
                       if (userProvider.isloged! && userProvider.currentUser!=null){

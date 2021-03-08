@@ -1,12 +1,12 @@
 //import 'package:admob_flutter/admob_flutter.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/Widgets/Dialogs/FIlterDialogWindow.dart';
+import 'package:filmster/Widgets/UI/moviePosterCard.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/discoverProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
-import 'package:filmster/widgets/UI/moviePosterCard.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,17 +49,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
       i++;
       if (i == 10) {
         pageList.add(
-          AdmobBanner(
-            adUnitId: AddMobClass().getBannerAdUnitId(),
-            adSize: AdmobBannerSize.FULL_BANNER,
-            listener: (AdmobAdEvent event, Map<String, dynamic> args) {
-              if (event == AdmobAdEvent.opened) {
-                print('Admob banner opened!');
-                FirebaseAnalytics().logEvent(name: 'adMobTrendingClick');
-              }
-            },
-            onBannerCreated: (AdmobBannerController controller) {},
-          ),
+          AddMobClass().buildListBanner()
         );
         i = 0;
       }

@@ -4,12 +4,12 @@ import 'dart:convert';
 import 'film.dart';
 
 class Search{
-  List<SearchResults>? search=[];
+  List<SearchResults>? results=[];
   int? total;
   String? response;
 
   Search({
-    this.search,
+    this.results,
     this.total,
     this.response,
   });
@@ -17,7 +17,7 @@ class Search{
 
   Search.fromJson(Map<String, dynamic> json) {
     if(json['results']!=null)
-      json['results'].forEach((element)=>search!.add(SearchResults.fromJson(element)));
+      json['results'].forEach((element)=>results!.add(SearchResults.fromJson(element)));
     if(json['total_results']!=null)
       total = json['total_results'];
     response = json['Response'];
@@ -79,6 +79,10 @@ class SearchResults{
      title = json['name'];
    voteAverage=json['vote_average'].toString();
    overview=json['overview'];
-   release=json['release_date'];
+   if(json['release_date']!=null) {
+     release = json['release_date'];
+   }else if(json["first_air_date"]!=null){
+     release = json["first_air_date"];
+   }
   }
 }

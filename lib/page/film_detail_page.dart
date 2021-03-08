@@ -7,15 +7,16 @@ import 'package:filmster/Widgets/UI/ActionIconButtons/FavoriteIconButton.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/MarkedIconButton.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/WatchedIconButton.dart';
 import 'package:filmster/Widgets/UI/CustomSnackBar.dart';
+import 'package:filmster/Widgets/UI/movieBanner.dart';
 import 'package:filmster/Widgets/UI/progressBarWidget.dart';
 import 'package:filmster/model/BasicResponse.dart';
 import 'package:filmster/model/Poster.dart';
+import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
-import 'package:filmster/widgets/UI/movieBanner.dart';
 import 'dart:async';
 import 'package:filmster/model/film.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -41,8 +42,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   ScrollController scrollController = ScrollController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Poster>? images=[];
-  List<String?> imagesId=[];
   List<Widget> posterList = [];
+  List<Widget> similarList = [];
   late ThemeProvider themeProvider;
   late UserProvider userProvider;
   Film? film;
@@ -70,13 +71,19 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 title: response.massage, state: _scaffoldKey);
           } else{
           images = imageResponse.backDropsList;
-          imagesId=[];
-          images!.forEach((Poster element) {
-            imagesId.add(element.filePath);
+          posterList=[];
+          images!.forEach((Poster element) async {
+            posterList.add(imageLoader('${Api().imageGalleryAPI}${element.filePath}'));
           });
-          await loadGallery(imagesId);
           }
       }
+      userProvider.isMovie
+          ?await userProvider.getSimilarMovie(widget.id, _scaffoldKey)
+          :await userProvider.getSimilarTv(widget.id, _scaffoldKey);
+      similarList.clear();
+      userProvider.similarList.forEach((element) {
+        similarList.add(similarCard(element));
+      });
       setState(() {
         isLoading = false;
       });
@@ -90,13 +97,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-  }
-
-  loadGallery(List list)async{
-    posterList=[];
-    list.forEach((element) async {
-      posterList.add(imageLoader('${Api().imageGalleryAPI}$element'));
-    });
   }
 
 
@@ -152,8 +152,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     child: CustomPaint(
                         painter: Progress(
                             current: scrollController.offset.toDouble(),
-                            allSize: scrollController.position.maxScrollExtent
-                                    .toDouble(),
+                            allSize: tryGetFullScrolSize(),
                             colors: themeProvider.currentMainColor,
                             height: 4,
                             width: MediaQuery.of(context).size.width,
@@ -170,6 +169,15 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             //drawer: DrawerMenu().build(context),
             body: buildBody(context),
           );
+  }
+
+  double tryGetFullScrolSize(){
+    try {
+      return scrollController.position.maxScrollExtent.toDouble();
+    } catch (e) {
+      print(e);
+      return 100.0;
+    }
   }
 
   buildGenres(BuildContext context,  id) {
@@ -529,9 +537,10 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               height: 20,
             ),
             _buildProduction(),
-            //_buildBannerField(),
+            _buildSimilar(),
+            AddMobClass().buildAdMobBanner(),
             _buildWebLinkBlock(),
-            //  Container( child: getDesc(movie),)
+             //Container( child: getDesc(movie),)
           ]),
           Positioned(
             left: 15,
@@ -544,20 +553,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             ),
           ),
         ]));
-  }
-
-  _buildBannerField() {
-    return AdmobBanner(
-      adUnitId: AddMobClass().getMovieDetailBannerAdUnitId(),
-      adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
-      listener: (AdmobAdEvent event, Map<String, dynamic> args) {
-        if (event == AdmobAdEvent.opened) {
-          print('Admob banner opened!');
-          FirebaseAnalytics().logEvent(name: 'adMobMovieDetailClick');
-        }
-      },
-      onBannerCreated: (AdmobBannerController controller) {},
-    );
   }
 
   imageLoader(String link) {
@@ -579,6 +574,38 @@ class FilmDetailPageState extends State<FilmDetailPage> {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: posterList,
+      ),
+    );
+  }
+
+  similarCard(SearchResults video){
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => FilmDetailPage(id:video.id.toString()))),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        child: video.poster!=null
+            ? Image.network('${Api().imageLowAPI}${video.poster}')
+            : Container(
+            height: 139,
+            width: 100,
+            child: Icon(
+              Icons.do_not_disturb_on,
+              size: 100.0,
+              color: themeProvider.currentAcidColor,
+            ))
+      ),
+    );
+  }
+
+  _buildSimilar(){
+    return Container(
+      width: MediaQuery.of(context).size.width - 20,
+      margin: EdgeInsets.symmetric(vertical: 20.0),
+      height: 200.0,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: similarList,
       ),
     );
   }

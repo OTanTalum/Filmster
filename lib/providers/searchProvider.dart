@@ -42,7 +42,7 @@ class SearchProvider extends ChangeNotifier {
       }else {
         oldValue = Oldtext;
         isLoading = false;
-        List<SearchResults>? list = response.search;
+        List<SearchResults>? list = response.results;
         addFilms(list, currentPage);
         changeIsLast(
             (response

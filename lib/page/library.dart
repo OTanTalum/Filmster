@@ -1,12 +1,13 @@
 import 'dart:ui';
+import 'package:filmster/Enums/PagesEnum.dart';
+import 'package:filmster/Widgets/UI/CustomeBottomNavigationBar.dart';
+import 'package:filmster/Widgets/UI/movieCard.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
-import 'package:filmster/widgets/UI/CustomeBottomNavigationBar.dart';
-import 'package:filmster/widgets/UI/movieCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -146,7 +147,7 @@ class _LibraryPageState extends State<LibraryPage>
             backgroundColor: myColors.currentSecondaryColor,
             child: Icon(
               Icons.favorite,
-              color: mySettings.currentPage==4
+              color: mySettings.currentPage==Pages.LIBRARY_PAGE
                   ? myColors.currentMainColor
                   : myColors.currentFontColor
           ),

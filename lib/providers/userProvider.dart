@@ -1,10 +1,10 @@
+import 'package:filmster/Widgets/UI/CustomSnackBar.dart';
 import 'package:filmster/model/BasicResponse.dart';
 import 'package:filmster/model/authentication.dart';
 import 'package:filmster/model/responses.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
-import 'package:filmster/widgets/UI/CustomSnackBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -42,7 +42,7 @@ class UserProvider extends ChangeNotifier {
   List<CustomList> listOfTVLists = [];
 
   List<SearchResults> christianMovie = [];
-
+  List<SearchResults> similarList=[];
   bool isMovie = true;
   String currentPeriod = 'day';
 
@@ -416,6 +416,30 @@ class UserProvider extends ChangeNotifier {
           }
         });
       }
+    }
+    notifyListeners();
+  }
+  
+  getSimilarMovie(id, keyState) async{
+    similarList.clear();
+    var response = await Api().getSimilarMovie(id);
+    if(hasError(response)){
+      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+    }else{
+      response.results.forEach((SearchResults element)=>
+      similarList.add(element));
+    }
+    notifyListeners();
+  }
+
+  getSimilarTv(id, keyState) async{
+    similarList.clear();
+    var response = await Api().getSimilarTv(id);
+    if(hasError(response)){
+      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+    }else{
+      response.results.forEach((SearchResults element)=>
+      similarList.add(element));
     }
     notifyListeners();
   }

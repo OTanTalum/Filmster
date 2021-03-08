@@ -37,7 +37,7 @@ class DiscoverProvider extends ChangeNotifier {
       CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
       return true;
     } else {
-      List<SearchResults>? list = response.search;
+      List<SearchResults>? list = response.results;
       isMovie ? addToDiscoverMovieList(list) : addToDiscoverTVList(list);
       changeIsLast((response.total ?? 0) < currentPage);
       notifyListeners();

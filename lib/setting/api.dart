@@ -17,6 +17,7 @@ const int RESPONSE_SUCCESS = 200;
 class Api extends http.BaseClient {
 
   final String apiKey = "22e195d94c2274b3dcf6484e58a1715f";
+  final String imageLowAPI = "https://image.tmdb.org/t/p/w300";
   final String imageBannerAPI = "https://image.tmdb.org/t/p/w500";
   final String imageGalleryAPI = "https://image.tmdb.org/t/p/original";
   String tMDBApi = 'https://api.themoviedb.org/3';
@@ -271,6 +272,24 @@ class Api extends http.BaseClient {
     var response = await http.get(
         '$imageGalleryAPI$link');
     return response;
+  }
+
+  getSimilarMovie(id)async{
+    var response = await http.get(
+        '$tMDBApi/movie/$id/similar?api_key=$apiKey'
+            '&language=${SettingsProvider.language}');
+    return response.statusCode == RESPONSE_SUCCESS
+        ? Search.fromJson(json.decode(response.body))
+        : BasicResponse.fromJson(json.decode(response.body));
+  }
+
+  getSimilarTv(id)async{
+    var response = await http.get(
+        '$tMDBApi/tv/$id/similar?api_key=$apiKey'
+            '&language=${SettingsProvider.language}');
+    return response.statusCode == RESPONSE_SUCCESS
+        ? Search.fromJson(json.decode(response.body))
+        : BasicResponse.fromJson(json.decode(response.body));
   }
 
 

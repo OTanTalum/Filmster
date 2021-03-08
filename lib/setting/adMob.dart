@@ -1,6 +1,8 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 const String APP_ID_ANDROID = "ca-app-pub-3113025288273721~8287602911";
 const String BANNER_ID_ANDROID = "ca-app-pub-3113025288273721/1021263084";
@@ -18,8 +20,6 @@ const String BANNER_ID_IOS_TEST = "ca-app-pub-3940256099942544/2934735716";
 const String BANNER_ID_ANDROID_TEST = "ca-app-pub-3940256099942544/6300978111";
 
 class AddMobClass{
- // AdmobInterstitial interstitialAd;
-  //AdmobReward rewardAd;
 
   String? getBannerAdUnitId() {
     if(kDebugMode){
@@ -81,5 +81,46 @@ class AddMobClass{
     } else if (Platform.isAndroid) {
       return APP_ID_ANDROID;
     }
+  }
+
+  Widget buildAdMobBanner(){
+    return AdmobBanner(
+      adUnitId: getMovieDetailBannerAdUnitId(),
+      adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
+      listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+        if (event == AdmobAdEvent.opened) {
+          FirebaseAnalytics().logEvent(name: 'adMobMovieDetailClick');
+        }
+      },
+      onBannerCreated: (AdmobBannerController controller) {
+      },
+    );
+  }
+
+  Widget buildListBanner() {
+   return  AdmobBanner(
+      adUnitId: getBannerAdUnitId(),
+      adSize: AdmobBannerSize.FULL_BANNER,
+      listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+        if (event == AdmobAdEvent.opened) {
+          print('Admob banner opened!');
+          FirebaseAnalytics().logEvent(name: 'adMobTrendingClick');
+        }
+      },
+      onBannerCreated: (AdmobBannerController controller) {},
+    );
+  }
+
+  Widget buildSearchListBunner(){
+    return AdmobBanner(
+      adUnitId: getDrawerBannerAdUnitId(),
+      adSize: AdmobBannerSize.LARGE_BANNER,
+      listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+        if (event == AdmobAdEvent.opened) {
+          FirebaseAnalytics().logEvent(name: 'adMobDrawerClick');
+        }
+      },
+      onBannerCreated: (AdmobBannerController controller) {},
+    );
   }
 }

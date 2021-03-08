@@ -64,7 +64,7 @@ class TrendingProvider extends ChangeNotifier {
         CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
         return true;
       } else {
-        List<SearchResults>? list = response.search;
+        List<SearchResults>? list = response.results;
         addFilms(list, currentPage, type, period);
         isLoading = false;
         changeIsLast((response.total ?? 0) < currentPage);

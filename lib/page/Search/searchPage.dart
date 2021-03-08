@@ -1,10 +1,10 @@
 import 'dart:ui';
 import 'package:filmster/Enums/PagesEnum.dart';
+import 'package:filmster/Widgets/UI/CustomeBottomNavigationBar.dart';
+import 'package:filmster/Widgets/UI/LIbraryActionButton.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
-import 'package:filmster/widgets/UI/CustomeBottomNavigationBar.dart';
-import 'package:filmster/widgets/UI/LIbraryActionButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

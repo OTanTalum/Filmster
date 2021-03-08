@@ -2,6 +2,9 @@ import 'dart:ui';
 //import 'package:admob_flutter/admob_flutter.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/Enums/PagesEnum.dart';
+import 'package:filmster/Widgets/UI/CustomeBottomNavigationBar.dart';
+import 'package:filmster/Widgets/UI/LIbraryActionButton.dart';
+import 'package:filmster/Widgets/UI/movieCard.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/providers/searchProvider.dart';
@@ -9,9 +12,6 @@ import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/userProvider.dart';
 import 'package:filmster/setting/adMob.dart';
-import 'package:filmster/widgets/UI/CustomeBottomNavigationBar.dart';
-import 'package:filmster/widgets/UI/LIbraryActionButton.dart';
-import 'package:filmster/widgets/UI/movieCard.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -64,21 +64,7 @@ class _FilmsPageState extends State<FilmsPage> {
     searchProvider.listOfFilms!.forEach((element) {
       list.add(MovieCard(element, scaffoldState));
       if (i == 5) {
-        list.add(
-          Container(
-            height: 120,
-            child: AdmobBanner(
-              adUnitId: AddMobClass().getDrawerBannerAdUnitId(),
-              adSize: AdmobBannerSize.LARGE_BANNER,
-              listener: (AdmobAdEvent event, Map<String, dynamic> args) {
-                if (event == AdmobAdEvent.opened) {
-                  FirebaseAnalytics().logEvent(name: 'adMobDrawerClick');
-                }
-              },
-              onBannerCreated: (AdmobBannerController controller) {},
-            ),
-          ),
-        );
+        list.add(AddMobClass().buildSearchListBunner());
         i = 0;
       }
       i++;

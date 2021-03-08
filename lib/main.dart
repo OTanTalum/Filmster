@@ -1,3 +1,4 @@
+//@dart = 2.9
 import 'dart:io';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/page/HomePage/HomePage.dart';
@@ -59,11 +60,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderStateMixin{
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   final Trace mainTraceInit = FirebasePerformance.instance.newTrace("mainTraceInit");
-  late TabController _tabController;
+  TabController _tabController;
   List<Widget> movieTrend = [];
   int currentPage = 1;
   bool isDone = false;
-  late SettingsProvider _settingsProvider;
+  SettingsProvider _settingsProvider;
 
 
   @override
@@ -171,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
 
 class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext? context) {
+  HttpClient createHttpClient(SecurityContext context) {
     return super.createHttpClient(context)
       ..badCertificateCallback = (X509Certificate cert, String host,
           int port) => true;

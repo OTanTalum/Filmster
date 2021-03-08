@@ -1,10 +1,10 @@
 name: filmster
 description: A new Flutter application.
 
-version: 0.0.14+1
+version: 0.0.15+1
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.12.0<3.0.0'
 
 dependencies:
   flutter:
@@ -30,7 +30,7 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.0
 
 
 dev_dependencies:
@@ -55,11 +55,9 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-
   assets:
     - assets/icons/
     - assets/image/
-
 
   fonts:
     - family: Cuprum
