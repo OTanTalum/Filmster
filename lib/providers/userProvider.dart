@@ -43,6 +43,7 @@ class UserProvider extends ChangeNotifier {
 
   List<SearchResults> christianMovie = [];
   List<SearchResults> similarList=[];
+  List<SearchResults> recommendedList=[];
   bool isMovie = true;
   String currentPeriod = 'day';
 
@@ -440,6 +441,31 @@ class UserProvider extends ChangeNotifier {
     }else{
       response.results.forEach((SearchResults element)=>
       similarList.add(element));
+    }
+    notifyListeners();
+  }
+
+
+  getRecommendedMovie(id, keyState) async{
+    recommendedList.clear();
+    var response = await Api().getRecommendedMovie(id);
+    if(hasError(response)){
+      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+    }else{
+      response.results.forEach((SearchResults element)=>
+      recommendedList.add(element));
+    }
+    notifyListeners();
+  }
+
+  getRecommendedTv(id, keyState) async{
+    recommendedList.clear();
+    var response = await Api().getRecommendedTv(id);
+    if(hasError(response)){
+      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
+    }else{
+      response.results.forEach((SearchResults element)=>
+      recommendedList.add(element));
     }
     notifyListeners();
   }

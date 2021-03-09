@@ -1,7 +1,7 @@
 name: filmster
 description: A new Flutter application.
 
-version: 0.0.15+1
+version: 0.0.16+1
 
 environment:
   sdk: '>=2.12.0<3.0.0'
@@ -17,7 +17,7 @@ dependencies:
   dartpedia: ^1.6.6
   url_launcher: ^5.4.2
   provider: ^4.3.1
-  admob_flutter: ^1.0.0-beta.5
+  admob_flutter: ^1.0.1
   package_info: ^0.4.0+16
   shared_preferences: ^0.5.8
   firebase_analytics: ^6.0.0

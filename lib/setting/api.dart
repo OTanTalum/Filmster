@@ -293,6 +293,25 @@ class Api extends http.BaseClient {
   }
 
 
+  getRecommendedMovie(id)async{
+    var response = await http.get(
+        '$tMDBApi/movie/$id/recommendations?api_key=$apiKey'
+            '&language=${SettingsProvider.language}');
+    return response.statusCode == RESPONSE_SUCCESS
+        ? Search.fromJson(json.decode(response.body))
+        : BasicResponse.fromJson(json.decode(response.body));
+  }
+
+  getRecommendedTv(id)async{
+    var response = await http.get(
+        '$tMDBApi/tv/$id/recommendations?api_key=$apiKey'
+            '&language=${SettingsProvider.language}');
+    return response.statusCode == RESPONSE_SUCCESS
+        ? Search.fromJson(json.decode(response.body))
+        : BasicResponse.fromJson(json.decode(response.body));
+  }
+
+
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final HttpMetric metric = FirebasePerformance.instance

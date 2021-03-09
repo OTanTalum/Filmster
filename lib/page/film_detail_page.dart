@@ -6,6 +6,7 @@ import 'package:filmster/Widgets/Pages/FullScreenImagePage.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/FavoriteIconButton.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/MarkedIconButton.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/WatchedIconButton.dart';
+import 'package:filmster/Widgets/UI/CardList.dart';
 import 'package:filmster/Widgets/UI/CustomSnackBar.dart';
 import 'package:filmster/Widgets/UI/movieBanner.dart';
 import 'package:filmster/Widgets/UI/progressBarWidget.dart';
@@ -43,7 +44,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Poster>? images=[];
   List<Widget> posterList = [];
-  List<Widget> similarList = [];
   late ThemeProvider themeProvider;
   late UserProvider userProvider;
   Film? film;
@@ -80,10 +80,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
       userProvider.isMovie
           ?await userProvider.getSimilarMovie(widget.id, _scaffoldKey)
           :await userProvider.getSimilarTv(widget.id, _scaffoldKey);
-      similarList.clear();
-      userProvider.similarList.forEach((element) {
-        similarList.add(similarCard(element));
-      });
+      userProvider.isMovie
+          ?await userProvider.getRecommendedMovie(widget.id, _scaffoldKey)
+          :await userProvider.getRecommendedTv(widget.id, _scaffoldKey);
       setState(() {
         isLoading = false;
       });
@@ -101,7 +100,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
 
 
   _buildHeader(String title, double size) {
-    var provider = Provider.of<ThemeProvider>(context);
     return Center(
       child: Text(
         title,
@@ -110,7 +108,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           fontFamily: "MPLUSRounded1c",
           fontWeight: FontWeight.w700,
           fontSize: size,
-          color: provider.currentMainColor,
+          color: themeProvider.currentMainColor,
         ),
       ),
     );
@@ -212,7 +210,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   }
 
   _buildInfo() {
-    var provider = Provider.of<ThemeProvider>(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Container(
@@ -221,8 +218,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             borderRadius: BorderRadius.all(Radius.circular(25)),
             gradient: LinearGradient(
               colors: [
-                provider.currentBackgroundColor!,
-                provider.currentSecondaryColor!
+                themeProvider.currentBackgroundColor!,
+                themeProvider.currentSecondaryColor!
               ],
               stops: [0.4, 1],
             )),
@@ -239,14 +236,14 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                       Row(children: <Widget>[
                         Icon(
                           Icons.today,
-                          color: provider.currentFontColor,
+                          color: themeProvider.currentFontColor,
                         ),
                         Text(
                           " ${film!.release}",
                           style: TextStyle(
                             fontFamily: "AmaticSC",
                             fontSize: 20.0,
-                            color: provider.currentFontColor,
+                            color: themeProvider.currentFontColor,
                           ),
                         ),
                         SizedBox(
@@ -254,14 +251,14 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                         ),
                         Icon(
                           Icons.hourglass_empty,
-                          color: provider.currentFontColor,
+                          color: themeProvider.currentFontColor,
                         ),
                         Text(
                           " ${film!.runtime}",
                           style: TextStyle(
                             fontFamily: "AmaticSC",
                             fontSize: 20.0,
-                            color: provider.currentFontColor,
+                            color: themeProvider.currentFontColor,
                           ),
                         ),
                       ]),
@@ -289,7 +286,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   }
 
   _buildWebLinkBlock() {
-    var provider = Provider.of<ThemeProvider>(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Container(
@@ -297,12 +293,12 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           // borderRadius: BorderRadius.all(Radius.circular(25)),
-          color: provider.currentSecondaryColor,
+          color: themeProvider.currentSecondaryColor,
         ),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(25)),
-            color: provider.currentSecondaryColor,
+            color: themeProvider.currentSecondaryColor,
           ),
           child: Column(children: <Widget>[
             Padding(
@@ -324,7 +320,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                         style: TextStyle(
                           fontFamily: "MPLUSRounded1c",
                           fontSize: 20.0,
-                          color: provider.currentFontColor,
+                          color: themeProvider.currentFontColor,
                         ),
                       ),
                     ),
@@ -337,7 +333,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   }
 
   _buildCreatorBlock() {
-    var provider = Provider.of<ThemeProvider>(context);
     List<Widget> list = [];
     if (film!.ganres != null && film!.ganres!.isNotEmpty) {
       film!.ganres!.forEach((element) {
@@ -347,7 +342,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     return Container(
       width: MediaQuery.of(context).size.width - 20,
       decoration: BoxDecoration(
-        color: provider.currentSecondaryColor,
+        color: themeProvider.currentSecondaryColor,
       ),
       child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -367,7 +362,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                       style: TextStyle(
                         fontFamily: "AmaticSC",
                         fontSize: 20.0,
-                        color: provider.currentFontColor,
+                        color: themeProvider.currentFontColor,
                       ),
                     ),
                   )
@@ -392,7 +387,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                         fontFamily: "MPLUSRounded1c",
                         fontWeight: FontWeight.w300,
                         fontSize: 17.0,
-                        color: provider.currentFontColor,
+                        color: themeProvider.currentFontColor,
                       ),
                     ),
                   )
@@ -408,11 +403,10 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   }
 
   _buildDevider() {
-    var provider = Provider.of<ThemeProvider>(context);
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4),
       child: Divider(
-        color: provider.currentBackgroundColor,
+        color: themeProvider.currentBackgroundColor,
         height: 1,
         thickness: 1,
         indent: 10,
@@ -422,14 +416,13 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   }
 
   _buildProduction() {
-    var provider = Provider.of<ThemeProvider>(context);
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: 12,
       ),
       width: MediaQuery.of(context).size.width - 20,
       decoration: BoxDecoration(
-        color: provider.currentSecondaryColor,
+        color: themeProvider.currentSecondaryColor,
       ),
       child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -488,7 +481,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   }
 
   buildOneField(field, String fieldName) {
-    var provider = Provider.of<ThemeProvider>(context);
     return field != null && field != 0
         ? Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
@@ -501,7 +493,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                       fontFamily: "MPLUSRounded1c",
                       fontWeight: FontWeight.w300,
                       fontSize: 18,
-                      color: provider.currentFontColor,
+                      color: themeProvider.currentFontColor,
                     ),
                   ),
                   Text(
@@ -510,7 +502,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                       fontFamily: "MPLUSRounded1c",
                       fontWeight: FontWeight.w300,
                       fontSize: 18,
-                      color: provider.currentFontColor,
+                      color: themeProvider.currentFontColor,
                     ),
                   ),
                 ]),
@@ -537,7 +529,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               height: 20,
             ),
             _buildProduction(),
-            _buildSimilar(),
+            CardList(userProvider.similarList, "Similar Movie"),
+            CardList(userProvider.recommendedList, "Recommended Movie"),
             AddMobClass().buildAdMobBanner(),
             _buildWebLinkBlock(),
              //Container( child: getDesc(movie),)
@@ -578,41 +571,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     );
   }
 
-  similarCard(SearchResults video){
-    return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => FilmDetailPage(id:video.id.toString()))),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        child: video.poster!=null
-            ? Image.network('${Api().imageLowAPI}${video.poster}')
-            : Container(
-            height: 139,
-            width: 100,
-            child: Icon(
-              Icons.do_not_disturb_on,
-              size: 100.0,
-              color: themeProvider.currentAcidColor,
-            ))
-      ),
-    );
-  }
-
-  _buildSimilar(){
-    return Container(
-      width: MediaQuery.of(context).size.width - 20,
-      margin: EdgeInsets.symmetric(vertical: 20.0),
-      height: 200.0,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: similarList,
-      ),
-    );
-  }
-
-
   List<Widget> getRaiting(movie) {
-    var provider = Provider.of<ThemeProvider>(context);
     List<Widget> rait = [];
     if (movie.raiting != null) {
       for (var i = 0; i < movie.raiting.length; i++) {
@@ -623,7 +582,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               children: <Widget>[
                 Image.asset(
                   'assets/icons/imdb.png',
-                  color: provider.currentFontColor,
+                  color: themeProvider.currentFontColor,
                   height: 35,
                 ),
                 Padding(
@@ -633,7 +592,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     style: TextStyle(
                         fontFamily: "MPLUSRounded1c",
                         fontWeight: FontWeight.w300,
-                        color: provider.currentFontColor),
+                        color: themeProvider.currentFontColor),
                   ),
                 )
               ],
@@ -644,7 +603,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               children: <Widget>[
                 Image.asset(
                   'assets/icons/RT.png',
-                  color: provider.currentFontColor,
+                  color: themeProvider.currentFontColor,
                   height: 35,
                 ),
                 Padding(
@@ -654,7 +613,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     style: TextStyle(
                         fontFamily: "MPLUSRounded1c",
                         fontWeight: FontWeight.w300,
-                        color: provider.currentFontColor),
+                        color: themeProvider.currentFontColor),
                   ),
                 ),
               ],
@@ -674,7 +633,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     style: TextStyle(
                         fontFamily: "MPLUSRounded1c",
                         fontWeight: FontWeight.w300,
-                        color: provider.currentFontColor),
+                        color: themeProvider.currentFontColor),
                   ),
                 ),
               ],
@@ -688,14 +647,13 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   }
 
   getIMDB(movie) {
-    var provider = Provider.of<ThemeProvider>(context);
     return InkWell(
       onTap: () {
         launch('https://www.imdb.com/title/${movie.imdbid}');
       },
       child: Image.asset(
         'assets/icons/imdb.png',
-        color: provider.currentFontColor,
+        color: themeProvider.currentFontColor,
         height: 35,
       ),
     );
