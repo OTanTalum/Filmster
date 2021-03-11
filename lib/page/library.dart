@@ -7,7 +7,7 @@ import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,17 +20,16 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  late UserProvider userProvider;
+  late LibraryProvider libraryProvider;
   ScrollController _scroll = ScrollController();
   TabController? _tabController;
-  List<Widget> list=[];
 
 
   @override
   void initState() {
     super.initState();
     initLists();
-    _tabController =  new TabController(length: 3, vsync: this);
+    _tabController =  new TabController(length:3, vsync: this);
     _scroll.addListener(addMore);
   }
 
@@ -42,19 +41,19 @@ class _LibraryPageState extends State<LibraryPage>
   }
 
   initLists() async{
-    await Provider.of<UserProvider>(context, listen: false).getFavoriteTv(_scaffoldKey);
-    await Provider.of<UserProvider>(context, listen: false).getFavoriteMovies(_scaffoldKey);
-    await Provider.of<UserProvider>(context, listen: false).getMarkedTVList(_scaffoldKey);
-    await Provider.of<UserProvider>(context, listen: false).getMarkedMovieList(_scaffoldKey);
-    await Provider.of<UserProvider>(context, listen: false).getLists(_scaffoldKey);
+    await Provider.of<LibraryProvider>(context, listen: false).getFavoriteTv(_scaffoldKey);
+    await Provider.of<LibraryProvider>(context, listen: false).getFavoriteMovies(_scaffoldKey);
+    await Provider.of<LibraryProvider>(context, listen: false).getMarkedTVList(_scaffoldKey);
+    await Provider.of<LibraryProvider>(context, listen: false).getMarkedMovieList(_scaffoldKey);
+    await Provider.of<LibraryProvider>(context, listen: false).getLists(_scaffoldKey);
   }
 
   addMore() async {
     if (_scroll.position.pixels ==
         _scroll.position.maxScrollExtent&&
-        userProvider.totalPage!>=userProvider.currentPage) {
-      userProvider.currentPage++;
-      await userProvider.getLists(_scaffoldKey);
+        libraryProvider.totalWatchedPage!>=libraryProvider.currentPage) {
+      libraryProvider.currentPage++;
+      await libraryProvider.getLists(_scaffoldKey);
     }
   }
 
@@ -69,16 +68,17 @@ class _LibraryPageState extends State<LibraryPage>
   @override
   Widget build(BuildContext context) {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
-    userProvider = Provider.of<UserProvider>(context);
+    libraryProvider = Provider.of<LibraryProvider>(context);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
 
-    List<Widget> favoriteList = renderLists(userProvider.getFavoriteList());
-    List<Widget> markedList = renderLists(userProvider.getMarkedList());
-    List<Widget> watchedList = renderLists(userProvider.getWatchedList());
+    List<Widget> favoriteList = renderLists(libraryProvider.getFavoriteList());
+    List<Widget> markedList = renderLists(libraryProvider.getMarkedList());
+    List<Widget> watchedList = renderLists(libraryProvider.getWatchedList());
 
     return WillPopScope(
       onWillPop: () async {
         Navigator.of(context).pop();
+        mySettings.changePage(mySettings.prevPage!);
         return true;
       },
         child: Scaffold(
@@ -112,10 +112,10 @@ class _LibraryPageState extends State<LibraryPage>
                     ),
                   ),
                   Switch(
-                    value: !userProvider.isMovie,
+                    value: !libraryProvider.isMovie,
                     onChanged: (value) {
                       setState(() {
-                        userProvider.changeCurrentType();
+                        libraryProvider.changeCurrentType();
                       });
                     },
                     activeTrackColor:

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/film_detail_page.dart';
 import 'package:filmster/providers/themeProvider.dart';
@@ -73,8 +74,11 @@ class CardList extends StatelessWidget {
                     children: [
                       Container(
                           height: 200,
-                          child: Image.network(
-                              '${Api().imageLowAPI}${video.poster}'),
+                          child: CachedNetworkImage(
+                            imageUrl: '${Api().imageLowAPI}${video.poster}',
+                            progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                CircularProgressIndicator(value: downloadProgress.progress),
+                          )
                       ),
                       SizedBox(
                         height: 8,

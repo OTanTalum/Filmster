@@ -6,7 +6,7 @@ import 'package:filmster/page/profilePage.dart';
 import 'package:filmster/page/settings_page.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +34,7 @@ class CustomBottomNavigationBar extends StatefulWidget {
               _buildIcon(Pages.SEARCH_PAGE, SearchPage(), Icons.search),
               SizedBox(width: 24),
               _buildIcon(Pages.SETTINGS_PAGE, SettingsPage(), Icons.settings),
-              _buildIcon(Pages.PROFILE_PAGE, Provider.of<UserProvider>(context, listen: false).currentUser==null
+              _buildIcon(Pages.PROFILE_PAGE, Provider.of<LibraryProvider>(context, listen: false).currentUser==null
                   ? LoginPage()
                   : ProfilePage(),
               Icons.person),

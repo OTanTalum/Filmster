@@ -12,18 +12,16 @@ import 'package:filmster/Widgets/UI/movieBanner.dart';
 import 'package:filmster/Widgets/UI/progressBarWidget.dart';
 import 'package:filmster/model/BasicResponse.dart';
 import 'package:filmster/model/Poster.dart';
-import 'package:filmster/model/search.dart';
+import 'package:filmster/providers/movieProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'dart:async';
 import 'package:filmster/model/film.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:dartpedia/dartpedia.dart' as wiki;
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -45,7 +43,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   List<Poster>? images=[];
   List<Widget> posterList = [];
   late ThemeProvider themeProvider;
-  late UserProvider userProvider;
+  late LibraryProvider libraryProvider;
+  late MovieProvider movieProvider;
   Film? film;
   bool isLoading = true;
 
@@ -55,7 +54,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     scrollController.addListener(() {setState(() {});});
     super.initState();
     Future.microtask(() async {
-      var response = userProvider.isMovie
+      var response = libraryProvider.isMovie
           ? await Api().getFilmDetail(widget.id)
           : await Api().getTvDetail(widget.id);
       if(hasError(response)){
@@ -63,7 +62,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           isLoading = false;
       }else {
           film = response;
-          var imageResponse = userProvider.isMovie
+          var imageResponse = libraryProvider.isMovie
               ? await Api().getFilmImages(widget.id)
               : await Api().getTvImages(widget.id);
           if(hasError(imageResponse)) {
@@ -77,12 +76,12 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           });
           }
       }
-      userProvider.isMovie
-          ?await userProvider.getSimilarMovie(widget.id, _scaffoldKey)
-          :await userProvider.getSimilarTv(widget.id, _scaffoldKey);
-      userProvider.isMovie
-          ?await userProvider.getRecommendedMovie(widget.id, _scaffoldKey)
-          :await userProvider.getRecommendedTv(widget.id, _scaffoldKey);
+      libraryProvider.isMovie
+          ?await movieProvider.getSimilarMovie(widget.id, _scaffoldKey)
+          :await movieProvider.getSimilarTv(widget.id, _scaffoldKey);
+      libraryProvider.isMovie
+          ?await movieProvider.getRecommendedMovie(widget.id, _scaffoldKey)
+          :await movieProvider.getRecommendedTv(widget.id, _scaffoldKey);
       setState(() {
         isLoading = false;
       });
@@ -116,8 +115,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    userProvider = Provider.of<UserProvider>(context);
+    libraryProvider = Provider.of<LibraryProvider>(context);
     themeProvider = Provider.of<ThemeProvider>(context);
+    movieProvider = Provider.of<MovieProvider>(context);
     return film == null
         ? Container(
             color: themeProvider.currentBackgroundColor,
@@ -529,10 +529,10 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               height: 20,
             ),
             _buildProduction(),
-            CardList(userProvider.similarList, "Similar Movie"),
-            CardList(userProvider.recommendedList, "Recommended Movie"),
+            CardList(movieProvider.similarList, "Similar Movie"),
+            CardList(movieProvider.recommendedList, "Recommended Movie"),
             AddMobClass().buildAdMobBanner(),
-            _buildWebLinkBlock(),
+            //_buildWebLinkBlock(),
              //Container( child: getDesc(movie),)
           ]),
           Positioned(

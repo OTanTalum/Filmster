@@ -3,7 +3,7 @@ import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/Genre.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,18 +24,18 @@ class FilterDialogWindow extends StatefulWidget {
 
 class _FilterDialogWindowState extends State<FilterDialogWindow> {
   late ThemeProvider themeProvider;
-  late UserProvider userProvider;
+  late LibraryProvider libraryProvider;
   late SettingsProvider settingsProvider;
   String? selectedValue;
 
   @override
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
-    userProvider = Provider.of<UserProvider>(context);
+    libraryProvider = Provider.of<LibraryProvider>(context);
     settingsProvider = Provider.of<SettingsProvider>(context);
     List<Widget> list = [];
 
-    userProvider.isMovie
+    libraryProvider.isMovie
         ? settingsProvider.movieListOfGenres!.forEach((Genre genre) {
       list.add(_buildOneMovieGenre(genre));
     })
@@ -104,11 +104,11 @@ class _FilterDialogWindowState extends State<FilterDialogWindow> {
                                   ),
                                 ),
                                 Switch(
-                                  value: userProvider.currentPeriod == "week",
+                                  value: libraryProvider.currentPeriod == "week",
                                   onChanged: (value) {
                                     setState(() {
-                                      userProvider.changeCurrentPeriod(
-                                          userProvider.currentPeriod == "week"
+                                      libraryProvider.changeCurrentPeriod(
+                                          libraryProvider.currentPeriod == "week"
                                               ? "day"
                                               : "week");
                                     });
@@ -140,10 +140,10 @@ class _FilterDialogWindowState extends State<FilterDialogWindow> {
                                     ),
                                   ),
                                   Switch(
-                                    value: !userProvider.isMovie,
+                                    value: !libraryProvider.isMovie,
                                     onChanged: (value) {
                                       setState(() {
-                                        userProvider.changeCurrentType();
+                                        libraryProvider.changeCurrentType();
                                       });
                                     },
                                     activeTrackColor:

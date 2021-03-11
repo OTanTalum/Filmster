@@ -218,11 +218,10 @@ class Api extends http.BaseClient {
     return BasicResponse.fromJson(json.decode(response.body));
   }
 
-  getWatchedList(String? sessionId, String? listId, page) async {
+  getWatchedList(String? sessionId, String? listId) async {
     var response = await http.get('$tMDBApi/list/$listId?'
         'api_key=$apiKey'
-        '&language=${SettingsProvider.language}'
-        '&page=$page');
+        '&language=${SettingsProvider.language}');
     return response.statusCode == RESPONSE_SUCCESS
         ? CustomList.fromJson(json.decode(response.body))
         : false;

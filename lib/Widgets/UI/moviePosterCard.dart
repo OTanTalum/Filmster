@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/page/film_detail_page.dart';
 import 'package:filmster/setting/api.dart';
@@ -27,12 +28,12 @@ class MoviePosterCard extends StatelessWidget {
                   )));
         },
         child: movie!.poster != null
-            ? Image.network(
-                "${Api().imageBannerAPI}${movie!.poster}",
-                fit: BoxFit.fill,
-                width: MediaQuery.of(context).size.width * 0.5,
-                height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),
-              )
+            ?CachedNetworkImage(
+        imageUrl: "${Api().imageBannerAPI}${movie!.poster}",
+          fit: BoxFit.fill,
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),
+        )
             : Container(),
       ),
       Positioned(

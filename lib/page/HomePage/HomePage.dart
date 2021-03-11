@@ -5,7 +5,7 @@ import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -40,12 +40,12 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
   }
 
   addMore() async {
-    var provider =  Provider.of<UserProvider>(context, listen: false);
+    var provider =  Provider.of<LibraryProvider>(context, listen: false);
     if ( _scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent&&
-        provider.totalPage!>=provider.currentPage && !provider.isLoading) {
-      provider.currentPage++;
-      await provider.getChristian(scaffoldState);
+        provider.totalChristianPage!>=currentPage && !provider.isLoading) {
+      currentPage++;
+      await provider.getChristian(scaffoldState, currentPage);
     }
   }
 
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
   Widget build(BuildContext context) {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
-    var userProvider = Provider.of<UserProvider>(context, listen: false);
+    var userProvider = Provider.of<LibraryProvider>(context, listen: false);
     List<Widget> christianList = [];
     userProvider.christianMovie.forEach((element) {
       christianList.add(MovieCard(element, scaffoldState));
@@ -73,13 +73,12 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
           tabs: [
             Tab(
               text: AppLocalizations().translate(context, WordKeys.trending),
-
             ),
             Tab(
               text: AppLocalizations().translate(context, WordKeys.discover),
             ),
             Tab(
-              icon: Icon(Icons.highlight),
+              child: Image.asset("assets/icons/cross.png", width: 24, height: 24, color:myColors.currentFontColor,),
             ),
           ],
         ),

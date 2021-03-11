@@ -5,7 +5,7 @@ import 'package:filmster/Widgets/UI/moviePosterCard.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/discoverProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,7 +20,7 @@ class DiscoverPage extends StatefulWidget {
 class _DiscoverPageState extends State<DiscoverPage> {
   ScrollController _scrollController = ScrollController();
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
-  late UserProvider userProvider;
+  late LibraryProvider libraryProvider;
   late DiscoverProvider discoverProvider;
   bool _isLoading = false;
 
@@ -35,7 +35,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     setState(() {
       _isLoading = true;
     });
-    await discoverProvider.loadDiscoveryData(userProvider.isMovie, context, scaffoldState);
+    await discoverProvider.loadDiscoveryData(libraryProvider.isMovie, context, scaffoldState);
     setState(() {
       _isLoading = false;
     });
@@ -62,7 +62,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
       _isLoading = true;
     });
     ++discoverProvider.currentPage;
-    await discoverProvider.loadDiscoveryData(userProvider.isMovie, context, scaffoldState);
+    await discoverProvider.loadDiscoveryData(libraryProvider.isMovie, context, scaffoldState);
     setState(() {
       _isLoading = false;
     });
@@ -70,7 +70,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   @override
   Widget build(BuildContext context) {
-    userProvider = Provider.of<UserProvider>(context);
+    libraryProvider = Provider.of<LibraryProvider>(context);
     discoverProvider = Provider.of<DiscoverProvider>(context);
     var themeProfile = Provider.of<ThemeProvider>(context);
     return Scaffold(
@@ -111,7 +111,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   _buildBody(BuildContext context) {
     List<Widget> listOfMovieCards = [];
-    List movieList = !userProvider.isMovie
+    List movieList = !libraryProvider.isMovie
         ? discoverProvider.discoverTv!
         : discoverProvider.discoverMovie!;
     listOfMovieCards.addAll(loadPage(movieList as List<SearchResults>));

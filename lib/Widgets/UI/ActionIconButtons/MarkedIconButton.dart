@@ -1,6 +1,6 @@
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,24 +11,24 @@ class MarkedIconButton extends StatelessWidget {
 
   MarkedIconButton({this.movie, this.keyState});
 
-  late UserProvider userProvider;
+  late LibraryProvider libraryProvider;
   late bool isMarked;
 
   @override
   Widget build(BuildContext context) {
-    userProvider =  Provider.of<UserProvider>(context);
-    userProvider.markedMovieListIds.contains(movie!.id);
+    libraryProvider =  Provider.of<LibraryProvider>(context);
+    libraryProvider.markedMovieListIds.contains(movie!.id);
 
-    isMarked = userProvider.isMovie
-        ? userProvider.markedMovieListIds.contains(movie!.id)
-        : userProvider.markedTVListIds.contains(movie!.id);
+    isMarked = libraryProvider.isMovie
+        ? libraryProvider.markedMovieListIds.contains(movie!.id)
+        : libraryProvider.markedTVListIds.contains(movie!.id);
 
     return IconButton(
       onPressed: () async {
         isMarked
-            ? await userProvider.removeFromMarkedList(movie!, keyState)
-            : await userProvider.mark(movie!, keyState);
-        userProvider.notify();
+            ? await libraryProvider.removeFromMarkedList(movie!, keyState)
+            : await libraryProvider.mark(movie!, keyState);
+        libraryProvider.notify();
       },
       icon: Icon(
         isMarked

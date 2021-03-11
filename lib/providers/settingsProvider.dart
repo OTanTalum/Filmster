@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:filmster/Enums/PagesEnum.dart';
 import 'package:filmster/Widgets/UI/CustomSnackBar.dart';
 import 'package:filmster/model/Genre.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +18,7 @@ class SettingsProvider extends ChangeNotifier {
   Map<Genre, bool> movieFilter = {};
 
   Pages currentPage = Pages.HOME_PAGE;
+  Pages? prevPage;
   String? currentYear;
 
   loadMovieListGenres(keyState) async {
@@ -49,7 +50,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   String? getOneGenre(BuildContext context, int? id) {
-    return Provider.of<UserProvider>(context).isMovie
+    return Provider.of<LibraryProvider>(context).isMovie
         ? movieListOfGenres!.singleWhere((Genre element) => element.id==id).name
         : tvListOfGenres!.singleWhere((Genre element) => element.id==id).name;
   }
@@ -76,6 +77,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   changePage(Pages pageIndex) {
+    prevPage = currentPage;
     currentPage = pageIndex;
     notifyListeners();
   }

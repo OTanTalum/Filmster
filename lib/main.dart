@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/page/HomePage/HomePage.dart';
 import 'package:filmster/providers/discoverProvider.dart';
+import 'package:filmster/providers/movieProvider.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/trendingProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -32,8 +33,9 @@ void main() {
         ChangeNotifierProvider(create: (_) => SearchProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ChangeNotifierProvider(create: (_) => TrendingProvider()),
-        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => LibraryProvider()),
         ChangeNotifierProvider(create: (_) => DiscoverProvider()),
+        ChangeNotifierProvider(create: (_) => MovieProvider()),
       ],
       child: MyApp(),
     ),
@@ -101,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
   }
 
   Future initUser()async {
-    var userProvider = Provider.of<UserProvider>(context, listen: false);
+    var userProvider = Provider.of<LibraryProvider>(context, listen: false);
     if (await Prefs().hasString("username")) {
       await userProvider.auth(
           await Prefs().getStringPrefs("username"),
@@ -112,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
       await userProvider.getFavoriteMovies(scaffoldState);
       await userProvider.getMarkedTVList(scaffoldState);
       await userProvider.getMarkedMovieList(scaffoldState);
-      await userProvider.getChristian(scaffoldState);
+      await userProvider.getChristian(scaffoldState, 1);
       await userProvider.getLists(scaffoldState);
     }
     Provider.of<TrendingProvider>(context,listen: false).currentPage=1;

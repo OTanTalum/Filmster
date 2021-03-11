@@ -7,7 +7,7 @@ import 'package:filmster/localization/localization.dart';
 import 'package:filmster/page/profilePage.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -117,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
 
   buildButton(context) {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
-    var userProvider = Provider.of<UserProvider>(context, listen: false);
+    var userProvider = Provider.of<LibraryProvider>(context, listen: false);
     return Padding(
         padding: const EdgeInsets.only(bottom: 10.0),
         child: ButtonBar(

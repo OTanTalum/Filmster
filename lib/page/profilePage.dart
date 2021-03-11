@@ -7,7 +7,7 @@ import 'package:filmster/localization/localization.dart';
 import 'package:filmster/page/loginPage.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
-    var userProfile = Provider.of<UserProvider>(context, listen: false);
+    var userProfile = Provider.of<LibraryProvider>(context, listen: false);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: ()async {

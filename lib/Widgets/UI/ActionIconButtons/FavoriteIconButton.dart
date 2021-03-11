@@ -1,6 +1,6 @@
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,22 +11,22 @@ class FavoriteIconButton extends StatelessWidget {
 
   FavoriteIconButton({this.movie, this.keyState});
 
-  late UserProvider userProvider;
+  late LibraryProvider libraryProvider;
   late bool isFavorite;
 
   @override
   Widget build(BuildContext context) {
-    userProvider =  Provider.of<UserProvider>(context);
-    userProvider.favoriteMovieListIds.contains(movie!.id);
+    libraryProvider =  Provider.of<LibraryProvider>(context);
+    libraryProvider.favoriteMovieListIds.contains(movie!.id);
 
-    isFavorite = userProvider.isMovie
-        ? userProvider.favoriteMovieListIds.contains(movie!.id)
-        : userProvider.favoriteTVIds.contains(movie!.id);
+    isFavorite = libraryProvider.isMovie
+        ? libraryProvider.favoriteMovieListIds.contains(movie!.id)
+        : libraryProvider.favoriteTVIds.contains(movie!.id);
 
     return IconButton(
       onPressed: () async {
-        await userProvider.markAsFavorite(movie!, isFavorite, keyState);
-        userProvider.notify();
+        await libraryProvider.markAsFavorite(movie!, isFavorite, keyState);
+        libraryProvider.notify();
       },
       icon: Icon(
         isFavorite

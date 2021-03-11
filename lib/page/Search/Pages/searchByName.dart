@@ -10,7 +10,7 @@ import 'package:filmster/localization/localization.dart';
 import 'package:filmster/providers/searchProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,7 +28,7 @@ class _FilmsPageState extends State<FilmsPage> {
   final textController = TextEditingController();
   ScrollController _scrollController = ScrollController();
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
-  late UserProvider userProvider;
+  late LibraryProvider libraryProvider;
   late ThemeProvider themeProvider;
   late SearchProvider searchProvider;
   late SettingsProvider settingsProvider;
@@ -79,7 +79,7 @@ class _FilmsPageState extends State<FilmsPage> {
     if (textController.text.length >= 3) {
       setState(() {
         currentPage = 1;
-        searchProvider.fetchData(textController.text, currentPage, userProvider.isMovie?"movie":"tv", scaffoldState);
+        searchProvider.fetchData(textController.text, currentPage, libraryProvider.isMovie?"movie":"tv", scaffoldState);
       });
     }
   }
@@ -88,7 +88,7 @@ class _FilmsPageState extends State<FilmsPage> {
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
     settingsProvider = Provider.of<SettingsProvider>(context);
-    userProvider = Provider.of<UserProvider>(context);
+    libraryProvider = Provider.of<LibraryProvider>(context);
     searchProvider = Provider.of<SearchProvider>(context);
     return WillPopScope(
       onWillPop: () async {
@@ -103,7 +103,7 @@ class _FilmsPageState extends State<FilmsPage> {
           title: Text(
             AppLocalizations().translate(
                 context,
-                userProvider.isMovie
+                libraryProvider.isMovie
                     ? WordKeys.findYourMovie
                     : WordKeys.findYourTV)!,
             style: TextStyle(
@@ -158,7 +158,7 @@ class _FilmsPageState extends State<FilmsPage> {
                 fontFamily: "AmaticSC"),
             hintText: AppLocalizations().translate(
                 context,
-                userProvider.isMovie
+                libraryProvider.isMovie
                     ? WordKeys.enterMovieName
                     : WordKeys.enterTVName),
           ),
@@ -188,7 +188,7 @@ class _FilmsPageState extends State<FilmsPage> {
         _scrollController.position.maxScrollExtent) {
       ++currentPage;
       await Provider.of<SearchProvider>(context, listen: false)
-          .fetchData(searchProvider.oldValue, currentPage, userProvider.isMovie?"movie":"tv", scaffoldState);
+          .fetchData(searchProvider.oldValue, currentPage, libraryProvider.isMovie?"movie":"tv", scaffoldState);
       setState(() {
         searchProvider.isLoading = false;
       });

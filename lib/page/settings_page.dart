@@ -10,6 +10,7 @@ import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import 'library.dart';
@@ -62,40 +63,59 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Widget _buildBody(context) {
     return Column(
-      children: <Widget>[
-        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                _buildTitle(AppLocalizations()
-                    .translate(context, WordKeys.changeYourTheme)!),
-                SizedBox(
-                  height: 40,
-                  width: MediaQuery.of(context).size.width * 0.5,
-                ),
-                _buildThemeButton(MyThemeKeys.LIGHT, "Light"),
-                _buildThemeButton(MyThemeKeys.DARK, "Dark"),
-                _buildThemeButton(MyThemeKeys.DARKER, "Darker"),
-                _buildThemeButton(MyThemeKeys.Loft, "Loft"),
-              ]),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              _buildTitle(AppLocalizations()
-                  .translate(context, WordKeys.changeYourLanguage)!),
-              SizedBox(
-                height: 40,
-                width: MediaQuery.of(context).size.width * 0.5,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          children: <Widget>[
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _buildTitle(AppLocalizations()
+                        .translate(context, WordKeys.changeYourTheme)!),
+                    SizedBox(
+                      height: 40,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                    ),
+                    _buildThemeButton(MyThemeKeys.LIGHT, "Light"),
+                    _buildThemeButton(MyThemeKeys.DARK, "Dark"),
+                    _buildThemeButton(MyThemeKeys.DARKER, "Darker"),
+                    _buildThemeButton(MyThemeKeys.Loft, "Loft"),
+                  ]),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _buildTitle(AppLocalizations()
+                      .translate(context, WordKeys.changeYourLanguage)!),
+                  SizedBox(
+                    height: 40,
+                    width: MediaQuery.of(context).size.width * 0.5,
+                  ),
+                  _buildLanguageButton("us", "English"),
+                  _buildLanguageButton("ru", "Russian"),
+                  _buildLanguageButton("pt", "Portugalish"),
+                  SizedBox(
+                    height: 50,
+                  ),
+                ],
               ),
-              _buildLanguageButton("us", "English"),
-              _buildLanguageButton("ru", "Russian"),
-              _buildLanguageButton("pt", "Portugalish"),
-              SizedBox(
-                height: 50,
-              ),
-            ],
-          ),
-        ]),
+            ]),
+        ]
+        ),
+        Column(
+          children: [
+            Center(child:Padding(
+              padding: const EdgeInsets.symmetric(vertical:24.0, ),
+              child: Text("This product uses the TMDb API \nbut is not endorsed or certified by TMDb.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontFamily: "AmaticSC", fontSize: 20, color: Provider.of<ThemeProvider>(context).currentFontColor),),
+            )),
+            Image.asset("assets/image/tmdbLogo.png",
+              width: MediaQuery.of(context).size.width-24,
+            ),
+            SizedBox(height: 48,),
+          ],
+        ),
       ],
     );
   }

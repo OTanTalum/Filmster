@@ -6,7 +6,7 @@ import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/trendingProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:filmster/setting/adMob.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,10 +31,10 @@ class _TrendingPageState extends State<TrendingPage> {
 
   initTrending() async {
     await Provider.of<TrendingProvider>(context, listen: false).fetchData(
-        Provider.of<UserProvider>(context, listen: false).isMovie
+        Provider.of<LibraryProvider>(context, listen: false).isMovie
             ? "movie"
             : "tv",
-        Provider.of<UserProvider>(context, listen: false).currentPeriod != "day"
+        Provider.of<LibraryProvider>(context, listen: false).currentPeriod != "day"
             ? "week"
             : "day",
     scaffoldState);
@@ -60,10 +60,10 @@ class _TrendingPageState extends State<TrendingPage> {
     var trendProvider = Provider.of<TrendingProvider>(context, listen: false);
     trendProvider.currentPage++;
     await trendProvider.fetchData(
-        !Provider.of<UserProvider>(context, listen: false).isMovie
+        !Provider.of<LibraryProvider>(context, listen: false).isMovie
             ? "tv"
             : "movie",
-        Provider.of<UserProvider>(context, listen: false).currentPeriod != "day"
+        Provider.of<LibraryProvider>(context, listen: false).currentPeriod != "day"
             ? "week"
             : "day",
     scaffoldState);
@@ -89,7 +89,7 @@ class _TrendingPageState extends State<TrendingPage> {
 
   _buildBody(BuildContext context) {
     var trendingProvider = Provider.of<TrendingProvider>(context);
-    var userProvider = Provider.of<UserProvider>(context);
+    var userProvider = Provider.of<LibraryProvider>(context);
     List<Widget> caramba = [];
     List movieList = !userProvider.isMovie
         ? userProvider.currentPeriod != "day"

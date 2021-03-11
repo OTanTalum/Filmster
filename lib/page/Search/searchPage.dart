@@ -4,7 +4,7 @@ import 'package:filmster/Widgets/UI/CustomeBottomNavigationBar.dart';
 import 'package:filmster/Widgets/UI/LIbraryActionButton.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
-import 'package:filmster/providers/userProvider.dart';
+import 'package:filmster/providers/libraryProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +20,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   ScrollController _scrollController = ScrollController();
-  late UserProvider userProvider;
+  late LibraryProvider libraryProvider;
   late SettingsProvider settingsProvider;
   late ThemeProvider themeProvider;
 
@@ -39,7 +39,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     themeProvider = Provider.of<ThemeProvider>(context);
     settingsProvider = Provider.of<SettingsProvider>(context);
-    userProvider = Provider.of<UserProvider>(context);
+    libraryProvider = Provider.of<LibraryProvider>(context);
     return WillPopScope(
       onWillPop: () async {
         settingsProvider.changePage(Pages.HOME_PAGE);
@@ -73,10 +73,10 @@ class _SearchPageState extends State<SearchPage> {
   _buildCard(String title, String imageURL, String type){
     return GestureDetector(
       onTap: (){
-        if(userProvider.isMovie&&type!="movie"||
-        !userProvider.isMovie&&type=="movie"
+        if(libraryProvider.isMovie&&type!="movie"||
+        !libraryProvider.isMovie&&type=="movie"
         ) {
-          Provider.of<UserProvider>(context, listen: false).changeCurrentType();
+          Provider.of<LibraryProvider>(context, listen: false).changeCurrentType();
         }
         Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => FilmsPage()));

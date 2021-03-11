@@ -13,7 +13,7 @@ const int RESPONSE_ADD_TO_LIST_SUCCESS = 12;
 const int RESPONSE_REMOVE_FROM_LIST_SUCCESS = 13;
 const int RESPONSE_MARK_SUCCESS = 1;
 
-class UserProvider extends ChangeNotifier {
+class LibraryProvider extends ChangeNotifier {
   String? requestToken;
   String? logedToken;
   String? sesion_id;
@@ -42,13 +42,14 @@ class UserProvider extends ChangeNotifier {
   List<CustomList> listOfTVLists = [];
 
   List<SearchResults> christianMovie = [];
-  List<SearchResults> similarList=[];
-  List<SearchResults> recommendedList=[];
+
   bool isMovie = true;
   String currentPeriod = 'day';
 
   int currentPage = 1;
-  int? totalPage;
+  int? totalChristianPage;
+  int? totalWatchedPage;
+
 
   bool isLoading = false;
 
@@ -350,15 +351,15 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getChristian(keyState) async {
+  Future<void> getChristian(keyState, int page) async {
     isLoading = true;
-    var response = await Api().getChristianMovies(currentPage);
+    var response = await Api().getChristianMovies(page);
     if(hasError(response)){
       CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
       isLoading = false;
       return;
     }else {
-      totalPage = response.totalPage;
+      totalChristianPage = response.totalPage;
       response.results.forEach((element) {
         if (!christianMovie.contains(element)) {
           christianMovie.add(element);
@@ -372,14 +373,12 @@ class UserProvider extends ChangeNotifier {
   Future<void> getWatchedTvList(keyState) async {
     watchedTvList = [];
     watchedTvListIds = [];
-    int totalResults = 21;
-    for (int i = 1; (i - 1) * 20 < totalResults; i++) {
-      var response = await Api().getWatchedList(sesion_id, watchedTVId, i);
+      var response = await Api().getWatchedList(sesion_id, watchedTVId);
       if (response==false) {
        // CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
         return;
       } else {
-        totalResults = response.itemCount;
+        totalWatchedPage=response.itemCount~/20+(response.itemCount%20==0?0:1);
         response.items.forEach((element) {
           if (!watchedTvList.contains(element)) {
             watchedTvList.add(element);
@@ -390,22 +389,19 @@ class UserProvider extends ChangeNotifier {
             watchedTvListIds.add(element.id);
           }
         });
-      }
     }
     notifyListeners();
   }
 
   Future<void> getWatchedMovieList(keyState) async {
-    watchedMovieListIds = [];
-    watchedMovieList = [];
-    int totalResults = 21;
-    for (int i = 1; (i - 1) * 20 < totalResults; i++) {
-      var response = await Api().getWatchedList(sesion_id, watchedmovieId, i);
+    watchedMovieListIds.clear();
+    watchedMovieList.clear();
+      var response = await Api().getWatchedList(sesion_id, watchedmovieId);
       if (response==false) {
        // CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
         return;
       } else {
-        totalResults = response.itemCount;
+        totalWatchedPage=response.itemCount~/20+(response.itemCount%20==0?0:1);
         response.items.forEach((element) {
           if (!watchedMovieList.contains(element)) {
             watchedMovieList.add(element);
@@ -416,59 +412,10 @@ class UserProvider extends ChangeNotifier {
             watchedMovieListIds.add(element.id);
           }
         });
-      }
-    }
-    notifyListeners();
-  }
-  
-  getSimilarMovie(id, keyState) async{
-    similarList.clear();
-    var response = await Api().getSimilarMovie(id);
-    if(hasError(response)){
-      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
-    }else{
-      response.results.forEach((SearchResults element)=>
-      similarList.add(element));
     }
     notifyListeners();
   }
 
-  getSimilarTv(id, keyState) async{
-    similarList.clear();
-    var response = await Api().getSimilarTv(id);
-    if(hasError(response)){
-      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
-    }else{
-      response.results.forEach((SearchResults element)=>
-      similarList.add(element));
-    }
-    notifyListeners();
-  }
-
-
-  getRecommendedMovie(id, keyState) async{
-    recommendedList.clear();
-    var response = await Api().getRecommendedMovie(id);
-    if(hasError(response)){
-      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
-    }else{
-      response.results.forEach((SearchResults element)=>
-      recommendedList.add(element));
-    }
-    notifyListeners();
-  }
-
-  getRecommendedTv(id, keyState) async{
-    recommendedList.clear();
-    var response = await Api().getRecommendedTv(id);
-    if(hasError(response)){
-      CustomSnackBar().showSnackBar(title: response.massage, state: keyState);
-    }else{
-      response.results.forEach((SearchResults element)=>
-      recommendedList.add(element));
-    }
-    notifyListeners();
-  }
 
   Future<void> getLists(keyState) async {
     listOfMovieLists = [];
