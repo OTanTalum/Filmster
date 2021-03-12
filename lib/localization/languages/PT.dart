@@ -21,4 +21,5 @@ const PT = {
   WordKeys.watched: "Assisti",
   WordKeys.trending: "Еendência agora",
   WordKeys.discover: "Descobrir",
+  WordKeys.genre: "Gênero",
 };

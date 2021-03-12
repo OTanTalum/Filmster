@@ -18,6 +18,6 @@ enum WordKeys {
   library,
   watched,
   trending,
-  discover
-
+  discover,
+  genre,
 }

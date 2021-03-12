@@ -1,7 +1,4 @@
-//import 'package:admob_flutter/admob_flutter.dart';
-import 'package:admob_flutter/admob_flutter.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-//import 'package:dartpedia/dartpedia.dart';
+
 import 'package:filmster/Widgets/Pages/FullScreenImagePage.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/FavoriteIconButton.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/MarkedIconButton.dart';
@@ -10,6 +7,8 @@ import 'package:filmster/Widgets/UI/CardList.dart';
 import 'package:filmster/Widgets/UI/CustomSnackBar.dart';
 import 'package:filmster/Widgets/UI/movieBanner.dart';
 import 'package:filmster/Widgets/UI/progressBarWidget.dart';
+import 'package:filmster/localization/languages/workKeys.dart';
+import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/BasicResponse.dart';
 import 'package:filmster/model/Poster.dart';
 import 'package:filmster/providers/movieProvider.dart';
@@ -22,6 +21,7 @@ import 'dart:async';
 import 'package:filmster/model/film.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -40,7 +40,7 @@ class FilmDetailPage extends StatefulWidget {
 class FilmDetailPageState extends State<FilmDetailPage> {
   ScrollController scrollController = ScrollController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<Poster>? images=[];
+  List<Poster>? images = [];
   List<Widget> posterList = [];
   late ThemeProvider themeProvider;
   late LibraryProvider libraryProvider;
@@ -48,48 +48,60 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   Film? film;
   bool isLoading = true;
 
-
   @override
   void initState() {
-    scrollController.addListener(() {setState(() {});});
+    scrollController.addListener(() {
+      setState(() {});
+    });
     super.initState();
     Future.microtask(() async {
       var response = libraryProvider.isMovie
           ? await Api().getFilmDetail(widget.id)
           : await Api().getTvDetail(widget.id);
-      if(hasError(response)){
-        CustomSnackBar().showSnackBar(title: response.massage, state: _scaffoldKey);
-          isLoading = false;
-      }else {
-          film = response;
-          var imageResponse = libraryProvider.isMovie
-              ? await Api().getFilmImages(widget.id)
-              : await Api().getTvImages(widget.id);
-          if(hasError(imageResponse)) {
-            CustomSnackBar().showSnackBar(
-                title: response.massage, state: _scaffoldKey);
-          } else{
+      if (hasError(response)) {
+        CustomSnackBar()
+            .showSnackBar(title: response.massage, state: _scaffoldKey);
+        isLoading = false;
+      } else {
+        film = response;
+        var imageResponse = libraryProvider.isMovie
+            ? await Api().getFilmImages(widget.id)
+            : await Api().getTvImages(widget.id);
+        if (hasError(imageResponse)) {
+          CustomSnackBar()
+              .showSnackBar(title: response.massage, state: _scaffoldKey);
+        } else {
           images = imageResponse.backDropsList;
-          posterList=[];
+          posterList = [];
           images!.forEach((Poster element) async {
-            posterList.add(imageLoader('${Api().imageGalleryAPI}${element.filePath}'));
+            posterList.add(
+                imageLoader('${Api().imageGalleryAPI}${element.filePath}'));
           });
-          }
+        }
       }
       libraryProvider.isMovie
-          ?await movieProvider.getSimilarMovie(widget.id, _scaffoldKey)
-          :await movieProvider.getSimilarTv(widget.id, _scaffoldKey);
+          ? await movieProvider.getSimilarMovie(widget.id, _scaffoldKey)
+          : await movieProvider.getSimilarTv(widget.id, _scaffoldKey);
       libraryProvider.isMovie
-          ?await movieProvider.getRecommendedMovie(widget.id, _scaffoldKey)
-          :await movieProvider.getRecommendedTv(widget.id, _scaffoldKey);
+          ? await movieProvider.getRecommendedMovie(widget.id, _scaffoldKey)
+          : await movieProvider.getRecommendedTv(widget.id, _scaffoldKey);
       setState(() {
         isLoading = false;
       });
     });
   }
 
-  hasError(response){
+  hasError(response) {
     return response.runtimeType == BasicResponse();
+  }
+
+  double tryGetFullScrolSize() {
+    try {
+      return scrollController.position.maxScrollExtent.toDouble();
+    } catch (e) {
+      print(e);
+      return 100.0;
+    }
   }
 
   @override
@@ -97,17 +109,17 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     super.didChangeDependencies();
   }
 
-
   _buildHeader(String title, double size) {
     return Center(
       child: Text(
         title,
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontFamily: "MPLUSRounded1c",
+          fontFamily: "Cuprum",
+          fontStyle: FontStyle.italic,
           fontWeight: FontWeight.w700,
           fontSize: size,
-          color: themeProvider.currentMainColor,
+          color: themeProvider.currentHeaderColor,
         ),
       ),
     );
@@ -159,56 +171,57 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 ),
               ),
               actions: <Widget>[
-                MarkedIconButton(movie: film!.toSearchResults(), keyState:_scaffoldKey),
-                FavoriteIconButton(movie: film!.toSearchResults(), keyState:_scaffoldKey),
-                WatchedIconButton(movie: film!.toSearchResults(), keyState:_scaffoldKey)
+                MarkedIconButton(
+                    movie: film!.toSearchResults(), keyState: _scaffoldKey),
+                FavoriteIconButton(
+                    movie: film!.toSearchResults(), keyState: _scaffoldKey),
+                WatchedIconButton(
+                    movie: film!.toSearchResults(), keyState: _scaffoldKey)
               ],
             ),
             //drawer: DrawerMenu().build(context),
             body: buildBody(context),
           );
   }
-
-  double tryGetFullScrolSize(){
-    try {
-      return scrollController.position.maxScrollExtent.toDouble();
-    } catch (e) {
-      print(e);
-      return 100.0;
-    }
+  
+  buildBody(context) {
+    return SingleChildScrollView(
+        controller: scrollController,
+        child: Stack(children: [
+          Column(children: <Widget>[
+            Container(
+                alignment: Alignment.topCenter,
+                width: MediaQuery.of(context).size.width,
+                //child: Image.network("${Api().imageBannerAPI}${film.poster}",),
+                child: film!.backdrop != null
+                    ? MovieBanner("${Api().imageBannerAPI}${film!.backdrop}")
+                    : MovieBanner("${Api().imageBannerAPI}${film!.poster}")),
+            _buildInfo(),
+            _buildDescriptionBlock(),
+            _buildMovieDetail(),
+            if (posterList != null && posterList.isNotEmpty) _buildGallery(),
+            AddMobClass().buildAdMobBanner(),
+            SizedBox(
+              height: 10,
+            ),
+            if(movieProvider.similarList.isNotEmpty)CardList(movieProvider.similarList, "Similar Movie", film!.id!, _scaffoldKey),
+            if(movieProvider.recommendedList.isNotEmpty) CardList(movieProvider.recommendedList, "Recommended Movie", film!.id!, _scaffoldKey),
+            //_buildWebLinkBlock(),
+            //Container( child: getDesc(movie),)
+          ]),
+          Positioned(
+            left: 15,
+            top: 120,
+            child: Container(
+              child: Image.network(
+                "${Api().imageBannerAPI}${film!.poster}",
+                height: MediaQuery.of(context).size.height * 0.3,
+              ),
+            ),
+          ),
+        ]));
   }
-
-  buildGenres(BuildContext context,  id) {
-    return Text(
-      Provider.of<SettingsProvider>(context).getOneGenre(context, id)!,
-      style: TextStyle(
-        fontFamily: "MPLUSRounded1c",
-        fontSize: 20,
-        fontWeight: FontWeight.w300,
-        color: themeProvider.currentFontColor,
-      ),
-    );
-  }
-
-  _buildVoteBlock(icon, text) {
-    return Row(children: [
-      Icon(
-        icon,
-        color: themeProvider.currentFontColor,
-      ),
-      Container(
-          padding: EdgeInsets.only(left: 5),
-          child: Text(text,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: "AmaticSC",
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: themeProvider.currentFontColor,
-              )))
-    ]);
-  }
-
+  
   _buildInfo() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -229,52 +242,21 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Padding(
-                  padding: EdgeInsets.only(left: 22, top: 22),
+                  padding: EdgeInsets.only(left: 22, top: 10),
                   child: Wrap(
                     direction: Axis.vertical,
                     children: <Widget>[
-                      Row(children: <Widget>[
-                        Icon(
-                          Icons.today,
-                          color: themeProvider.currentFontColor,
-                        ),
-                        Text(
-                          " ${film!.release}",
-                          style: TextStyle(
-                            fontFamily: "AmaticSC",
-                            fontSize: 20.0,
-                            color: themeProvider.currentFontColor,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Icon(
-                          Icons.hourglass_empty,
-                          color: themeProvider.currentFontColor,
-                        ),
-                        Text(
-                          " ${film!.runtime}",
-                          style: TextStyle(
-                            fontFamily: "AmaticSC",
-                            fontSize: 20.0,
-                            color: themeProvider.currentFontColor,
-                          ),
-                        ),
-                      ]),
-                      SizedBox(
-                        height: 10,
-                      ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          _buildVoteBlock(
-                              Icons.trending_up, film!.popularity.toString()),
+                          _buildVoteBlock(Icons.person, film!.voteCount),
                           SizedBox(
-                            width: 15,
+                            width: 30,
                           ),
                           _buildVoteBlock(Icons.grade, film!.voteAverage),
                         ],
-                      )
+                      ),
+                       _buildVoteBlock(Icons.trending_up, film!.popularity.toString()),
                     ],
                   )),
               _buildDevider(),
@@ -283,6 +265,165 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         ]),
       ),
     );
+  }
+
+  _buildDescriptionBlock() {
+    return Container(
+      width: MediaQuery.of(context).size.width - 20,
+      decoration: BoxDecoration(
+        color: themeProvider.currentSecondaryColor,
+      ),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 16, bottom: 8),
+              child: _buildHeader("${film!.title}", 30),
+            ),
+            film!.title != film!.originalTitle
+                ? Padding(
+                    padding: EdgeInsets.only(top: 8, bottom: 16),
+                    child: _buildHeader("${film!.originalTitle}", 27))
+                : Container(),
+            film!.tagline != null && film!.tagline!.isNotEmpty
+                ? Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    child: Text(
+                      "\"${film!.tagline}\"",
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontFamily: "AmaticSC",
+                        fontSize: 20.0,
+                        color: themeProvider.currentFontColor,
+                      ),
+                    ),
+                  )
+                : Container(),
+            _buildDevider(),
+            film!.overview != null && film!.overview!.isNotEmpty
+                ? Container(
+                    padding: EdgeInsets.all(12),
+                    child: Text(
+                      "\t${film!.overview}",
+                      style: TextStyle(
+                        fontFamily: "Cuprum",
+                        fontWeight: FontWeight.w300,
+                        height: 1.1,
+                        wordSpacing: 1,
+                        letterSpacing: 0.5,
+                        fontSize: 21.0,
+                        color: themeProvider.currentFontColor,
+                      ),
+                    ),
+                  )
+                : Container(),
+            film!.overview != null && film!.overview!.isNotEmpty
+                ? _buildDevider()
+                : Container(),
+            SizedBox(
+              height: 10,
+            )
+          ]),
+    );
+  }
+
+  _buildMovieDetail() {
+    String genres = '';
+    if (film!.ganres != null && film!.ganres!.isNotEmpty) {
+      film!.ganres!.forEach((element) {
+        genres += Provider.of<SettingsProvider>(context)
+            .getOneGenre(context, element["id"])!;
+        genres += ", ";
+      });
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        color: themeProvider.currentSecondaryColor,
+        width: MediaQuery.of(context).size.width - 20,
+        child: Column(
+          children: [
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: _buildHeader("Movie Detail", 30)),
+            _buildDevider(),
+            buildOneField(genres, "${AppLocalizations().translate(context, WordKeys.genre)!}:"),
+            Row(
+              children: <Widget>[
+                film!.companies!.isNotEmpty && film!.companies![0].logo != null
+                    ? Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Image.network(
+                    "${Api().imageBannerAPI}${film!.companies![0].logo}",
+                    width: 100,
+                  ),
+                )
+                    : Container(),
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      buildOneField(film!.companies![0].name, "Company:"),
+                      buildOneField(film?.countrys![0].name, "Country:"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            buildOneField(film!.status, "Status:"),
+            buildOneField(film!.budget, "Budget:"),
+            buildOneField(film!.revenue, "Revenue:"),
+            buildOneField(film!.release, "Release Date:"),
+            buildOneField("${film!.runtime} m", "Runtime:"),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buildGallery() {
+    return Container(
+      width: MediaQuery.of(context).size.width - 20,
+      margin: EdgeInsets.symmetric(vertical: 20.0),
+      height: 200.0,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: posterList,
+      ),
+    );
+  }
+
+  buildGenres(BuildContext context, id) {
+    return Text(
+      Provider.of<SettingsProvider>(context).getOneGenre(context, id)!,
+      style: TextStyle(
+        fontFamily: "Cuprum",
+        fontSize: 20,
+        fontWeight: FontWeight.w300,
+        color: themeProvider.currentFontColor,
+      ),
+    );
+  }
+
+  _buildVoteBlock(icon, text) {
+    return Row(children: [
+      Icon(
+        icon,
+        color: themeProvider.currentFontColor,
+      ),
+      Container(
+          padding: EdgeInsets.only(left: 5),
+          child: Text(text,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: "AmaticSC",
+                fontSize: 42,
+                fontWeight: FontWeight.bold,
+                color: themeProvider.currentFontColor,
+              )))
+    ]);
   }
 
   _buildWebLinkBlock() {
@@ -307,24 +448,24 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                 // getWikiLinks(film),
+                  // getWikiLinks(film),
                   getIMDB(film),
                 ]),
             film!.homepage != null
                 ? Padding(
-                    padding: EdgeInsets.symmetric(vertical: 6),
-                    child: GestureDetector(
-                      onTap: () => {},
-                      child: Text(
-                        film!.homepage!,
-                        style: TextStyle(
-                          fontFamily: "MPLUSRounded1c",
-                          fontSize: 20.0,
-                          color: themeProvider.currentFontColor,
-                        ),
-                      ),
-                    ),
-                  )
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: GestureDetector(
+                onTap: () => {},
+                child: Text(
+                  film!.homepage!,
+                  style: TextStyle(
+                    fontFamily: "MPLUSRounded1c",
+                    fontSize: 20.0,
+                    color: themeProvider.currentFontColor,
+                  ),
+                ),
+              ),
+            )
                 : Container()
           ]),
         ),
@@ -332,221 +473,44 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     );
   }
 
-  _buildCreatorBlock() {
-    List<Widget> list = [];
-    if (film!.ganres != null && film!.ganres!.isNotEmpty) {
-      film!.ganres!.forEach((element) {
-        list.add(buildGenres(context, element["id"]));
-      });
-    }
-    return Container(
-      width: MediaQuery.of(context).size.width - 20,
-      decoration: BoxDecoration(
-        color: themeProvider.currentSecondaryColor,
-      ),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader("${film!.title}", 30),
-            film!.title != film!.originalTitle
-                ? _buildHeader("${film!.originalTitle}", 22)
-                : Container(),
-            film!.tagline != null && film!.tagline!.isNotEmpty
-                ? Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    child: Text(
-                      "\"${film!.tagline}\"",
-                      textAlign: TextAlign.end,
-                      style: TextStyle(
-                        fontFamily: "AmaticSC",
-                        fontSize: 20.0,
-                        color: themeProvider.currentFontColor,
-                      ),
-                    ),
-                  )
-                : Container(),
-            _buildDevider(),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              child: Wrap(
-                direction: Axis.horizontal,
-                alignment: WrapAlignment.start,
-                spacing: 6,
-                children: list,
-              ),
-            ),
-            _buildDevider(),
-            film!.overview != null && film!.overview!.isNotEmpty
-                ? Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text(
-                      "\t${film!.overview}",
-                      style: TextStyle(
-                        fontFamily: "MPLUSRounded1c",
-                        fontWeight: FontWeight.w300,
-                        fontSize: 17.0,
-                        color: themeProvider.currentFontColor,
-                      ),
-                    ),
-                  )
-                : Container(),
-            film!.overview != null && film!.overview!.isNotEmpty
-                ? _buildDevider()
-                : Container(),
-            SizedBox(
-              height: 10,
-            )
-          ]),
-    );
-  }
-
-  _buildDevider() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4),
-      child: Divider(
-        color: themeProvider.currentBackgroundColor,
-        height: 1,
-        thickness: 1,
-        indent: 10,
-        endIndent: 10,
-      ),
-    );
-  }
-
-  _buildProduction() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 12,
-      ),
-      width: MediaQuery.of(context).size.width - 20,
-      decoration: BoxDecoration(
-        color: themeProvider.currentSecondaryColor,
-      ),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader("Production", 26),
-            Row(
-              children: <Widget>[
-                film!.companies!.isNotEmpty && film!.companies![0].logo != null
-                    ? Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Image.network(
-                          "${Api().imageBannerAPI}${film!.companies![0].logo}",
-                          width: 100,
-                        ),
-                      )
-                    : Container(),
-                Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      _buildDevider(),
-                      buildOneField(film!.status, "Status:"),
-                      film!.status != null && film!.status != 0
-                          ? _buildDevider()
-                          : Container(),
-                      buildOneField(film!.budget, "Budget:"),
-                      film!.budget != null && film!.budget != 0
-                          ? _buildDevider()
-                          : Container(),
-                      buildOneField(film!.revenue, "Revenue:"),
-                      film!.revenue != null && film!.revenue != 0
-                          ? _buildDevider()
-                          : Container(),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            film!.companies!.isNotEmpty && film!.companies![0] != null
-                ? buildOneField(film!.companies![0].name, "Company:")
-                : Container(),
-            film!.companies!.isNotEmpty && film!.companies![0] != null
-                ? _buildDevider()
-                : Container(),
-            film!.countrys!.isNotEmpty
-                ? buildOneField(film?.countrys![0].name, "Country:")
-                : Container(),
-            film!.countrys!.isNotEmpty && film?.countrys![0] != null
-                ? _buildDevider()
-                : Container(),
-            SizedBox(
-              height: 10,
-            )
-          ]),
-    );
-  }
-
   buildOneField(field, String fieldName) {
     return field != null && field != 0
-        ? Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    fieldName,
-                    style: TextStyle(
-                      fontFamily: "MPLUSRounded1c",
-                      fontWeight: FontWeight.w300,
-                      fontSize: 18,
-                      color: themeProvider.currentFontColor,
+        ?   Column(children: [
+                Container(
+                  height: 40,
+                  padding: EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Text(
+                      fieldName,
+                      style: TextStyle(
+                        fontFamily: "Cuprum",
+                        fontWeight: FontWeight.w300,
+                        fontSize: 18,
+                        color: themeProvider.currentFontColor,
+                      ),
                     ),
-                  ),
-                  Text(
-                    field.toString(),
-                    style: TextStyle(
-                      fontFamily: "MPLUSRounded1c",
-                      fontWeight: FontWeight.w300,
-                      fontSize: 18,
-                      color: themeProvider.currentFontColor,
+                    if(fieldName=="${AppLocalizations().translate(context, WordKeys.genre)!}:")
+                      SizedBox(width: 100,),
+                    Expanded(
+                      child: Text(
+                        field.toString(),
+                        textAlign: TextAlign.end,
+                        softWrap: true,
+                        style: TextStyle(
+                          fontFamily: "Cuprum",
+                          fontWeight: FontWeight.w300,
+                          fontSize: 18,
+                          color: themeProvider.currentFontColor,
+                        ),
+                      ),
                     ),
-                  ),
-                ]),
-          )
+                  ]),
+                ),
+                _buildDevider()
+              ])
         : Container();
   }
 
-  buildBody(context) {
-    return SingleChildScrollView(
-        controller: scrollController,
-        child: Stack(children: [
-          Column(children: <Widget>[
-            Container(
-                alignment: Alignment.topCenter,
-                width: MediaQuery.of(context).size.width,
-                //child: Image.network("${Api().imageBannerAPI}${film.poster}",),
-                child: film!.backdrop != null
-                    ? MovieBanner("${Api().imageBannerAPI}${film!.backdrop}")
-                    : MovieBanner("${Api().imageBannerAPI}${film!.poster}")),
-            _buildInfo(),
-            _buildCreatorBlock(),
-            if(posterList!=null && posterList.isNotEmpty)_buildGallery(),
-            SizedBox(
-              height: 20,
-            ),
-            _buildProduction(),
-            CardList(movieProvider.similarList, "Similar Movie"),
-            CardList(movieProvider.recommendedList, "Recommended Movie"),
-            AddMobClass().buildAdMobBanner(),
-            //_buildWebLinkBlock(),
-             //Container( child: getDesc(movie),)
-          ]),
-          Positioned(
-            left: 15,
-            top: 120,
-            child: Container(
-              child: Image.network(
-                "${Api().imageBannerAPI}${film!.poster}",
-                height: MediaQuery.of(context).size.height * 0.3,
-              ),
-            ),
-          ),
-        ]));
-  }
 
   imageLoader(String link) {
     return GestureDetector(
@@ -555,18 +519,6 @@ class FilmDetailPageState extends State<FilmDetailPage> {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12),
         child: Image.network(link),
-      ),
-    );
-  }
-
-  _buildGallery(){
-    return Container(
-      width: MediaQuery.of(context).size.width - 20,
-      margin: EdgeInsets.symmetric(vertical: 20.0),
-      height: 200.0,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: posterList,
       ),
     );
   }
@@ -659,34 +611,47 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     );
   }
 
-  // getWikiLinks(Film movie) {
-  //   var provider = Provider.of<ThemeProvider>(context);
-  //   return FutureBuilder<WikipediaPage>(
-  //       future: getWiki(movie.originalTitle),
-  //       builder: (BuildContext context, AsyncSnapshot<WikipediaPage> snapshot) {
-  //         if (snapshot.hasData) {
-  //           return InkWell(
-  //             onTap: () {
-  //               launch(snapshot.data.url);
-  //             },
-  //             child: Image.asset(
-  //               'assets/icons/wiki.png',
-  //               color: provider.currentFontColor,
-  //               height: 30,
-  //             ),
-  //           );
-  //         }
-  //         return Container();
-  //       });
-  // }
+  _buildDevider() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4),
+      child: Divider(
+        color: themeProvider.currentBackgroundColor,
+        height: 1,
+        thickness: 1,
+        indent: 10,
+        endIndent: 10,
+      ),
+    );
+  }
 
-  // Future<WikipediaPage> getWiki(String movie) async {
-  //   var wikipediaPage = await wiki.page('$movie ');
-  //   if (wikipediaPage.content.startsWith('Redirect to:')) {
-  //     var array = wikipediaPage.content.split('This page is a redirect');
-  //     array = array[0].split('Redirect to:');
-  //     wikipediaPage = await wiki.page('${array[1]}');
-  //   }
-  //   return wikipediaPage;
-  // }
+// getWikiLinks(Film movie) {
+//   var provider = Provider.of<ThemeProvider>(context);
+//   return FutureBuilder<WikipediaPage>(
+//       future: getWiki(movie.originalTitle),
+//       builder: (BuildContext context, AsyncSnapshot<WikipediaPage> snapshot) {
+//         if (snapshot.hasData) {
+//           return InkWell(
+//             onTap: () {
+//               launch(snapshot.data.url);
+//             },
+//             child: Image.asset(
+//               'assets/icons/wiki.png',
+//               color: provider.currentFontColor,
+//               height: 30,
+//             ),
+//           );
+//         }
+//         return Container();
+//       });
+// }
+
+// Future<WikipediaPage> getWiki(String movie) async {
+//   var wikipediaPage = await wiki.page('$movie ');
+//   if (wikipediaPage.content.startsWith('Redirect to:')) {
+//     var array = wikipediaPage.content.split('This page is a redirect');
+//     array = array[0].split('Redirect to:');
+//     wikipediaPage = await wiki.page('${array[1]}');
+//   }
+//   return wikipediaPage;
+// }
 }
