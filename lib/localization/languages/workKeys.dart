@@ -20,4 +20,5 @@ enum WordKeys {
   trending,
   discover,
   genre,
+  detail,
 }

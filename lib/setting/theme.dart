@@ -34,6 +34,8 @@ class MyThemes {
           mainColor:Colors.orange[200],
           acidColor:Colors.deepOrange[200],
           secondaryColor:Colors.black12,
+          headerColor: Colors.blueGrey[800],
+
         );
           return lightTheme;
       }
@@ -45,6 +47,7 @@ class MyThemes {
             mainColor:Colors.orange[400],
             acidColor:Colors.deepOrange[400],
             secondaryColor:Colors.blueGrey[300],
+            headerColor: Color.fromRGBO(241, 222, 170, 1.0)
           );
           return darkTheme;
         }
@@ -56,6 +59,7 @@ class MyThemes {
             mainColor:Colors.orange[800],
             acidColor:Colors.deepOrange[800],
             secondaryColor:Colors.blueGrey[800],
+            headerColor: Color.fromRGBO(241, 222, 170, 1.0)
           );
           return darkerTheme;
         }
@@ -66,6 +70,7 @@ class MyThemes {
           mainColor:Colors.orange[800],
           acidColor:Colors.white,
           secondaryColor: Color(0xffffC488),
+          headerColor: Colors.blueGrey[800],
         );
         return Loft;
       }

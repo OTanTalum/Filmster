@@ -1,3 +1,5 @@
+import 'package:filmster/model/Episode.dart';
+import 'package:filmster/model/Season.dart';
 import 'package:filmster/model/search.dart';
 
 class Film {
@@ -26,6 +28,16 @@ class Film {
   bool? video;
   String? voteAverage;
   String? voteCount;
+  String? type;
+  List <Season>? seasons=[];
+  int? numberOfEpisodes;
+  int? numberOfSeasons;
+  Episode? lastEpisode;
+  Episode? nextEpisode;
+  String? lastAirDate;
+  List <String>? languages =[];
+  bool? isInProduction;
+
 
   Film({
     this.title,
@@ -53,6 +65,15 @@ class Film {
     this.video,
     this.voteAverage,
     this.voteCount,
+    this.type,
+    this.seasons,
+    this.numberOfSeasons,
+    this.numberOfEpisodes,
+    this.lastEpisode,
+    this.nextEpisode,
+    this.lastAirDate,
+    this.languages,
+    this.isInProduction,
   });
 
   Film.fromJson(Map<String, dynamic> json) {
@@ -106,6 +127,30 @@ class Film {
     video = json['video'];
     voteAverage = json['vote_average'].toString();
     voteCount = json['vote_count'].toString();
+
+    ///Only for TV part
+    ///
+    ///
+
+    type = json["type"];
+    if(json['seasons']!=null&&json['seasons'].isNotEmpty) {
+      json['seasons'].forEach((element){
+      seasons?.add(Season.fromJson(element));
+    });
+    }
+    numberOfSeasons=json['number_of_seasons'];
+    numberOfEpisodes=json['number_of_episodes'];
+    lastAirDate=json['last_air_date'];
+    isInProduction=json['in_production'];
+    if(json['languages']!=null&&json['languages'].isNotEmpty) {
+      json['languages'].forEach((element){
+        languages?.add(element);
+      });
+    }
+    if(json['last_episode_to_air']!=null)
+      lastEpisode = Episode.fromJson(json['last_episode_to_air']);
+    if(json['next_episode_to_air']!=null)
+      nextEpisode = Episode.fromJson(json['next_episode_to_air']);
   }
 
   SearchResults toSearchResults(){

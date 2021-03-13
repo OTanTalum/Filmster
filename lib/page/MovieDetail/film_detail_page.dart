@@ -1,4 +1,3 @@
-
 import 'package:filmster/Widgets/Pages/FullScreenImagePage.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/FavoriteIconButton.dart';
 import 'package:filmster/Widgets/UI/ActionIconButtons/MarkedIconButton.dart';
@@ -10,7 +9,9 @@ import 'package:filmster/Widgets/UI/progressBarWidget.dart';
 import 'package:filmster/localization/languages/workKeys.dart';
 import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/BasicResponse.dart';
+import 'package:filmster/model/Episode.dart';
 import 'package:filmster/model/Poster.dart';
+import 'package:filmster/page/MovieDetail/SeasonsPage.dart';
 import 'package:filmster/providers/movieProvider.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
@@ -19,6 +20,7 @@ import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'dart:async';
 import 'package:filmster/model/film.dart';
+import 'package:filmster/setting/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -115,8 +117,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         title,
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontFamily: "Cuprum",
-          fontStyle: FontStyle.italic,
+          fontFamily: "AmaticSC",
+          fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w700,
           fontSize: size,
           color: themeProvider.currentHeaderColor,
@@ -183,7 +185,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             body: buildBody(context),
           );
   }
-  
+
   buildBody(context) {
     return SingleChildScrollView(
         controller: scrollController,
@@ -200,12 +202,17 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             _buildDescriptionBlock(),
             _buildMovieDetail(),
             if (posterList != null && posterList.isNotEmpty) _buildGallery(),
+            if (!libraryProvider.isMovie) buildSeasonsButton(),
             AddMobClass().buildAdMobBanner(),
             SizedBox(
               height: 10,
             ),
-            if(movieProvider.similarList.isNotEmpty)CardList(movieProvider.similarList, "Similar Movie", film!.id!, _scaffoldKey),
-            if(movieProvider.recommendedList.isNotEmpty) CardList(movieProvider.recommendedList, "Recommended Movie", film!.id!, _scaffoldKey),
+            if (movieProvider.similarList.isNotEmpty)
+              CardList(movieProvider.similarList, "Similar Movie", film!.id!,
+                  _scaffoldKey),
+            if (movieProvider.recommendedList.isNotEmpty)
+              CardList(movieProvider.recommendedList, "Recommended Movie",
+                  film!.id!, _scaffoldKey),
             //_buildWebLinkBlock(),
             //Container( child: getDesc(movie),)
           ]),
@@ -221,7 +228,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           ),
         ]));
   }
-  
+
   _buildInfo() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -256,7 +263,11 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                           _buildVoteBlock(Icons.grade, film!.voteAverage),
                         ],
                       ),
-                       _buildVoteBlock(Icons.trending_up, film!.popularity.toString()),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      _buildVoteBlock(
+                          Icons.trending_up, film!.popularity.toString()),
                     ],
                   )),
               _buildDevider(),
@@ -308,12 +319,12 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     child: Text(
                       "\t${film!.overview}",
                       style: TextStyle(
-                        fontFamily: "Cuprum",
-                        fontWeight: FontWeight.w300,
-                        height: 1.1,
+                        fontFamily: "NK170",
+                        fontWeight: FontWeight.w500,
+                        height: 1,
                         wordSpacing: 1,
                         letterSpacing: 0.5,
-                        fontSize: 21.0,
+                        fontSize: 25.0,
                         color: themeProvider.currentFontColor,
                       ),
                     ),
@@ -350,17 +361,18 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: _buildHeader("Movie Detail", 30)),
             _buildDevider(),
-            buildOneField(genres, "${AppLocalizations().translate(context, WordKeys.genre)!}:"),
+            buildOneField(genres,
+                "${AppLocalizations().translate(context, WordKeys.genre)!}:"),
             Row(
               children: <Widget>[
                 film!.companies!.isNotEmpty && film!.companies![0].logo != null
                     ? Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Image.network(
-                    "${Api().imageBannerAPI}${film!.companies![0].logo}",
-                    width: 100,
-                  ),
-                )
+                        padding: EdgeInsets.all(12),
+                        child: Image.network(
+                          "${Api().imageBannerAPI}${film!.companies![0].logo}",
+                          width: 100,
+                        ),
+                      )
                     : Container(),
                 Expanded(
                   child: Column(
@@ -395,11 +407,135 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     );
   }
 
+  buildSeasonsButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
+      child: Container(
+        color: themeProvider.currentSecondaryColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              child: _buildHeader("Seasons & Episodes", 30),
+            ),
+            buildEpisode(film!.lastEpisode!, "Last Episode"),
+            if (film!.nextEpisode != null)
+              buildEpisode(film!.nextEpisode!, "Next Episode"),
+            GestureDetector(
+              onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => SeasonsPage(movie: film))),
+              child: Container(
+                color: themeProvider.currentMainColor,
+                height: 50,
+                child: Center(
+                  child: Text(
+                    "All Seasons & Episodes",
+                    style: TextStyle(
+                      fontFamily: "AmaticSC",
+                      fontSize: 25,
+                      fontWeight: FontWeight.w300,
+                      color: themeProvider.currentFontColor,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  buildEpisode(Episode episode, String textHeader) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 12),
+      child: Stack(children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          height: 200,
+          width: MediaQuery.of(context).size.width - 24,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: NetworkImage("${Api().imageBannerAPI}${episode.poster}"),
+                fit: BoxFit.fitWidth,
+                alignment: Alignment.topLeft),
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+            boxShadow: [
+              BoxShadow(
+                  color: themeProvider!.currentSecondaryColor!,
+                  offset: new Offset(3.0, 5.0),
+                  blurRadius: 5.0,
+                  spreadRadius: 0.7)
+            ],
+          ),
+        ),
+        Opacity(
+          opacity: 0.7,
+          child: Container(
+              height: 200,
+              width: MediaQuery.of(context).size.width - 24,
+              decoration: BoxDecoration(
+                color: themeProvider.currentTheme!=MyThemes.Loft?themeProvider.currentBackgroundColor:Colors.black12,
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    textHeader,
+                    style: TextStyle(
+                      fontFamily: "AmaticSC",
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                      color: themeProvider.currentFontColor,
+                    ),
+                  ),
+                  Text(episode.name!,
+                      style: TextStyle(
+                        fontFamily: "AmaticSC",
+                        fontSize: 30,
+                        fontWeight: FontWeight.w700,
+                        color: themeProvider.currentFontColor,
+                      )),
+                  SizedBox(height: 48),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(episode.airDate ?? "-",
+                            style: TextStyle(
+                              fontFamily: "AmaticSC",
+                              fontSize: 30,
+                              fontWeight: FontWeight.w700,
+                              color: themeProvider.currentFontColor,
+                            )),
+                        Text(
+                            "Season ${episode.seasonNumber}\tEpisode ${episode.episodeNumber}",
+                            style: TextStyle(
+                              fontFamily: "AmaticSC",
+                              fontSize: 30,
+                              fontWeight: FontWeight.w700,
+                              color: themeProvider.currentFontColor,
+                            )),
+                      ],
+                    ),
+                  )
+                ],
+              ))),
+        ),
+      ]),
+    );
+  }
+
   buildGenres(BuildContext context, id) {
     return Text(
       Provider.of<SettingsProvider>(context).getOneGenre(context, id)!,
       style: TextStyle(
-        fontFamily: "Cuprum",
+        fontFamily: "NK170",
         fontSize: 20,
         fontWeight: FontWeight.w300,
         color: themeProvider.currentFontColor,
@@ -419,7 +555,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontFamily: "AmaticSC",
-                fontSize: 42,
+                fontSize: 25,
                 fontWeight: FontWeight.bold,
                 color: themeProvider.currentFontColor,
               )))
@@ -453,19 +589,19 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 ]),
             film!.homepage != null
                 ? Padding(
-              padding: EdgeInsets.symmetric(vertical: 6),
-              child: GestureDetector(
-                onTap: () => {},
-                child: Text(
-                  film!.homepage!,
-                  style: TextStyle(
-                    fontFamily: "MPLUSRounded1c",
-                    fontSize: 20.0,
-                    color: themeProvider.currentFontColor,
-                  ),
-                ),
-              ),
-            )
+                    padding: EdgeInsets.symmetric(vertical: 6),
+                    child: GestureDetector(
+                      onTap: () => {},
+                      child: Text(
+                        film!.homepage!,
+                        style: TextStyle(
+                          fontFamily: "MPLUSRounded1c",
+                          fontSize: 20.0,
+                          color: themeProvider.currentFontColor,
+                        ),
+                      ),
+                    ),
+                  )
                 : Container()
           ]),
         ),
@@ -475,42 +611,46 @@ class FilmDetailPageState extends State<FilmDetailPage> {
 
   buildOneField(field, String fieldName) {
     return field != null && field != 0
-        ?   Column(children: [
-                Container(
-                  height: 40,
-                  padding: EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        ? Column(children: [
+            Container(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 12.0),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     Text(
                       fieldName,
                       style: TextStyle(
-                        fontFamily: "Cuprum",
+                        fontFamily: "NK170",
                         fontWeight: FontWeight.w300,
-                        fontSize: 18,
+                        fontSize: 20,
                         color: themeProvider.currentFontColor,
                       ),
                     ),
-                    if(fieldName=="${AppLocalizations().translate(context, WordKeys.genre)!}:")
-                      SizedBox(width: 100,),
+                    if (fieldName ==
+                        "${AppLocalizations().translate(context, WordKeys.genre)!}:")
+                      SizedBox(
+                        width: 100,
+                      ),
                     Expanded(
                       child: Text(
                         field.toString(),
                         textAlign: TextAlign.end,
                         softWrap: true,
                         style: TextStyle(
-                          fontFamily: "Cuprum",
+                          fontFamily: "NK170",
                           fontWeight: FontWeight.w300,
-                          fontSize: 18,
+                          fontSize: 20,
                           color: themeProvider.currentFontColor,
                         ),
                       ),
                     ),
                   ]),
-                ),
-                _buildDevider()
-              ])
+            ),
+            _buildDevider()
+          ])
         : Container();
   }
-
 
   imageLoader(String link) {
     return GestureDetector(

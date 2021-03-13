@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:filmster/model/search.dart';
-import 'package:filmster/page/film_detail_page.dart';
+import 'package:filmster/page/MovieDetail/film_detail_page.dart';
 import 'package:filmster/setting/api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

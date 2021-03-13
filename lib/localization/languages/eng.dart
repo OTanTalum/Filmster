@@ -22,4 +22,5 @@ const ENG = {
   WordKeys.trending: "Trending",
   WordKeys.discover: "Discover",
   WordKeys.genre: "Genre",
+  WordKeys.detail: "Detail",
 };

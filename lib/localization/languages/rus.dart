@@ -21,5 +21,6 @@ const RUS = {
   WordKeys.watched: "Просмотренное",
   WordKeys.trending: "Популярное",
   WordKeys.discover: "Открития",
-  WordKeys.genre: ":Жанр",
+  WordKeys.genre: "Жанр",
+  WordKeys.detail: "Детали о",
 };

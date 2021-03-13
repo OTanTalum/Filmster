@@ -13,6 +13,7 @@ class ThemeProvider extends ChangeNotifier {
   Color? currentMainColor = Colors.orange[200];
   Color? currentAcidColor = Colors.deepOrange[200];
   Color? currentSecondaryColor = Colors.black12;
+  Color? currentHeaderColor = Colors.amberAccent;
 
   changeTheme(BuildContext context, MyThemeKeys key) {
     currentThemeKeys = key;
@@ -26,12 +27,14 @@ class ThemeProvider extends ChangeNotifier {
     Color? mainColor,
     Color? acidColor,
     Color? secondaryColor,
+    Color? headerColor,
   }) {
     currentFontColor = fontColor;
     currentBackgroundColor = backgroundColor;
     currentMainColor = mainColor;
     currentAcidColor = acidColor;
     currentSecondaryColor = secondaryColor;
+    currentHeaderColor = headerColor;
     notifyListeners();
   }
 

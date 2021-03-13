@@ -335,7 +335,7 @@ class _FilterDialogWindowState extends State<FilterDialogWindow> {
                   fontFamily: "AmaticSC",
                 ),
               ),
-              color: themeProvider.currentSecondaryColor,
+              color: themeProvider.currentMainColor,
             )
           ],
           alignment: MainAxisAlignment.center,

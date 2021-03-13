@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:filmster/model/search.dart';
-import 'package:filmster/page/film_detail_page.dart';
+import 'package:filmster/page/MovieDetail/film_detail_page.dart';
 import 'package:filmster/providers/libraryProvider.dart';
 import 'package:filmster/providers/movieProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
@@ -36,9 +36,9 @@ class CardList extends StatelessWidget {
                     title,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: "Cuprum",
+                      fontFamily: "AmaticSC",
                       fontWeight: FontWeight.w700,
-                      fontSize: 26,
+                      fontSize: 30,
                       color: themeProvider.currentHeaderColor,
                     ),
                   ),

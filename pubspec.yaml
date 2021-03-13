@@ -1,7 +1,7 @@
 name: filmster
 description: A new Flutter application.
 
-version: 0.0.18+4
+version: 0.0.19+5
 
 
 environment:
@@ -61,21 +61,14 @@ flutter:
     - assets/image/
 
   fonts:
-    - family: Cuprum
-      fonts:
-        - asset: assets/fonts/Cuprum-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/Cuprum-Regular.ttf
-          weight: 300
-        - asset: assets/fonts/Cuprum-BoldItalic.ttf
-          style: italic
-        - asset: assets/fonts/Cuprum-Italic.ttf
-          style: italic
     - family: AmaticSC
       fonts:
         - asset: assets/fonts/AmaticSC-Bold.ttf
           weight: 700
         - asset: assets/fonts/AmaticSC-Regular.ttf
+    - family: NK170
+      fonts:
+        - asset: assets/fonts/NK170.otf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -22,4 +22,5 @@ const PT = {
   WordKeys.trending: "Еendência agora",
   WordKeys.discover: "Descobrir",
   WordKeys.genre: "Gênero",
+  WordKeys.detail: "Detalhe",
 };
