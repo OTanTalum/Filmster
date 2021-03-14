@@ -6,7 +6,7 @@ class ThemeProvider extends ChangeNotifier {
 
   MyThemeKeys currentThemeKeys = MyThemeKeys.LIGHT;
 
-  ThemeData currentTheme = MyThemes.lightTheme;
+  ThemeData? currentTheme = MyThemes.lightTheme;
 
   Color? currentFontColor = Colors.black;
   Color? currentBackgroundColor = Colors.white;

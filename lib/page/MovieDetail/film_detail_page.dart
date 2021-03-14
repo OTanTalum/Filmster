@@ -464,7 +464,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             borderRadius: BorderRadius.all(Radius.circular(20)),
             boxShadow: [
               BoxShadow(
-                  color: themeProvider!.currentSecondaryColor!,
+                  color: themeProvider.currentSecondaryColor!,
                   offset: new Offset(3.0, 5.0),
                   blurRadius: 5.0,
                   spreadRadius: 0.7)
