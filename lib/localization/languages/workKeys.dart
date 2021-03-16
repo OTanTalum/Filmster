@@ -21,4 +21,5 @@ enum WordKeys {
   discover,
   genre,
   detail,
+  notAuthActionPressedError
 }

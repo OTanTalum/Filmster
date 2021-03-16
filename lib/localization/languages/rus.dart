@@ -23,4 +23,5 @@ const RUS = {
   WordKeys.discover: "Открития",
   WordKeys.genre: "Жанр",
   WordKeys.detail: "Детали о",
+  WordKeys.notAuthActionPressedError: "Авторизуйтесь чтобы, добавлять элементы в библиотеку",
 };

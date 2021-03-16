@@ -11,11 +11,12 @@ import 'ActionIconButtons/WatchedIconButton.dart';
 
 class MoviePosterCard extends StatelessWidget {
   MoviePosterCard({
-    this.movie, this.scaffoldKey
+    required this.movie,
+    required this.scaffoldKey
   });
 
-  final GlobalKey<ScaffoldState>? scaffoldKey;
-  final SearchResults? movie;
+  final GlobalKey<ScaffoldState> scaffoldKey;
+  final SearchResults movie;
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +25,12 @@ class MoviePosterCard extends StatelessWidget {
         onTap: () async {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => FilmDetailPage(
-                    id: movie!.id.toString(),
+                    id: movie.id.toString(),
                   )));
         },
-        child: movie!.poster != null
+        child: movie.poster != null
             ?CachedNetworkImage(
-        imageUrl: "${Api().imageBannerAPI}${movie!.poster}",
+        imageUrl: "${Api().imageBannerAPI}${movie.poster}",
           fit: BoxFit.fill,
           width: MediaQuery.of(context).size.width * 0.5,
           height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),

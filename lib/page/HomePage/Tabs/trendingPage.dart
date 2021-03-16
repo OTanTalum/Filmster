@@ -45,7 +45,7 @@ class _TrendingPageState extends State<TrendingPage> {
     int i = 0;
     trendingList.forEach((element) {
       i++;
-      pageList.add(MoviePosterCard(movie:element));
+      pageList.add(MoviePosterCard(movie:element, scaffoldKey: scaffoldState,));
       if (i == 10) {
         pageList.add(
           AddMobClass().buildListBanner()

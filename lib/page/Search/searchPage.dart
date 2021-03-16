@@ -20,6 +20,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   ScrollController _scrollController = ScrollController();
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   late LibraryProvider libraryProvider;
   late SettingsProvider settingsProvider;
   late ThemeProvider themeProvider;
@@ -47,12 +48,13 @@ class _SearchPageState extends State<SearchPage> {
         return true;
       },
       child: Scaffold(
+        key:scaffoldState ,
         backgroundColor: themeProvider.currentBackgroundColor,
         appBar: AppBar(
           title: Text("Search",),
         ),
         bottomNavigationBar: CustomBottomNavigationBar(),
-        floatingActionButton: LibraryActionButton.build(context),
+        floatingActionButton: LibraryActionButton.build(context, scaffoldState),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         body: _buildBody(context),
       ),

@@ -23,4 +23,5 @@ const PT = {
   WordKeys.discover: "Descobrir",
   WordKeys.genre: "Gênero",
   WordKeys.detail: "Detalhe",
+  WordKeys.notAuthActionPressedError: "Faça login para adicionar itens à biblioteca.",
 };

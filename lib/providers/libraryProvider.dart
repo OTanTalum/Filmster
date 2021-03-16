@@ -264,7 +264,7 @@ class LibraryProvider extends ChangeNotifier {
 
   Future<void> mark(SearchResults film, keyState) async {
     BasicResponse response = await Api()
-        .mark(film.id, sesion_id, currentUser!.id, isMovie ? "movie" : "tv");
+        .mark(film.id, sesion_id, currentUser?.id, isMovie ? "movie" : "tv");
     if (response.isSuccess ?? response.code == RESPONSE_MARK_SUCCESS) {
       if (isMovie) {
         markedMovieList.add(film);

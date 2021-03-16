@@ -23,4 +23,5 @@ const ENG = {
   WordKeys.discover: "Discover",
   WordKeys.genre: "Genre",
   WordKeys.detail: "Detail",
+  WordKeys.notAuthActionPressedError: "Log in to add items to the library.",
 };

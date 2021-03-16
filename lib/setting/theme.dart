@@ -47,7 +47,7 @@ class MyThemes {
             mainColor:Colors.orange[400],
             acidColor:Colors.deepOrange[400],
             secondaryColor:Colors.blueGrey[300],
-            headerColor: Color.fromRGBO(241, 222, 170, 1.0)
+            headerColor: Colors.blueGrey[900],
           );
           return darkTheme;
         }

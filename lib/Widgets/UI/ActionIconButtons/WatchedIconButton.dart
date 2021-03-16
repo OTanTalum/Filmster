@@ -1,3 +1,5 @@
+import 'package:filmster/localization/languages/workKeys.dart';
+import 'package:filmster/localization/localization.dart';
 import 'package:filmster/model/search.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/libraryProvider.dart';
@@ -5,9 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../CustomSnackBar.dart';
+
 class WatchedIconButton extends StatelessWidget {
   final SearchResults? movie;
-  final GlobalKey? keyState;
+  final GlobalKey<ScaffoldState>? keyState;
 
   WatchedIconButton({this.movie, this.keyState});
 
@@ -25,6 +29,11 @@ class WatchedIconButton extends StatelessWidget {
 
     return IconButton(
       onPressed: () async {
+        if(libraryProvider.currentUser==null){
+          CustomSnackBar()
+              .showSnackBar(title: "${AppLocalizations().translate(context, WordKeys.notAuthActionPressedError)}", state: keyState!);
+          return;
+        }
         isWatched
             ? await libraryProvider.removeFromWatched(movie!, keyState)
             : await libraryProvider.markAsWatched(movie!, keyState);

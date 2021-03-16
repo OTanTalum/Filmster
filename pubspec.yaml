@@ -1,7 +1,7 @@
 name: filmster
 description: A new Flutter application.
 
-version: 0.0.19+5
+version: 0.0.20+6
 
 
 environment:
@@ -69,6 +69,9 @@ flutter:
     - family: NK170
       fonts:
         - asset: assets/fonts/NK170.otf
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/Lato.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

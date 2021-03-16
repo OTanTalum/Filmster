@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
             ]),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(),
-      floatingActionButton: LibraryActionButton.build(context),
+      floatingActionButton: LibraryActionButton.build(context,scaffoldState),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       //drawer: DrawerMenu().build(context),
       body: TabBarView(

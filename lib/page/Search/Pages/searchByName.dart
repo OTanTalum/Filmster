@@ -113,7 +113,7 @@ class _FilmsPageState extends State<FilmsPage> {
           ),
         ),
         bottomNavigationBar: CustomBottomNavigationBar(),
-        floatingActionButton: LibraryActionButton.build(context),
+        floatingActionButton: LibraryActionButton.build(context,scaffoldState),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         body: _buildBody(context),
       ),

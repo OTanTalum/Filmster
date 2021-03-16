@@ -54,7 +54,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(),
-      floatingActionButton: LibraryActionButton.build(context),
+      floatingActionButton: LibraryActionButton.build(context, scaffoldState),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       //drawer: DrawerMenu().build(context),
       body: _buildBody(context),

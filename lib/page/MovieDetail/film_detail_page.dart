@@ -319,12 +319,12 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     child: Text(
                       "\t${film!.overview}",
                       style: TextStyle(
-                        fontFamily: "NK170",
-                        fontWeight: FontWeight.w500,
-                        height: 1,
-                        wordSpacing: 1,
-                        letterSpacing: 0.5,
-                        fontSize: 25.0,
+                        fontFamily: "Lato",
+                        // fontWeight: FontWeight.w500,
+                        // height: 1.1,
+                        // wordSpacing: 1,
+                        // letterSpacing: 0.5,
+                        fontSize: 18.0,
                         color: themeProvider.currentFontColor,
                       ),
                     ),
@@ -377,8 +377,11 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 Expanded(
                   child: Column(
                     children: <Widget>[
-                      buildOneField(film!.companies![0].name, "Company:"),
-                      buildOneField(film?.countrys![0].name, "Country:"),
+                      if (film!.companies != null &&
+                          film!.companies!.isNotEmpty)
+                        buildOneField(film!.companies?[0].name, "Company:"),
+                      if (film?.countrys != null && film!.countrys!.isNotEmpty)
+                        buildOneField(film?.countrys?[0].name, "Country:"),
                     ],
                   ),
                 ),
@@ -458,7 +461,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           width: MediaQuery.of(context).size.width - 24,
           decoration: BoxDecoration(
             image: DecorationImage(
-                image: NetworkImage("${Api().imageBannerAPI}${episode.poster}"),
+                image: NetworkImage(episode.poster != null
+                    ? "${Api().imageBannerAPI}${episode.poster}"
+                    : "${Api().imageBannerAPI}${film!.poster}"),
                 fit: BoxFit.fitWidth,
                 alignment: Alignment.topLeft),
             borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -472,16 +477,23 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           ),
         ),
         Opacity(
-          opacity: 0.7,
+          opacity: 0.6,
           child: Container(
               height: 200,
               width: MediaQuery.of(context).size.width - 24,
               decoration: BoxDecoration(
-                color: themeProvider.currentTheme!=MyThemes.Loft?themeProvider.currentBackgroundColor:Colors.black12,
+                color: Colors.black,
+                // themeProvider.currentTheme != MyThemes.Loft
+                //     ? themeProvider.currentBackgroundColor
+                //     :
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
-              child: Center(
-                  child: Column(
+          ),
+        ),
+        Center(
+            child: Container(
+              height: 200,
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
@@ -525,8 +537,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     ),
                   )
                 ],
-              ))),
-        ),
+              ),
+            ))
       ]),
     );
   }
