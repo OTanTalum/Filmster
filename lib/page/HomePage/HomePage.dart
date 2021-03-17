@@ -18,7 +18,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixin{
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   ScrollController _scrollController = ScrollController();
   TabController? _tabController;
@@ -28,7 +29,7 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
   @override
   void initState() {
     super.initState();
-    _tabController =  new TabController(length: 3, vsync: this);
+    _tabController = new TabController(length: 3, vsync: this);
     _scrollController.addListener(addMore);
   }
 
@@ -40,10 +41,11 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
   }
 
   addMore() async {
-    var provider =  Provider.of<LibraryProvider>(context, listen: false);
-    if ( _scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent&&
-        provider.totalChristianPage!>=currentPage && !provider.isLoading) {
+    var provider = Provider.of<LibraryProvider>(context, listen: false);
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        provider.totalChristianPage! >= currentPage &&
+        !provider.isLoading) {
       currentPage++;
       await provider.getChristian(scaffoldState, currentPage);
     }
@@ -61,7 +63,9 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
     var userProvider = Provider.of<LibraryProvider>(context, listen: false);
     List<Widget> christianList = [];
     userProvider.christianMovie.forEach((element) {
-      christianList.add(MovieCard(element, scaffoldState));
+      christianList.add(
+        MovieCard(film: element, scaffoldKey: scaffoldState),
+      );
     });
     return Scaffold(
       key: scaffoldState,
@@ -78,21 +82,25 @@ class _HomePageState extends State<HomePage>  with SingleTickerProviderStateMixi
               text: AppLocalizations().translate(context, WordKeys.discover),
             ),
             Tab(
-              child: Image.asset("assets/icons/cross.png", width: 24, height: 24, color:myColors.currentFontColor,),
+              child: Image.asset(
+                "assets/icons/cross.png",
+                width: 24,
+                height: 24,
+                color: myColors.currentFontColor,
+              ),
             ),
           ],
         ),
         centerTitle: true,
-        title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Filmster',
-                style: TextStyle(fontFamily: "AmaticSC", fontSize: 34),
-              ),
-            ]),
+        title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text(
+            'Filmster',
+            style: TextStyle(fontFamily: "AmaticSC", fontSize: 34),
+          ),
+        ]),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(),
-      floatingActionButton: LibraryActionButton.build(context,scaffoldState),
+      floatingActionButton: LibraryActionButton.build(context: context, keyState: scaffoldState),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       //drawer: DrawerMenu().build(context),
       body: TabBarView(

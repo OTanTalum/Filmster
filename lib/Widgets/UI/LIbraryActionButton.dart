@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class LibraryActionButton {
-  static FloatingActionButton build(BuildContext context, GlobalKey<ScaffoldState> keyState) {
+  static FloatingActionButton build({
+    required BuildContext context,
+    required GlobalKey<ScaffoldState> keyState}) {
    SettingsProvider settings =  Provider.of<SettingsProvider>(context);
    ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
     LibraryProvider libraryProvider =  Provider.of<LibraryProvider>(context);

@@ -60,7 +60,11 @@ class _LibraryPageState extends State<LibraryPage>
   List<Widget> renderLists(List<SearchResults> list){
     List<Widget> actionList=[];
     list.forEach((SearchResults element) {
-      actionList.add(MovieCard(element, _scaffoldKey));
+      actionList.add(
+          MovieCard(
+            film:element,
+            scaffoldKey: _scaffoldKey,),
+      );
     });
     return actionList;
   }

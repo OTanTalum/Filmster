@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 
 class MovieBanner extends StatelessWidget {
-
   final String imageUrl;
 
-  MovieBanner(
-      this.imageUrl
-      );
+  MovieBanner({required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +24,7 @@ class ArcClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     var path = Path();
-    path.lineTo(0.0, size.height/2);
+    path.lineTo(0.0, size.height / 2);
 
     var firstControlPoint = Offset(size.width / 3, size.height);
     var firstPoint = Offset(size.width, size.height);

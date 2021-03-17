@@ -68,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
         bottomNavigationBar: CustomBottomNavigationBar(),
-        floatingActionButton: LibraryActionButton.build(context, _scaffoldKey),
+        floatingActionButton: LibraryActionButton.build(context: context, keyState: _scaffoldKey),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         //drawer: DrawerMenu().build(context),
         body: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [

@@ -20,7 +20,6 @@ import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'dart:async';
 import 'package:filmster/model/film.dart';
-import 'package:filmster/setting/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -42,7 +41,7 @@ class FilmDetailPage extends StatefulWidget {
 class FilmDetailPageState extends State<FilmDetailPage> {
   ScrollController scrollController = ScrollController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<Poster>? images = [];
+  List<Poster> images = [];
   List<Widget> posterList = [];
   late ThemeProvider themeProvider;
   late LibraryProvider libraryProvider;
@@ -165,7 +164,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                         painter: Progress(
                             current: scrollController.offset.toDouble(),
                             allSize: tryGetFullScrolSize(),
-                            colors: themeProvider.currentMainColor,
+                            colors: themeProvider.currentMainColor!,
                             height: 4,
                             width: MediaQuery.of(context).size.width,
                             radius: 7.0)),
@@ -196,8 +195,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 width: MediaQuery.of(context).size.width,
                 //child: Image.network("${Api().imageBannerAPI}${film.poster}",),
                 child: film!.backdrop != null
-                    ? MovieBanner("${Api().imageBannerAPI}${film!.backdrop}")
-                    : MovieBanner("${Api().imageBannerAPI}${film!.poster}")),
+                    ? MovieBanner(imageUrl:"${Api().imageBannerAPI}${film!.backdrop}")
+                    : MovieBanner(imageUrl:"${Api().imageBannerAPI}${film!.poster}")),
             _buildInfo(),
             _buildDescriptionBlock(),
             _buildMovieDetail(),
@@ -208,10 +207,10 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               height: 10,
             ),
             if (movieProvider.similarList.isNotEmpty)
-              CardList(movieProvider.similarList, "Similar Movie", film!.id!,
+              CardList(movieProvider.similarList, libraryProvider.isMovie? "${AppLocalizations().translate(context, WordKeys.similarMovies)!}": "${AppLocalizations().translate(context, WordKeys.similarMovies)!} ", film!.id!,
                   _scaffoldKey),
             if (movieProvider.recommendedList.isNotEmpty)
-              CardList(movieProvider.recommendedList, "Recommended Movie",
+              CardList(movieProvider.recommendedList, libraryProvider.isMovie? "${AppLocalizations().translate(context, WordKeys.recommended)!} ${AppLocalizations().translate(context, WordKeys.films)!}": "${AppLocalizations().translate(context, WordKeys.recommended)!} ${AppLocalizations().translate(context, WordKeys.TV)!}",
                   film!.id!, _scaffoldKey),
             //_buildWebLinkBlock(),
             //Container( child: getDesc(movie),)
@@ -319,12 +318,12 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     child: Text(
                       "\t${film!.overview}",
                       style: TextStyle(
-                        fontFamily: "Lato",
+                        fontFamily: "Ubuntu",
                         // fontWeight: FontWeight.w500,
-                        // height: 1.1,
+                         height: 1.3,
                         // wordSpacing: 1,
                         // letterSpacing: 0.5,
-                        fontSize: 18.0,
+                        fontSize: 19.0,
                         color: themeProvider.currentFontColor,
                       ),
                     ),
@@ -359,7 +358,10 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           children: [
             Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
-                child: _buildHeader("Movie Detail", 30)),
+                child: _buildHeader(libraryProvider.isMovie
+                    ? "${AppLocalizations().translate(context, WordKeys.movieDetails)!}:"
+                    : "${AppLocalizations().translate(context, WordKeys.tvDetails)!}:"
+                    , 30)),
             _buildDevider(),
             buildOneField(genres,
                 "${AppLocalizations().translate(context, WordKeys.genre)!}:"),
@@ -379,19 +381,19 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     children: <Widget>[
                       if (film!.companies != null &&
                           film!.companies!.isNotEmpty)
-                        buildOneField(film!.companies?[0].name, "Company:"),
+                        buildOneField(film!.companies?[0].name, "${AppLocalizations().translate(context, WordKeys.company)!}:"),
                       if (film?.countrys != null && film!.countrys!.isNotEmpty)
-                        buildOneField(film?.countrys?[0].name, "Country:"),
+                        buildOneField(film?.countrys?[0].name, "${AppLocalizations().translate(context, WordKeys.country)!}:"),
                     ],
                   ),
                 ),
               ],
             ),
-            buildOneField(film!.status, "Status:"),
+            buildOneField(film!.status, "${AppLocalizations().translate(context, WordKeys.status)!}:"),
             buildOneField(film!.budget, "Budget:"),
             buildOneField(film!.revenue, "Revenue:"),
-            buildOneField(film!.release, "Release Date:"),
-            buildOneField("${film!.runtime} m", "Runtime:"),
+            buildOneField(film!.release, "${AppLocalizations().translate(context, WordKeys.releaseDate)!}:"),
+            buildOneField("${film!.runtime} m", "${AppLocalizations().translate(context, WordKeys.runtime)!}:"),
           ],
         ),
       ),
@@ -421,9 +423,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(vertical: 12),
-              child: _buildHeader("Seasons & Episodes", 30),
+              child: _buildHeader("${AppLocalizations().translate(context, WordKeys.seasonsAndEpisodes)!}:", 30),
             ),
-            buildEpisode(film!.lastEpisode!, "Last Episode"),
+            buildEpisode(film!.lastEpisode!, "${AppLocalizations().translate(context, WordKeys.lastEpisodes)!}:"),
             if (film!.nextEpisode != null)
               buildEpisode(film!.nextEpisode!, "Next Episode"),
             GestureDetector(
@@ -434,7 +436,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 height: 50,
                 child: Center(
                   child: Text(
-                    "All Seasons & Episodes",
+                    "${AppLocalizations().translate(context, WordKeys.seasonsAndEpisodes)!}:",
                     style: TextStyle(
                       fontFamily: "AmaticSC",
                       fontSize: 25,
@@ -526,7 +528,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                               color: themeProvider.currentFontColor,
                             )),
                         Text(
-                            "Season ${episode.seasonNumber}\tEpisode ${episode.episodeNumber}",
+                            "${episode.seasonNumber}\tEpisode ${episode.episodeNumber}",
                             style: TextStyle(
                               fontFamily: "AmaticSC",
                               fontSize: 30,

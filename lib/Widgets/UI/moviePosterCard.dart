@@ -10,10 +10,7 @@ import 'ActionIconButtons/MarkedIconButton.dart';
 import 'ActionIconButtons/WatchedIconButton.dart';
 
 class MoviePosterCard extends StatelessWidget {
-  MoviePosterCard({
-    required this.movie,
-    required this.scaffoldKey
-  });
+  MoviePosterCard({required this.movie, required this.scaffoldKey});
 
   final GlobalKey<ScaffoldState> scaffoldKey;
   final SearchResults movie;
@@ -23,18 +20,21 @@ class MoviePosterCard extends StatelessWidget {
     return Stack(children: [
       GestureDetector(
         onTap: () async {
-          Navigator.of(context).push(MaterialPageRoute(
+          Navigator.of(context).push(
+            MaterialPageRoute(
               builder: (_) => FilmDetailPage(
-                    id: movie.id.toString(),
-                  )));
+                id: movie.id.toString(),
+              ),
+            ),
+          );
         },
         child: movie.poster != null
-            ?CachedNetworkImage(
-        imageUrl: "${Api().imageBannerAPI}${movie.poster}",
-          fit: BoxFit.fill,
-          width: MediaQuery.of(context).size.width * 0.5,
-          height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),
-        )
+            ? CachedNetworkImage( 
+                imageUrl: "${Api().imageBannerAPI}${movie.poster}",
+                fit: BoxFit.fill,
+                width: MediaQuery.of(context).size.width * 0.5,
+                height: MediaQuery.of(context).size.width * 0.5 * (3 / 2),
+              )
             : Container(),
       ),
       Positioned(
@@ -49,9 +49,9 @@ class MoviePosterCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                MarkedIconButton(movie: movie, keyState:scaffoldKey),
-                FavoriteIconButton(movie: movie, keyState:scaffoldKey),
-                WatchedIconButton(movie: movie, keyState:scaffoldKey)
+                MarkedIconButton(movie: movie, keyState: scaffoldKey),
+                FavoriteIconButton(movie: movie, keyState: scaffoldKey),
+                WatchedIconButton(movie: movie, keyState: scaffoldKey)
               ],
             ),
           ),

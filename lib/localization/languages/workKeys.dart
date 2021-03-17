@@ -20,6 +20,17 @@ enum WordKeys {
   trending,
   discover,
   genre,
-  detail,
+  movieDetails,
+  tvDetails,
+  company,
+  country,
+  status,
+  releaseDate,
+  runtime,
+  seasonsAndEpisodes,
+  lastEpisodes,
+  similarMovies,
+  similarTV,
+  recommended,
   notAuthActionPressedError
 }

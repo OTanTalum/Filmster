@@ -93,8 +93,12 @@ class CardList extends StatelessWidget {
                             imageUrl: '${Api().imageLowAPI}${video.poster}',
                             progressIndicatorBuilder:
                                 (context, url, downloadProgress) =>
-                                    CircularProgressIndicator(
-                                        value: downloadProgress.progress),
+                                    Center(
+                                      child: Container(height: 24,width: 24,
+                                        child: CircularProgressIndicator(
+                                            value: downloadProgress.progress),
+                                      ),
+                                    ),
                           )),
                       SizedBox(
                         height: 8,

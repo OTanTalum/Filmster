@@ -54,7 +54,7 @@ class _SearchPageState extends State<SearchPage> {
           title: Text("Search",),
         ),
         bottomNavigationBar: CustomBottomNavigationBar(),
-        floatingActionButton: LibraryActionButton.build(context, scaffoldState),
+        floatingActionButton: LibraryActionButton.build(context: context, keyState: scaffoldState),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         body: _buildBody(context),
       ),

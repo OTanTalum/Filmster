@@ -13,7 +13,10 @@ import 'ActionIconButtons/MarkedIconButton.dart';
 import 'ActionIconButtons/WatchedIconButton.dart';
 
 class MovieCard extends StatelessWidget {
-  MovieCard(this.film, this.scaffoldKey);
+  MovieCard({
+     required this.film,
+     required this.scaffoldKey
+  });
 
   final GlobalKey<ScaffoldState> scaffoldKey;
   final SearchResults film;

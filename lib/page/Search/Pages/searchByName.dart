@@ -62,7 +62,11 @@ class _FilmsPageState extends State<FilmsPage> {
     List<Widget> list = [];
     int i = 0;
     searchProvider.listOfFilms!.forEach((element) {
-      list.add(MovieCard(element, scaffoldState));
+      list.add(
+          MovieCard(
+        film:element,
+            scaffoldKey: scaffoldState,),
+      );
       if (i == 5) {
         list.add(AddMobClass().buildSearchListBunner());
         i = 0;
@@ -113,7 +117,7 @@ class _FilmsPageState extends State<FilmsPage> {
           ),
         ),
         bottomNavigationBar: CustomBottomNavigationBar(),
-        floatingActionButton: LibraryActionButton.build(context,scaffoldState),
+        floatingActionButton: LibraryActionButton.build(context: context, keyState: scaffoldState),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         body: _buildBody(context),
       ),

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'languages/PT.dart';
 import 'languages/eng.dart';
 import 'languages/rus.dart';
+import 'languages/ua.dart';
 import 'languages/workKeys.dart';
 
 class AppLocalizations {
@@ -14,6 +15,7 @@ class AppLocalizations {
     'us': ENG,
     "ru" : RUS,
     "pt" : PT,
+    "uk" : UA,
   };
 
   String? translate(context, key) {
@@ -26,6 +28,9 @@ class AppLocalizations {
         break;
         case "pt":
         return localization["pt"]![key];
+        break;
+        case "uk":
+        return localization["uk"]![key];
         break;
     }
   }
