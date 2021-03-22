@@ -35,4 +35,5 @@ const PT = {
   WordKeys.similarTV: "Série semelhante",
   WordKeys.recommended: "Recomendados",
   WordKeys.notAuthActionPressedError: "Faça login para adicionar itens à biblioteca.",
+  WordKeys.search: "Зrocurar",
 };

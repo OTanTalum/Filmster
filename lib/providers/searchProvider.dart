@@ -54,7 +54,7 @@ class SearchProvider extends ChangeNotifier {
   }
 
   bool hasError(response) {
-    return response.runtimeType == BasicResponse();
+    return response.runtimeType == BasicResponse().runtimeType;
   }
 }
 

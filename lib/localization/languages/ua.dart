@@ -35,4 +35,5 @@ const UA = {
   WordKeys.similarTV: "Схожі серіали",
   WordKeys.recommended: "Рекомендовані",
   WordKeys.notAuthActionPressedError: "Увійдіть щоб додавати елементи до біблотеки",
+  WordKeys.search: "Пошук",
 };

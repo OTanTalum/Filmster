@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:filmster/Enums/PagesEnum.dart';
 import 'package:filmster/Widgets/UI/CustomeBottomNavigationBar.dart';
 import 'package:filmster/Widgets/UI/LIbraryActionButton.dart';
+import 'package:filmster/localization/languages/workKeys.dart';
+import 'package:filmster/localization/localization.dart';
 import 'package:filmster/providers/settingsProvider.dart';
 import 'package:filmster/providers/themeProvider.dart';
 import 'package:filmster/providers/libraryProvider.dart';
@@ -51,7 +53,13 @@ class _SearchPageState extends State<SearchPage> {
         key:scaffoldState ,
         backgroundColor: themeProvider.currentBackgroundColor,
         appBar: AppBar(
-          title: Text("Search",),
+          title: Text( AppLocalizations().translate(
+              context, WordKeys.search)!,
+            style: TextStyle(
+              fontFamily: "AmaticSC",
+              fontSize: 30,
+            ),
+          ),
         ),
         bottomNavigationBar: CustomBottomNavigationBar(),
         floatingActionButton: LibraryActionButton.build(context: context, keyState: scaffoldState),

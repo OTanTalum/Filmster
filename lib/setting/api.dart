@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:filmster/model/BasicResponse.dart';
 import 'package:filmster/model/GalleryResponse.dart';
 import 'package:filmster/model/Genre.dart';
+import 'package:filmster/model/Season.dart';
 import 'package:filmster/model/authentication.dart';
 import 'package:filmster/model/film.dart';
 import 'package:filmster/model/responses.dart';
@@ -310,6 +311,14 @@ class Api extends http.BaseClient {
         : BasicResponse.fromJson(json.decode(response.body));
   }
 
+  getSeason(seasonNumber, tvId)async{
+    var response = await http.get(
+        '$tMDBApi/tv/$tvId/season/$seasonNumber?api_key=$apiKey'
+            '&language=${SettingsProvider.language}');
+    return response.statusCode == RESPONSE_SUCCESS
+        ? Season.fromJson(json.decode(response.body))
+        : BasicResponse.fromJson(json.decode(response.body));
+  }
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {

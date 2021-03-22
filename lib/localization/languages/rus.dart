@@ -35,4 +35,5 @@ const RUS = {
   WordKeys.similarTV: "Похожие сериалы",
   WordKeys.recommended: "Рекомендуемые",
   WordKeys.notAuthActionPressedError: "Авторизуйтесь чтобы, добавлять элементы в библиотеку",
+  WordKeys.search: "Поиск",
 };

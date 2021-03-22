@@ -35,4 +35,5 @@ const ENG = {
   WordKeys.similarTV: "Similar Series",
   WordKeys.recommended: "Recommended",
   WordKeys.notAuthActionPressedError: "Log in to add items to the library.",
+  WordKeys.search: "Search",
 };

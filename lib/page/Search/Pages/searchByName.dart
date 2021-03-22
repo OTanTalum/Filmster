@@ -158,7 +158,7 @@ class _FilmsPageState extends State<FilmsPage> {
                   color: themeProvider.currentMainColor!, width: 1.0),
             ),
             hintStyle: TextStyle(
-                color: themeProvider.currentSecondaryColor,
+                color: themeProvider.currentFontColor,
                 fontFamily: "AmaticSC"),
             hintText: AppLocalizations().translate(
                 context,

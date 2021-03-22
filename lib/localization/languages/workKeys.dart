@@ -32,5 +32,6 @@ enum WordKeys {
   similarMovies,
   similarTV,
   recommended,
-  notAuthActionPressedError
+  notAuthActionPressedError,
+  search
 }

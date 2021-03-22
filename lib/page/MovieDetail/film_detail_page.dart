@@ -20,6 +20,7 @@ import 'package:filmster/setting/adMob.dart';
 import 'package:filmster/setting/api.dart';
 import 'dart:async';
 import 'package:filmster/model/film.dart';
+import 'package:filmster/setting/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -74,7 +75,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
         } else {
           images = imageResponse.backDropsList;
           posterList = [];
-          images!.forEach((Poster element) async {
+          images.forEach((Poster element) async {
             posterList.add(
                 imageLoader('${Api().imageGalleryAPI}${element.filePath}'));
           });
@@ -93,7 +94,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
   }
 
   hasError(response) {
-    return response.runtimeType == BasicResponse();
+    return response.runtimeType == BasicResponse().runtimeType;
   }
 
   double tryGetFullScrolSize() {
@@ -201,7 +202,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             _buildDescriptionBlock(),
             _buildMovieDetail(),
             if (posterList != null && posterList.isNotEmpty) _buildGallery(),
-            if (!libraryProvider.isMovie) buildSeasonsButton(),
+            if (!libraryProvider.isMovie) buildSeasonsBlock(),
             AddMobClass().buildAdMobBanner(),
             SizedBox(
               height: 10,
@@ -412,7 +413,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     );
   }
 
-  buildSeasonsButton() {
+  buildSeasonsBlock() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
       child: Container(
@@ -504,7 +505,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                       fontFamily: "AmaticSC",
                       fontSize: 22,
                       fontWeight: FontWeight.w500,
-                      color: themeProvider.currentFontColor,
+                      color: themeProvider.currentTheme == MyThemes.Loft
+                           ? themeProvider.currentBackgroundColor
+                           : themeProvider.currentFontColor,
                     ),
                   ),
                   Text(episode.name!,
@@ -512,7 +515,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                         fontFamily: "AmaticSC",
                         fontSize: 30,
                         fontWeight: FontWeight.w700,
-                        color: themeProvider.currentFontColor,
+                        color: themeProvider.currentTheme == MyThemes.Loft
+                            ? themeProvider.currentBackgroundColor
+                            : themeProvider.currentFontColor,
                       )),
                   SizedBox(height: 48),
                   Padding(
@@ -525,7 +530,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                               fontFamily: "AmaticSC",
                               fontSize: 30,
                               fontWeight: FontWeight.w700,
-                              color: themeProvider.currentFontColor,
+                              color: themeProvider.currentTheme == MyThemes.Loft
+                                  ? themeProvider.currentBackgroundColor
+                                  : themeProvider.currentFontColor,
                             )),
                         Text(
                             "${episode.seasonNumber}\tEpisode ${episode.episodeNumber}",
@@ -533,7 +540,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                               fontFamily: "AmaticSC",
                               fontSize: 30,
                               fontWeight: FontWeight.w700,
-                              color: themeProvider.currentFontColor,
+                              color: themeProvider.currentTheme == MyThemes.Loft
+                                  ? themeProvider.currentBackgroundColor
+                                  : themeProvider.currentFontColor,
                             )),
                       ],
                     ),

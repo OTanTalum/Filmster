@@ -68,37 +68,32 @@ class _SettingsPageState extends State<SettingsPage> {
         Column(
           children: <Widget>[
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-              Column(
+              Container(
+                width: MediaQuery.of(context).size.width/2,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      _buildTitle(AppLocalizations()
+                          .translate(context, WordKeys.changeYourTheme)!),
+                      //_buildThemeButton(MyThemeKeys.LIGHT, "Light"),
+                      _buildThemeButton(MyThemeKeys.DARK, "Dark"),
+                      _buildThemeButton(MyThemeKeys.DARKER, "Darker"),
+                      _buildThemeButton(MyThemeKeys.Loft, "Loft"),
+                    ]),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width/2,
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     _buildTitle(AppLocalizations()
-                        .translate(context, WordKeys.changeYourTheme)!),
-                    SizedBox(
-                      height: 40,
-                      width: MediaQuery.of(context).size.width * 0.5,
-                    ),
-                    _buildThemeButton(MyThemeKeys.LIGHT, "Light"),
-                    _buildThemeButton(MyThemeKeys.DARK, "Dark"),
-                    _buildThemeButton(MyThemeKeys.DARKER, "Darker"),
-                    _buildThemeButton(MyThemeKeys.Loft, "Loft"),
-                  ]),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _buildTitle(AppLocalizations()
-                      .translate(context, WordKeys.changeYourLanguage)!),
-                  SizedBox(
-                    height: 40,
-                    width: MediaQuery.of(context).size.width * 0.5,
-                  ),
-                  _buildLanguageButton("us", "English"),
-                 // _buildLanguageButton("ru", "Russian"),
-                  _buildLanguageButton("pt", "Portugalish"),
-                  _buildLanguageButton("uk", "Ukrainian"),
-                  SizedBox(
-                    height: 50,
-                  ),
-                ],
+                        .translate(context, WordKeys.changeYourLanguage)!),
+                    _buildLanguageButton("us", "English"),
+                    _buildLanguageButton("ru", "Russian"),
+                    _buildLanguageButton("pt", "Portugalish"),
+                    _buildLanguageButton("uk", "Ukrainian"),
+                  ],
+                ),
               ),
             ]),
         ]
@@ -154,13 +149,16 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   _buildTitle(String titleText) {
-    return Text(
-      titleText,
-      style: TextStyle(
-        fontFamily: "AmaticSC",
-        fontSize: 26,
-        color:
-            Provider.of<ThemeProvider>(context, listen: false).currentFontColor,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical:24.0),
+      child: Text(
+        titleText,
+        style: TextStyle(
+          fontFamily: "AmaticSC",
+          fontSize: 26,
+          color:
+              Provider.of<ThemeProvider>(context, listen: false).currentFontColor,
+        ),
       ),
     );
   }
