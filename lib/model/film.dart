@@ -116,7 +116,7 @@ class Film {
     if(json['runtime']!=null) {
       runtime = json['runtime'];
     }
-    else if(json['episode_run_time']!=null){
+    else if(json['episode_run_time']!=null && json['episode_run_time'].isNotEmpty){
       runtime = json['episode_run_time'].first;
     }
     if (json['spoken_languages'] != null)

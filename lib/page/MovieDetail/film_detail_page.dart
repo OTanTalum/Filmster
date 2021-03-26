@@ -197,7 +197,9 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                 //child: Image.network("${Api().imageBannerAPI}${film.poster}",),
                 child: film!.backdrop != null
                     ? MovieBanner(imageUrl:"${Api().imageBannerAPI}${film!.backdrop}")
-                    : MovieBanner(imageUrl:"${Api().imageBannerAPI}${film!.poster}")),
+                    : film!.poster!=null
+                      ? MovieBanner(imageUrl:"${Api().imageBannerAPI}${film!.poster}")
+                      : Container(height: MediaQuery.of(context).size.height*0.2,)),
             _buildInfo(),
             _buildDescriptionBlock(),
             _buildMovieDetail(),
@@ -221,8 +223,10 @@ class FilmDetailPageState extends State<FilmDetailPage> {
             top: 120,
             child: Container(
               child: Image.network(
-                "${Api().imageBannerAPI}${film!.poster}",
-                height: MediaQuery.of(context).size.height * 0.3,
+                film!.poster!=null
+                    ? "${Api().imageBannerAPI}${film!.poster}"
+                  : "https://dalk4zrp4jp3q.cloudfront.net/images/mac_YFVkNF/movie_placeholder_big_2x.png",
+                height: MediaQuery.of(context).size.height * (film!.poster!=null?0.3:0.23 ),
               ),
             ),
           ),
@@ -426,7 +430,8 @@ class FilmDetailPageState extends State<FilmDetailPage> {
               padding: EdgeInsets.symmetric(vertical: 12),
               child: _buildHeader("${AppLocalizations().translate(context, WordKeys.seasonsAndEpisodes)!}:", 30),
             ),
-            buildEpisode(film!.lastEpisode!, "${AppLocalizations().translate(context, WordKeys.lastEpisodes)!}:"),
+            if(film!.lastEpisode!=null)
+            buildEpisode(film!.lastEpisode, "${AppLocalizations().translate(context, WordKeys.lastEpisodes)!}:"),
             if (film!.nextEpisode != null)
               buildEpisode(film!.nextEpisode!, "Next Episode"),
             GestureDetector(
@@ -454,7 +459,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
     );
   }
 
-  buildEpisode(Episode episode, String textHeader) {
+  buildEpisode(Episode? episode, String textHeader) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 12),
       child: Stack(children: [
@@ -464,9 +469,11 @@ class FilmDetailPageState extends State<FilmDetailPage> {
           width: MediaQuery.of(context).size.width - 24,
           decoration: BoxDecoration(
             image: DecorationImage(
-                image: NetworkImage(episode.poster != null
-                    ? "${Api().imageBannerAPI}${episode.poster}"
-                    : "${Api().imageBannerAPI}${film!.poster}"),
+                image: NetworkImage(episode?.poster != null
+                    ? "${Api().imageBannerAPI}${episode?.poster}"
+                    : film!.poster!=null
+                      ? "${Api().imageBannerAPI}${film!.poster}"
+                      : "https://dalk4zrp4jp3q.cloudfront.net/images/mac_YFVkNF/movie_placeholder_big_2x.png"),
                 fit: BoxFit.fitWidth,
                 alignment: Alignment.topLeft),
             borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -510,7 +517,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                            : themeProvider.currentFontColor,
                     ),
                   ),
-                  Text(episode.name!,
+                  Text(episode?.name??" ",
                       style: TextStyle(
                         fontFamily: "AmaticSC",
                         fontSize: 30,
@@ -525,7 +532,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(episode.airDate ?? "-",
+                        Text(episode?.airDate ?? "-",
                             style: TextStyle(
                               fontFamily: "AmaticSC",
                               fontSize: 30,
@@ -535,7 +542,7 @@ class FilmDetailPageState extends State<FilmDetailPage> {
                                   : themeProvider.currentFontColor,
                             )),
                         Text(
-                            "${episode.seasonNumber}\tEpisode ${episode.episodeNumber}",
+                            "${episode?.seasonNumber}\tEpisode ${episode?.episodeNumber}",
                             style: TextStyle(
                               fontFamily: "AmaticSC",
                               fontSize: 30,

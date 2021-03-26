@@ -25,12 +25,22 @@ class _HomePageState extends State<HomePage>
   TabController? _tabController;
   int currentPage = 1;
   List<Widget> movieTrend = [];
+  List<Widget> christianList = [];
 
   @override
   void initState() {
     super.initState();
     _tabController = new TabController(length: 3, vsync: this);
     _scrollController.addListener(addMore);
+    Future.microtask(() async {
+      await Provider.of<LibraryProvider>(context, listen: false).getChristian(scaffoldState, 1);
+
+      Provider.of<LibraryProvider>(context, listen:false).christianMovie.forEach((element) {
+        christianList.add(
+          MovieCard(film: element, scaffoldKey: scaffoldState),
+        );
+      });
+    });
   }
 
   @override
@@ -61,12 +71,6 @@ class _HomePageState extends State<HomePage>
     var myColors = Provider.of<ThemeProvider>(context, listen: false);
     var mySettings = Provider.of<SettingsProvider>(context, listen: false);
     var userProvider = Provider.of<LibraryProvider>(context, listen: false);
-    List<Widget> christianList = [];
-    userProvider.christianMovie.forEach((element) {
-      christianList.add(
-        MovieCard(film: element, scaffoldKey: scaffoldState),
-      );
-    });
     return Scaffold(
       key: scaffoldState,
       backgroundColor: myColors.currentBackgroundColor,

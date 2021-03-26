@@ -55,7 +55,7 @@ class MovieCard extends StatelessWidget {
                           )
                         : Container(
                             height: 139,
-                            width: 100,
+                            width: 130,
                             child: Icon(
                               Icons.do_not_disturb_on,
                               size: 100.0,

@@ -13,6 +13,7 @@ class SettingsProvider extends ChangeNotifier {
   static String language = "ru";
   List <Genre>? movieListOfGenres = [];
   List <Genre>? tvListOfGenres = [];
+  List <Genre>? listOfGenre=[];
 
   Map<Genre, bool> tvFilter = {};
   Map<Genre, bool> movieFilter = {};
@@ -21,12 +22,13 @@ class SettingsProvider extends ChangeNotifier {
   Pages? prevPage;
   String? currentYear;
 
+
   loadMovieListGenres(keyState) async {
     GenresResponse response = await Api().getMovieGenres();
     if(response.isSuccess!){
       movieListOfGenres = response.genres;
       movieFilter.clear();
-      movieListOfGenres!.forEach((element) {
+      movieListOfGenres!.forEach((Genre element) {
         movieFilter[element]=false;
       });
     }else{
@@ -50,9 +52,8 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   String? getOneGenre(BuildContext context, int? id) {
-    return Provider.of<LibraryProvider>(context).isMovie
-        ? movieListOfGenres!.singleWhere((Genre element) => element.id==id).name
-        : tvListOfGenres!.singleWhere((Genre element) => element.id==id).name;
+    List<Genre> temp = movieListOfGenres! + tvListOfGenres!;
+    return temp.firstWhere((Genre element) => element.id==id).name;
   }
 
   changeTVGenreStatus(Genre genre){

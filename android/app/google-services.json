@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "577918515815-ecdtbcpt8v1sfqt1ln0mj3trehieptiu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tantalum.filmster",
+            "certificate_hash": "f945fcc626d3ea2feb2f9c4f50514b160eeb0c77"
+          }
+        },
+        {
           "client_id": "577918515815-v2lld71gr4mia1qon4hq5t0tpvgk5utr.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -30,10 +38,18 @@
             {
               "client_id": "577918515815-v2lld71gr4mia1qon4hq5t0tpvgk5utr.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "577918515815-9tie173eb2cvqnil1uthr66c1tf8g3c2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tantalum.filmster"
+              }
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-3113025288273721~8287602911"
     }
   ],
   "configuration_version": "1"

@@ -1,4 +1,5 @@
 //@dart = 2.9
+import 'dart:async';
 import 'dart:io';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:filmster/page/HomePage/HomePage.dart';
@@ -11,6 +12,7 @@ import 'package:filmster/providers/trendingProvider.dart';
 import 'package:filmster/providers/libraryProvider.dart';
 import 'package:filmster/setting/sharedPreferenced.dart';
 import 'package:filmster/setting/theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,26 +22,42 @@ import 'package:provider/provider.dart';
 
 import 'Widgets/Pages/LogoScreen.dart';
 
-void main() {
+void main()async{
   WidgetsFlutterBinding.ensureInitialized();
   Admob.initialize();
-  Crashlytics.instance.enableInDevMode = true;
-  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+
+
+  await Firebase.initializeApp();
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  await FirebaseCrashlytics.instance
+      .setCrashlyticsCollectionEnabled(true);
+  Function originalOnError = FlutterError.onError;
+  FlutterError.onError = (FlutterErrorDetails errorDetails) async {
+    await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+    originalOnError(errorDetails);
+  };
+
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   HttpOverrides.global = new MyHttpOverrides();
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => SearchProvider()),
-        ChangeNotifierProvider(create: (_) => SettingsProvider()),
-        ChangeNotifierProvider(create: (_) => TrendingProvider()),
-        ChangeNotifierProvider(create: (_) => LibraryProvider()),
-        ChangeNotifierProvider(create: (_) => DiscoverProvider()),
-        ChangeNotifierProvider(create: (_) => MovieProvider()),
-      ],
-      child: MyApp(),
-    ),
-  );
+  runZonedGuarded(() {
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ThemeProvider()),
+          ChangeNotifierProvider(create: (_) => SearchProvider()),
+          ChangeNotifierProvider(create: (_) => SettingsProvider()),
+          ChangeNotifierProvider(create: (_) => TrendingProvider()),
+          ChangeNotifierProvider(create: (_) => LibraryProvider()),
+          ChangeNotifierProvider(create: (_) => DiscoverProvider()),
+          ChangeNotifierProvider(create: (_) => MovieProvider()),
+        ],
+        child: MyApp(),
+      ),
+    );
+  },(error, stackTrace) {
+    FirebaseCrashlytics.instance.recordError(error, stackTrace);
+  });
+
 }
 
 class MyApp extends StatelessWidget {
@@ -74,6 +92,7 @@ class _MyHomePageState extends State<MyHomePage>  with SingleTickerProviderState
     _tabController =  new TabController(length: 3, vsync: this);
     super.initState();
   }
+
 
   @override
   void didChangeDependencies() {
